@@ -2,13 +2,10 @@
 
 <h1 align="center">NanoPay.js</h1>
 
-<h3 align="center">Crypto HTML Paywall</h3>
+<h3 align="center">Nano Payment Library</h3>
 
 ![line](https://github.com/fwd/n2/raw/master/.github/line.png)
-![line](https://github.com/fwd/nano-pay/raw/master/img/splash2.png)
-![line](https://github.com/fwd/n2/raw/master/.github/line.png)
-![line](https://github.com/fwd/nano-pay/raw/master/img/splash3.png)
-
+![line](https://pbs.twimg.com/media/F_4K6f6XoAAYtPE?format=jpg&name=medium)
 ![line](https://github.com/fwd/n2/raw/master/.github/line.png)
 
 ### Live Demo

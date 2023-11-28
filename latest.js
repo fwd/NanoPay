@@ -118,7 +118,7 @@ var NanocurrencyWeb;(()=>{var e={4431:function(e,t,r){var n;!function(i){"use st
             text: `nano:${address}?amount=${amount}`,
             width: 300,
             height: 280,
-            logo: "/img/xno.svg", // @todo "Failed to execute 'toDataURL' on 'HTMLCanvasElement'"
+            logo: "https://pay.nano.to/img/xno.svg", // @todo "Failed to execute 'toDataURL' on 'HTMLCanvasElement'"
           }
           new QRCode(document.getElementById("qrcode"), options);
           resolve()
@@ -151,7 +151,7 @@ var template = `<div id="nano-pay" style="font-family: 'Arial'; position: fixed;
     <div id="nano-body" style="width: 100%;max-width: 380px;display: flex;flex-direction: column;justify-content: center;align-items: center;background: ${window.nano.dark_mode ? 'rgb(247, 247, 247)' : 'rgb(247, 247, 247)'};;position: absolute;bottom: -100%;transition: all 0.3s ease 0s;color:#000;border-top-left-radius: 4px;border-top-right-radius: 4px;box-shadow: 1px 1px 7px #0003;">
 			
 			<div style="width: 100%;display: flex;align-items: center;justify-content: space-between;padding: 11px;border-bottom: 1px solid #0000000f;"> 
-			<div style=" display: flex; align-items: center; "> <img src="/img/xno.svg" style="max-width: 22px;"> <span style=" display: block; margin-left: 4px; ">Pay</span> </div>
+			<div style=" display: flex; align-items: center; "> <img src="https://pay.nano.to/img/xno.svg" style="max-width: 22px;"> <span style=" display: block; margin-left: 4px; ">Pay</span> </div>
 
 			<div style="color: #1f9ce9" onclick="window.nano.cancel(); return"> Cancel </div> 
 			</div>
@@ -176,7 +176,7 @@ var template = `<div id="nano-pay" style="font-family: 'Arial'; position: fixed;
 				</div> 
 			</div>
 
-		    <div style=" display: flex; flex-direction: column; align-items: center; margin: 15px 0; "> <img src="/img/natrium.png" style=" max-width: 40px; "> <span style=" margin-top: 10px; display: block; opacity: 0.5; font-size: 85%; ">Open Natrium</span> </div>
+		    <div style=" display: flex; flex-direction: column; align-items: center; margin: 15px 0; "> <img src="https://pay.nano.to/img/natrium.png" style=" max-width: 40px; "> <span style=" margin-top: 10px; display: block; opacity: 0.5; font-size: 85%; ">Open Natrium</span> </div>
 
     </div>
 </div>
@@ -245,7 +245,7 @@ var template = `<div id="nano-pay" style="font-family: 'Arial'; position: fixed;
             all[i].innerHTML = ''
             
             let code = `<div onclick="window.nano.unlock('${config.element}', '${config.amount}', '${config.address}', '${config.title}', '${config.color}')" style="cursor: pointer;padding: 7px 25px;border-radius: 4px;margin: 15px 0 10px 0;display: flex;align-items: center;justify-content: center;background: #ffffff;font-family: Helvetica, 'Arial';letter-spacing: 1px;min-height: 48px; color: ${config.color || '#000'}">
-        <img style="max-width: 24px;width: auto;min-width: auto;margin: 0 8px 0 0!important;float: none;" src="/img/xno.svg" alt="">
+        <img style="max-width: 24px;width: auto;min-width: auto;margin: 0 8px 0 0!important;float: none;" src="https://pay.nano.to/img/xno.svg" alt="">
         ${ config.button || 'Pay with Nano' }
     </div>`
             if (config.free) {
