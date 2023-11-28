@@ -28,44 +28,17 @@
 
 ![line](https://github.com/fwd/n2/raw/master/.github/line.png)
 
-### Paywall
-
-Monetize any DOM element on your website.
-
-> **This library is not for keeping secrets. It is to make it easier for users to support you. Anyone can bypass this kind of  paywall with some tinkering.**
-
-```html
-<script>
-    nano.paywall({ 
-        element: '.premium', // required, all with class .premium
-        address: 'YOUR_ADDRESS', // required
-        amount: 0.001, // required
-        debug: false, // optional
-        free: false, // // optional, allow free access
-        background: '#000000de', // optional css hex
-        text: 'Read Lorem for', // optional
-        title: '', // optional
-        color: '', // optional
-        // endpoint: 'https://nanolooker.com/api/rpc', // optional
-        success: (block) => {
-            // Element(s) are automatically shown.
-            console.log(block)
-        }
-    })
-</script>
-```
-
-### Single Charge
-
-Accept one-time Nano payments.
+### Usage
 
 ```html
 <script>
     // open up popup
-    nano.charge({ 
+    nano.pay({ 
         address: 'YOUR_ADDRESS', // required
         amount: 0.001, // required
         random: true, // recommended
+        shipping: true,
+        email: true,
         success: (block) => {
             console.log(block)
         }
