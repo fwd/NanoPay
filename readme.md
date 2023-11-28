@@ -63,4 +63,4 @@
 
 ### Stargazers
 
-[![Stargazers over time](https://starchart.cc/fwd/nano-pay.svg)](https://github.com/fwd/nano-pay)
+[![Star History Chart](https://api.star-history.com/svg?repos=fwd/nano-pay&type=Date)](https://star-history.com/#fwd/nano-pay&Date)
