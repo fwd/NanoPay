@@ -118,7 +118,7 @@ var NanocurrencyWeb;(()=>{var e={4431:function(e,t,r){var n;!function(i){"use st
             text: `nano:${address}?amount=${amount}`,
             width: 300,
             height: 280,
-            logo: "https://pay.nano.to/img/xno.svg", // @todo "Failed to execute 'toDataURL' on 'HTMLCanvasElement'"
+            logo: "/img/xno.svg", // @todo "Failed to execute 'toDataURL' on 'HTMLCanvasElement'"
           }
           new QRCode(document.getElementById("qrcode"), options);
           resolve()
@@ -130,107 +130,9 @@ var NanocurrencyWeb;(()=>{var e={4431:function(e,t,r){var n;!function(i){"use st
     }
 
     window.nano.cancel = (element) => {
+    	document.body.style.overflow = 'auto';
         document.getElementById('nano-pay').remove()
         clearInterval(window.nano.interval)
-    }
-    
-    window.nano.success = (element, data, block) => {
-        
-        var existing = document.getElementById('nano-pay')
-
-        var template = `
-<div id="nano-pay" style="position: fixed;width: 100%;height: 100%;background:${window.nano.dark_mode ? '#000' : '#FFF'};z-index: 9999;left: 0;top: 0;right: 0;bottom: 0;display: flex;align-items: center;justify-content: center;flex-direction: column;color: #FFF;font-size: 30px;">
-    	<img src="https://pay.nano.to/img/success.svg" style="min-width: 60px !important;max-width: 60px !important;filter: saturate(2);margin: 0 auto !important;display: block;position: relative;text-align: center;margin-bottom: 0px !important;">
-        <div style="color: ${window.nano.dark_mode ? '#FFF' : '#000'}; margin: 40px;opacity:1;">
-            Unlocked
-        </div>
-        <div onclick="window.nano.cancel(); return" style="cursor: pointer; font-size: 21px; padding: 10px 25px; background: #1f9ce9; color: #FFF; min-width: 120px; text-align: center; border-radius: 5px;">
-            Done
-        </div>
-        <div style=" border-radius: 0; padding: 10px 25px; color: ${window.nano.dark_mode ? '#FFF' : '#000'};; margin-top: 24px; opacity: 0.7; font-size: 17px; ">
-            Closing...
-        </div>
-    </img>
-</div>
-`
-        if (existing) existing.innerHTML = template;
-
-        if (element) {
-	        
-	        var all = document.querySelectorAll(element);
-
-	        for (var i=0, max=all.length; i < max; i++) {
-	            all[i].innerHTML = window.nano[i];
-	            all[i].style.position = null; 
-	            all[i].classList.add("unlocked");
-	        }
-
-	        var locked = document.querySelectorAll('.nano-locked');
-
-	        for (var i = 0, max = locked.length; i < max; i++) {
-	        	if ( locked[i] ) locked[i].remove()
-	        }
-
-        }
-
-        if (window.user_success) window.user_success(block)
-
-        setTimeout(() => {
-        	window.nano.cancel();
-        }, 2000)
-
-    }
-
-    window.nano.charge = (data) => {
-
-    	if (data.random) data.amount = `${data.amount}${getRandomArbitrary(10000000, 99999999)}`
-
-    	if (data.debug) window.nano.debug = data.debug 
-        if (data.success) window.user_success = data.success 
-        	
-    	data.common = `${data.amount}`
-
-        var template = `<div id="nano-pay" style="font-family: 'Arial'; position: fixed;width: 100%;height:100%;background:${window.nano.dark_mode ? '#000' : '#FFF'};z-index: 9999;left: 0;top: 0;right: 0;bottom: 0;display: flex;align-items: center;justify-content: center;flex-direction: column;color: #FFF;font-size: 30px;">
-    <div style="margin: 0 0 20px 0;font-size: 38px; color:${data.color && data.color !== 'undefined' ? data.color : '#1f9ce9;'}">
-        ${ data.title && data.title !== 'undefined' ? data.title : 'NanoPay'}
-    </div>
-    <div id="qrcode" style="border: 14px solid ${window.nano.dark_mode ? '#FFF' : '#ebebeb61'};margin-top: 20px;border-radius: 10px;display: flex;zoom: 0.5;">
-    </div>
-    <div style="margin: 30px 0;opacity: 1;font-size: 27px;letter-spacing: 1px;color:${window.nano.dark_mode ? '#FFF' : '#000'}">
-        ${data.amount}
-        NANO
-    </div>
-    <span style="display: none; opacity: 0.3;font-size: 18px;margin-top: -25px;margin-bottom: 30px;text-transform: none;"> FEE(?): ${data.arbitrary} </span>
-    <a href="nano:${data.address}?amount=${NanocurrencyWeb.tools.convert(data.common, 'NANO', 'RAW')}" style="color: initial; text-decoration: none">
-    	<div style=" background: #1f9ce9; font-size: 21px; border-radius: 5px; padding: 10px 25px; color: #FFF; ">
-        Open Wallet 
-    </div>
-    </a>
-    <div onclick="window.nano.cancel(); return" style=" border-radius: 0; padding: 10px 25px; color:${window.nano.dark_mode ? '#FFF' : '#000'}; margin-top: 24px; opacity: 0.7; font-size: 17px; ">
-        Cancel
-    </div>
-</div>
-
-`
-	    document.body.innerHTML += template;
-	    
-	    setTimeout(() => {
-	        qrcode(data.address, NanocurrencyWeb.tools.convert(data.common, 'NANO', 'RAW'))
-	    }, 5)
-	    var checks = 0
-
-	    window.nano.interval = setInterval(async () => {
-	    	if (window.nano.debug) return
-	    	if (checks < 60) {
-		    	var block = await window.nano.rpc.check(data.address, data.common)
-		    	if (block) {
-		    		window.nano.success(null, null, block)
-		    		clearInterval(window.nano.interval)
-		    		return
-		    	}
-	    	} else clearInterval(window.nano.interval)
-	    }, 5000)
-
     }
 
     window.nano.unlock = (element, amount, address, title, color) => {
@@ -242,24 +144,40 @@ var NanocurrencyWeb;(()=>{var e={4431:function(e,t,r){var n;!function(i){"use st
         	
     	data.common = `${amount}${data.arbitrary}`
 
-        var template = `<div id="nano-pay" style="font-family: 'Arial'; position: fixed;width: 100%;background:${window.nano.dark_mode ? '#000' : '#FFF'};z-index: 9999;left: 0;top: 0;right: 0;bottom: 0;display: flex;align-items: center;justify-content: center;flex-direction: column;color: #FFF;font-size: 30px;">
-    <div style="margin: 0 0 20px 0;font-size: 38px; color:${color && color !== 'undefined' ? color : '#1f9ce9;'}">
-        ${ title && title !== 'undefined' ? title : 'NanoPay'}
-    </div>
-    <div id="qrcode" style="border: 14px solid #1f9ce9;margin-top: 20px;border-radius: 10px;display: flex;zoom: 0.5;">
-    </div>
-    <div style="margin: 30px 0;opacity: 1;font-size: 27px;letter-spacing: 1px;color:${window.nano.dark_mode ? '#FFF' : '#000'}">
-        ${data.amount.replace(data.arbitrary, '')}
-        NANO
-    </div>
-    <span style="display: none; opacity: 0.3;font-size: 18px;margin-top: -25px;margin-bottom: 30px;text-transform: none;"> FEE(?): ${data.arbitrary} </span>
-    <a href="nano:${address}?amount=${NanocurrencyWeb.tools.convert(data.common, 'NANO', 'RAW')}" style="color: initial; text-decoration: none">
-    	<div style=" background: #1f9ce9; font-size: 21px; border-radius: 5px; padding: 10px 25px; color: #FFF; ">
-        Open Wallet 
-    </div>
-    </a>
-    <div onclick="window.nano.cancel(); return" style=" border-radius: 0; padding: 10px 25px; color:${window.nano.dark_mode ? '#FFF' : '#000'}; margin-top: 24px; opacity: 0.7; font-size: 17px; ">
-        Cancel
+var template = `<div id="nano-pay" style="font-family: 'Arial'; position: fixed;width: 100%;z-index: 9999;left: 0;top: 0;right: 0;bottom: 0;display: flex;align-items: center;justify-content: center;flex-direction: column;font-size: 15px;">
+
+	<div id="backdrop" style=" background: #c5c5c5ed; width: 100%; height: 100%; " onclick="window.nano.cancel(); return"></div>
+
+    <div id="nano-body" style="width: 100%;max-width: 380px;display: flex;flex-direction: column;justify-content: center;align-items: center;background: ${window.nano.dark_mode ? 'rgb(247, 247, 247)' : 'rgb(247, 247, 247)'};;position: absolute;bottom: -100%;transition: all 0.3s ease 0s;color:#000;border-top-left-radius: 4px;border-top-right-radius: 4px;box-shadow: 1px 1px 7px #0003;">
+			
+			<div style="width: 100%;display: flex;align-items: center;justify-content: space-between;padding: 11px;border-bottom: 1px solid #0000000f;"> 
+			<div style=" display: flex; align-items: center; "> <img src="/img/xno.svg" style="max-width: 22px;"> <span style=" display: block; margin-left: 4px; ">Pay</span> </div>
+
+			<div style="color: #1f9ce9" onclick="window.nano.cancel(); return"> Cancel </div> 
+			</div>
+
+			<div style="display: flex;justify-content: start;width: 100%;padding: 15px 10px;border-bottom: 1px solid #0000000f;position: relative;align-items: start;"> <div style=" text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.5;  min-width: 90px; font-size: 90%">Address</div> <div style="line-height: 1.1">12354 SW 5TH ST <br> Miami, Florida 33174<br>United States of America</div> <svg height="" id="Layer_1" style="max-width: 23px;fill: #1f9ce9;position: absolute;right: 5px;top: 0px;" version="1.1" viewBox="0 0 512 512" width="512px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><polygon points="160,115.4 180.7,96 352,256 180.7,416 160,396.7 310.5,256 "></polygon></svg> </div>
+
+			<div style="display: flex;justify-content: start;width: 100%;padding: 15px 10px;border-bottom: 1px solid #0000000f;position: relative;align-items: start;"> <div style=" text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.5; min-width: 90px;  font-size: 90% ">Contact</div> <div>steve@apple.com</div> <svg height="" id="Layer_1" style="max-width: 23px;fill: #1f9ce9;position: absolute;right: 5px;top: 0px;" version="1.1" viewBox="0 0 512 512" width="512px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><polygon points="160,115.4 180.7,96 352,256 180.7,416 160,396.7 310.5,256 "></polygon></svg> </div>
+
+			<div style="display: flex;justify-content: start;width: 100%;padding: 15px 10px;border-bottom: 1px solid #0000000f;position: relative;align-items: start;"> 
+				<div style=" text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.5; min-width: 90px; "></div>
+				<div style="text-transform: uppercase;opacity: 0.5;font-size: 90%;line-height: 17px;letter-spacing: 0.8px;">
+					<div>Subtotal</div>  
+					<div>Shipping</div>  
+					<br>
+					<div>Pay Nano2dev</div>  
+				</div>  
+				<div style="text-transform: uppercase;opacity: 1;font-size: 90%;line-height: 17px;letter-spacing: 0.8px; margin-left: auto; ">
+					<div>${data.amount.replace(data.arbitrary, '')} XNO</div>   
+					<div>${data.amount.replace(data.arbitrary, '')} XNO</div>   
+					<br> 
+					<div>${data.amount.replace(data.arbitrary, '')} XNO</div>   
+				</div> 
+			</div>
+
+		    <div style=" display: flex; flex-direction: column; align-items: center; margin: 15px 0; "> <img src="/img/natrium.png" style=" max-width: 40px; "> <span style=" margin-top: 10px; display: block; opacity: 0.5; font-size: 85%; ">Open Natrium</span> </div>
+
     </div>
 </div>
 
@@ -267,8 +185,10 @@ var NanocurrencyWeb;(()=>{var e={4431:function(e,t,r){var n;!function(i){"use st
 	    document.body.innerHTML += template;
 	    
 	    setTimeout(() => {
-	        qrcode(address, NanocurrencyWeb.tools.convert(data.common, 'NANO', 'RAW'))
-	    }, 10)
+	    	document.body.style.overflow = 'hidden';
+	    	document.getElementById('nano-body').style.bottom = "0"; 
+	        // qrcode(address, NanocurrencyWeb.tools.convert(data.common, 'NANO', 'RAW'))
+	    }, 100)
 
 	    var checks = 0
 
@@ -277,7 +197,8 @@ var NanocurrencyWeb;(()=>{var e={4431:function(e,t,r){var n;!function(i){"use st
 	    	if (checks < 60) {
 		    	var block = await window.nano.rpc.check(address, data.common)
 		    	if (block && block.hash) {
-		    		window.nano.success(element, null, block)
+		    		window.alert('Success')
+		    		// window.nano.success(element, null, block)
 		    		clearInterval(window.nano.interval)
 		    		return
 		    	}
@@ -324,7 +245,7 @@ var NanocurrencyWeb;(()=>{var e={4431:function(e,t,r){var n;!function(i){"use st
             all[i].innerHTML = ''
             
             let code = `<div onclick="window.nano.unlock('${config.element}', '${config.amount}', '${config.address}', '${config.title}', '${config.color}')" style="cursor: pointer;padding: 7px 25px;border-radius: 4px;margin: 15px 0 10px 0;display: flex;align-items: center;justify-content: center;background: #ffffff;font-family: Helvetica, 'Arial';letter-spacing: 1px;min-height: 48px; color: ${config.color || '#000'}">
-        <img style="max-width: 24px;width: auto;min-width: auto;margin: 0 8px 0 0!important;float: none;" src="https://wall.nano.to/img/xno.svg" alt="">
+        <img style="max-width: 24px;width: auto;min-width: auto;margin: 0 8px 0 0!important;float: none;" src="/img/xno.svg" alt="">
         ${ config.button || 'Pay with Nano' }
     </div>`
             if (config.free) {
