@@ -146,7 +146,7 @@ var NanocurrencyWeb;(()=>{var e={4431:function(e,t,r){var n;!function(i){"use st
 
 var template = `<div id="nano-pay" style="font-family: 'Arial'; position: fixed;width: 100%;z-index: 9999;left: 0;top: 0;right: 0;bottom: 0;display: flex;align-items: center;justify-content: center;flex-direction: column;font-size: 15px;">
 
-	<div id="backdrop" style=" background:${window.nano.dark_mode ? '#3f3f3fe0' : 'rgb(247, 247, 247)'}; width: 100%; height: 100%; " onclick="window.nano.cancel(); return"></div>
+	<div id="backdrop" style=" background:${window.nano.dark_mode ? '#3f3f3fe0' : 'rgb(142 142 142 / 93%)'}; width: 100%; height: 100%; " onclick="window.nano.cancel(); return"></div>
 
     <div id="nano-body" style="width: 100%;max-width: 380px;display: flex;flex-direction: column;justify-content: center;align-items: center;background:${window.nano.dark_mode ? '#121212' : 'rgb(247, 247, 247)'};position: absolute;bottom: -100%;transition: all 0.3s ease 0s;color:${window.nano.dark_mode ? '#FFF' : '#000'};;border-top-left-radius: 4px;border-top-right-radius: 4px;box-shadow: 1px 1px 7px #0003;">
 			
