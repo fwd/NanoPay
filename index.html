@@ -427,41 +427,47 @@
     </head>
     
     <body>
+        
         <p style="display: none; opacity: 0;">Non-custodial, back-end agnostic DOM monetization browser library. Easily monetize any DOM element with Nano currency.</p>
         <!-- partial:index.partial.html -->
+
         <nav>   
             <a id="home" href="https://nano.to" target="_blank">Nano.to Presents</a>
             <a id="home" href="https://github.com/fwd/nano-pay" target="_blank">Github</a>
         </nav>
-        <header>
+        
+        <header style="position: relative;">
             <h1 class="smaller">NanoPay.js</h1>
+            <span style=" color: yellow; font-size: 40px; bottom: 0; display: block; margin-top: 40px; ">Coming Soon</span>
+            <br>
+            <!-- <br> -->
+            <!-- <br> -->
         </header>
+
         <img style="width: 100%;" src="https://pbs.twimg.com/media/F_4K6f6XoAAYtPE?format=jpg&name=medium" alt="">
+        
         <article class="premium">
             <br>
             <br>
-            <a id="button">Pay 5 NANO</a>
+            <a data-amount="0.1" data-address="@faucet">Pay 5 NANO</a>
         </article>
         
         <script src="/latest.js?v=1"></script>
 
         <script>
-             nano.pay({ 
-                element: '#button', // optional css hex
-                address: '@bank', // required
-                amount: 0.001, // required
-                random: true, // recommended
-                shipping: true,
-                email: true,
-                // text: 'Unlock', // optional
-                // color: 'red', // optional
-                success: (block) => {
-                    
-                    console.log(block)
-
-                }
-            })
+            //  nano.pay({ 
+            //     element: '#button', // optional css hex
+            //     address: '@bank', // required
+            //     amount: 0.001, // required
+            //     random: true, // recommended
+            //     shipping: true,
+            //     email: true,
+            //     success: (block) => {
+            //         console.log(block)
+            //     }
+            // })
         </script>
+
     </body>
 
 </html>
