@@ -183,8 +183,8 @@
 
 		addStyleIfNotExists(cssContent);
 
-		window.NanoPay.config.mailing_address = config.email || localStorage.getItem('nano-pay-mailing-address')
-		window.NanoPay.config.contact_email = config.mailing_address || localStorage.getItem('nano-pay-contact-email')
+		window.NanoPay.config.contact_email = config.email || localStorage.getItem('nano-pay-contact-email')
+		window.NanoPay.config.mailing_address = config.mailing_address || localStorage.getItem('nano-pay-mailing-address')
 
 		var template = `
 		<div id="nano-pay">
