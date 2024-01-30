@@ -93,12 +93,14 @@
     	var address = config.address
     	var amount = config.amount
     	var random = config.random || config.random === false || config.random === "false" ? config.random : true
+    	var notify = config.notify
 
 		var checkout = (await window.NanoPay.RPC.post('https://rpc.nano.to', { 
 			action: "checkout", 
 			address, 
 			amount, 
 			random,
+			notify,
 			checkout: true 
 		}, { headers: { 'nano-app': `fwd/nano-pay:${version}` } }))
 
@@ -253,10 +255,6 @@
 		    	var block = (await window.NanoPay.RPC.get(checkout.check))
 		    	checking = false
 		    	if (block && block.block) {
-		    		if (config.success) {
-		    			if ( config.success.constructor.name === 'AsyncFunction' ) await config.success(block)
-		    			if ( config.success.constructor.name !== 'AsyncFunction' ) config.success(block)
-		    		}
 			    	var success_el = document.getElementById('nano-pay-button-image') 
 			    	var success_text = document.getElementById('nano-pay-button-text')
 			    	success_el.style.maxWidth = '55px'
@@ -264,9 +262,13 @@
 			    	success_el.style.filter = 'hue-rotate(40deg)'
 			    	success_el.style.filter = 'hue-rotate(115deg)' // blue
 			    	success_text.style.display = 'none'
+		    		if (config.success) {
+		    			if ( config.success.constructor.name === 'AsyncFunction' ) await config.success(block)
+		    			if ( config.success.constructor.name !== 'AsyncFunction' ) config.success(block)
+		    		}
 		    		setTimeout(() => {
 		    			window.NanoPay.close()
-		    		}, 3000)
+		    		}, 2000)
 		    		clearInterval(window.NanoPay.interval)
 		    		return
 		    	}
