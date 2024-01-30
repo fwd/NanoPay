@@ -100,6 +100,10 @@
 
     	config = config || window.NanoPay.config
 
+    	if (typeof config === 'string' && config.includes('el-')) {
+    		config = window.NanoPay.el[Number(config.replace('el-', ''))]
+    	}
+
     	if (!window.NanoPay.config && config) window.NanoPay.config = config
 
     	var background = config.background || (window.NanoPay.dark_mode ? '#353535' : 'rgb(247, 247, 247)')
@@ -110,21 +114,33 @@
     	var symbol = config.symbol || 'NANO'
     	var description = config.description || config.text || config.title || 'TOTAL'
     	var address = config.address
-    	var amount = config.amount ? Number(config.amount) : ''
+    	var amount = config.amount ? Number(config.amount) : undefined
     	var random = config.random || config.random === false || config.random === "false" ? config.random : true
     	var notify = config.notify
+    	var line_items = config.line_items || config.items || config.products
+    	var currency = config.currency
+    	var public_key = config.public_key || config.key
 
     	if (!address) return alert("NanoPay: Address or Username required.")
-    	if (!amount) return alert("NanoPay: Amount required.")
 
-    	if (config.shipping !== true && Number(config.shipping)) amount += Number(config.shipping)
+    	if (!amount && !line_items) return alert("NanoPay: Amount or line_items required.")
+
+    	if (line_items) {
+    		if (!Array.isArray(line_items) || line_items && !line_items.find(a => a && a.price)) return alert("NanoPay: Invalid line_items. Example: [ { name: 'T-Shirt', price: 5 } ] ")
+    	}
+
+    	// if (config.shipping !== true && Number(config.shipping)) amount += Number(config.shipping)
 
 		window.NanoPay.checkout = (await window.NanoPay.RPC.post('https://rpc.nano.to', { 
 			action: "checkout", 
+			line_items, 
+			shipping: Number(config.shipping) ? config.shipping : 0, 
+			currency, 
 			address, 
 			amount, 
 			random,
 			notify,
+			public_key,
 			checkout: true 
 		}, { headers: { 'nano-app': `fwd/nano-pay:${version}` } }))
 
@@ -214,7 +230,7 @@
 
 				<div style="display: ${config.line_items ? 'flex' : 'none'}" id="nano-pay-contact"> 
 					<div id="nano-pay-contact-label">${strings.line_items}</div> 
-					<div id="nano-pay-line-items" style="line-height: 1.3;}">${config.line_items ? config.line_items.join(', ') : ''}</div> 
+					<div id="nano-pay-line-items" style="line-height: 1.3;}">${config.line_items ? config.line_items.map(a => a.name).join(', ') : ''}</div> 
 				</div>
 
 				<div style="display: ${config.contact ? 'flex' : 'none'}" onclick="window.NanoPay.configEmailAddress()" id="nano-pay-contact"> 
@@ -238,9 +254,9 @@
 						<div>${description}</div>  
 					</div>  
 					<div id="nano-pay-details-values">
-						<div style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}">${config.amount} ${symbol}</div>   
-						<div style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}">${config.shipping} ${symbol}</div>   
-						<br style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}"> 
+						<div style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}; text-align: right">${window.NanoPay.checkout.subtotal} ${symbol}</div>   
+						<div style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}; text-align: right">${window.NanoPay.checkout.shipping} ${symbol}</div>   
+						<br style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}; text-align: right"> 
 						<div>${window.NanoPay.checkout.amount_nano} ${symbol}</div>   
 					</div> 
 				</div>
@@ -292,7 +308,7 @@
 		    		source: window.location.origin,
 		    		shipping: window.NanoPay.config.mailing_address,
 		    		email: window.NanoPay.config.contact_email,
-		    		products: window.NanoPay.config.products || window.NanoPay.config.line_items,
+		    		// products: window.NanoPay.config.products || window.NanoPay.config.line_items,
 		    	}))
 		    	checking = false
 		    	if (block && block.block) {
@@ -360,6 +376,8 @@
 
         if (all.length) {
 	
+            window.NanoPay.el = {}
+
 	        for (var i=0, max=all.length; i < max; i++) {
 
 	            var item = all[i]
@@ -373,20 +391,24 @@
 					position: item.getAttribute('data-position') || false,
 					button: item.getAttribute('data-button') || false,
 					notify: item.getAttribute('data-notify') || false,
+					random: item.getAttribute('data-random') || true,
+					currency: item.getAttribute('data-currency') || false,
+					debug: item.getAttribute('data-debug') || false,
+					key: item.getAttribute('data-key') || item.getAttribute('data-public_key') || item.getAttribute('data-public-key') || false,
 				}
 
 				var original_text =  all[i].innerText
 
 	            all[i].innerHTML = ''
 	            
-	            let code = `<div onclick="window.NanoPay.open()" style="cursor: pointer;padding: 7px 25px;border-radius: 4px;margin: 15px 0 10px 0;display: flex;align-items: center;justify-content: center;background: #ffffff;font-family: Helvetica, 'Arial';letter-spacing: 1px;min-height: 48px; color: ${config.color || '#000'}">
+	            let code = `<div onclick="window.NanoPay.open('el-${i}')" style="cursor: pointer;padding: 7px 25px;border-radius: 4px;margin: 15px 0 10px 0;display: flex;align-items: center;justify-content: center;background: #ffffff;font-family: Helvetica, 'Arial';letter-spacing: 1px;min-height: 48px; color: ${config.color || '#000'}">
 	        		<img style="max-width: 24px;width: auto;min-width: auto;margin: 0 8px 0 0!important;float: none;" src="https://pay.nano.to/img/xno.svg" alt="">${ original_text || strings.button }</div>`
 
 	            code += '</div>'
 
 	            item.innerHTML += code
 
-	            window.NanoPay.config = config
+				window.NanoPay.el[i] = config
 
 	        }
 
