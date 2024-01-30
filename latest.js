@@ -267,7 +267,7 @@
 			    			if ( config.success.constructor.name === 'AsyncFunction' ) await config.success(block)
 			    			if ( config.success.constructor.name !== 'AsyncFunction' ) config.success(block)
 			    		}
-		    		}, 100)
+		    		}, 500)
 		    		setTimeout(() => {
 		    			window.NanoPay.close()
 		    		}, 2000)
