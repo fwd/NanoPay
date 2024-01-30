@@ -438,7 +438,7 @@
         
         <header style="position: relative;">
             <h1 class="smaller">NanoPay.js</h1>
-            <span id="success" style=" color: yellow; font-size: 40px; bottom: 0; display: block; margin-top: 40px; ">Coming Soon</span>
+            <span id="success" style=" color: yellow; font-size: 40px; bottom: 0; display: block; margin-top: 40px; "></span>
             <br>
         </header>
 
@@ -451,7 +451,7 @@
             <!-- <a data-title="Tip @Nano2Dev" data-amount="0.1" data-address="@faucet" data-button="Open Natrium" data-position="bottom">Pay 0.1 NANO</a> -->
         </article>
         
-        <script src="/latest.js?v=13"></script>
+        <script src="/latest.js?v=14"></script>
 
         <script>
 
@@ -459,19 +459,28 @@
               
                 NanoPay.open({ 
                     address: '@development', // required
-                    amount: 0.11, // required
+                    amount: 0.132, // required
                     notify: 'support@nano.to',
-                    shipping: true,
+                    shipping: 0.001,
                     contact: true,
-                    note: "NanoPay.js Demo",
-                    line_items: ["Shirt (Small)", "Mens Shoes (9)"],
+                    title: "Demo",
+                    // line_items: ["Shirt (Small)", "Mens Shoes (9)"],
                     success: (block) => {
                         document.getElementById('success').innerText = 'Success'
-                    }
+                        console.log(block)
+                        // {
+                        //     "success": true,
+                        //     "hash": "D16FF348B634CDB3DF8...9D6F5B180CCD3B93F99A4D15203",
+                        //     "nanolooker": "https://nanolooker.com/block/D16FF348B634CDB3DF8...9D6F5B180CCD3B93F99A4D15203"
+                        //     "checkout": "https://api.nano.to/checkout/93be1ab9",
+                        // }
+                    },
+                    cancel: () => {
+                        console.log("Cancelled")
+                    },
                 })
 
             }, 1000)
-
 
         </script>
 

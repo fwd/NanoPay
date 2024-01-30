@@ -61,6 +61,16 @@
         clearInterval(window.NanoPay.interval)
     }
 
+    window.NanoPay.cancel = async (element) => {
+    	document.body.style.overflow = 'auto';
+        document.getElementById('nano-pay').remove()
+        clearInterval(window.NanoPay.interval)
+        if (window.NanoPay.config && window.NanoPay.config.cancel) {
+	        if ( window.NanoPay.config.cancel.constructor.name === 'AsyncFunction' ) await window.NanoPay.config.cancel()
+			if ( window.NanoPay.config.cancel.constructor.name !== 'AsyncFunction' ) window.NanoPay.config.cancel()
+        }
+    }
+
 	function addStyleIfNotExists(cssContent) {
 	    var styles = document.head.getElementsByTagName('style');
 	    var styleExists = false;
@@ -90,7 +100,6 @@
 
     	config = config || window.NanoPay.config
 
-    	// if (window.NanoPay.config) window.NanoPay.close()
     	if (!window.NanoPay.config && config) window.NanoPay.config = config
 
     	var background = config.background || (window.NanoPay.dark_mode ? '#353535' : 'rgb(247, 247, 247)')
@@ -132,6 +141,7 @@
     		tax: config.strings && config.strings.tax ? config.strings.tax : 'Sales Tax',
     		subtotal: config.strings && config.strings.subtotal ? config.strings.subtotal : 'Subtotal',
     		button: config.strings && config.strings.button ? config.strings.button : 'Pay with Nano',
+    		line_items: config.strings && config.strings.line_items ? config.strings.line_items : (config.line_items && config.line_items.length > 1 ? 'Items' : 'Item'),
     	}
 
     	// looks better
@@ -143,7 +153,7 @@
 			
 			#nano-pay-backdrop { background: ${backdrop_background}; width: 100%; height: 100%;  }
 			
-			#nano-pay-body { width: 100%;max-width: 420px;display: flex;flex-direction: column;justify-content: center;align-items: center;background:${background};position: absolute;transition: all 0.3s ease 0s;color:${text_color};box-shadow: 1px 1px 7px #0003; }
+			#nano-pay-body { width: 100%;max-width: 420px;display: flex;flex-direction: column;justify-content: center;align-items: center;background:${background};position: absolute;transition: all 0.3s ease 0s;color:${text_color};box-shadow: 1px 1px 7px #0003; letter-spacing: 0.2px }
 
 			#nano-pay-header { display: flex; align-items: center; }
 			#nano-pay-header > img { max-width: 22px; }
@@ -152,21 +162,21 @@
 			#nano-pay-cancel { color: #1f9ce9 }
 			#nano-pay-shipping { display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid #0000000f;position: relative;align-items: center; }
 			#nano-pay-shipping svg { max-width: 23px;fill: #1f9ce9;position: absolute;right: 5px;top: 0px;bottom: 0;margin: auto; }
-			#nano-pay-shipping-label {  text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.5;  min-width: 90px; font-size: 90% }
+			#nano-pay-shipping-label {  text-transform: uppercase; letter-spacing: 0.7px; opacity: 0.7;  min-width: 90px; font-size: 90% }
 
 			#nano-pay-contact { display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid #0000000f;position: relative;align-items: center; }
-			#nano-pay-contact-label {  text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.5; min-width: 90px;  font-size: 90%  }
+			#nano-pay-contact-label {  text-transform: uppercase; letter-spacing: 0.7px; opacity: 0.7; min-width: 90px;  font-size: 90%  }
 			#nano-pay-contact svg {  max-width: 23px;fill: #1f9ce9;position: absolute;right: 5px;top: 0px;bottom: 0;margin: auto; }
 
 			#nano-pay-details { display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid #0000000f;position: relative;align-items: start; }
 
-			#nano-pay-details-spacer { text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.5; min-width: 90px; }
-			#nano-pay-details-labels { text-transform: uppercase;opacity: 0.5;font-size: 90%;line-height: 17px;letter-spacing: 0.8px; }
+			#nano-pay-details-spacer { text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.7; min-width: 90px; }
+			#nano-pay-details-labels { text-transform: uppercase;opacity: 0.7;font-size: 90%;line-height: 17px;letter-spacing: 0.8px; }
 			#nano-pay-details-values { text-transform: uppercase;opacity: 1;font-size: 90%;line-height: 17px;letter-spacing: 0.8px; margin-left: auto; }
 
 			#nano-pay-button { display: flex; flex-direction: column; align-items: center; margin: 15px 0 18px 0; text-decoration: none; color: inherit; text-align: center;  }
 
-			#nano-pay-button span {  margin-top: 10px; display: block; opacity: 0.5; font-size: 85%;  }
+			#nano-pay-button span {  margin-top: 10px; display: block; opacity: 0.7; font-size: 85%;  }
 		`;
 
 		if (position === 'bottom') {
@@ -189,7 +199,7 @@
 		var template = `
 		<div id="nano-pay">
 
-			<div id="nano-pay-backdrop" onclick="window.NanoPay.close(); return"></div>
+			<div id="nano-pay-backdrop" onclick="window.NanoPay.cancel(); return"></div>
 
 		    <div id="nano-pay-body">
 					
@@ -198,8 +208,13 @@
 						<img src="https://pay.nano.to/img/xno.svg"> 
 						<span>Pay</span> 
 					</div>
+					
+					<div id="nano-pay-cancel" onclick="window.NanoPay.cancel(); return">Cancel</div> 
+				</div>
 
-					<div id="nano-pay-cancel" onclick="window.NanoPay.close(); return"> Cancel </div> 
+				<div style="display: ${config.line_items ? 'flex' : 'none'}" id="nano-pay-contact"> 
+					<div id="nano-pay-contact-label">${strings.line_items}</div> 
+					<div id="nano-pay-line-items" style="line-height: 1.3;}">${config.line_items ? config.line_items.join(', ') : ''}</div> 
 				</div>
 
 				<div style="display: ${config.contact ? 'flex' : 'none'}" onclick="window.NanoPay.configEmailAddress()" id="nano-pay-contact"> 
@@ -285,13 +300,19 @@
 			    	var success_text = document.getElementById('nano-pay-button-text')
 			    	success_el.style.maxWidth = '65px'
 			    	success_el.src = 'https://pay.nano.to/img/success.gif'
-			    	success_el.style.filter = 'hue-rotate(40deg)'
+			    	// success_el.style.filter = 'hue-rotate(40deg)'
 			    	success_el.style.filter = 'hue-rotate(115deg)' // blue
 			    	success_text.style.display = 'none'
 		    		if (config.success) {
 				    	setTimeout(async () => {
-			    			if ( config.success.constructor.name === 'AsyncFunction' ) await config.success(block)
-			    			if ( config.success.constructor.name !== 'AsyncFunction' ) config.success(block)
+				    		var response = {
+				    			success: block.success,
+				    			hash: block.block,
+				    			nanolooker: block.redirect,
+				    			checkout: block.json
+				    		}
+			    			if ( config.success.constructor.name === 'AsyncFunction' ) await config.success(response)
+			    			if ( config.success.constructor.name !== 'AsyncFunction' ) config.success(response)
 			    		}, 100)
 		    		}
 		    		setTimeout(() => {
@@ -348,7 +369,7 @@
 					amount: item.getAttribute('data-amount'),
 					address: item.getAttribute('data-address') || item.getAttribute('data-name'),
 					shipping: item.getAttribute('data-shipping') || false,
-					contact: item.getAttribute('data-contact') || false,
+					contact: item.getAttribute('data-email') || item.getAttribute('data-contact') || false,
 					position: item.getAttribute('data-position') || false,
 					button: item.getAttribute('data-button') || false,
 					notify: item.getAttribute('data-notify') || false,
