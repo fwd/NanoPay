@@ -346,6 +346,7 @@
     		if (window.NanoPay.config.localstorage !== false) localStorage.setItem('nano-pay-mailing-address', shipping)
     		window.NanoPay.config.mailing_address = shipping
     		document.getElementById('nano-pay-user-mailing-address').innerText = shipping
+    		document.getElementById('nano-pay-user-mailing-address').style.opacity = '1'
     	}
     }
 
@@ -363,6 +364,7 @@
     		if (window.NanoPay.config.localstorage !== false) localStorage.setItem('nano-pay-contact-email', email)
     		window.NanoPay.config.contact_email = email
     		document.getElementById('nano-pay-user-contact-email').innerText = email
+    		document.getElementById('nano-pay-user-contact-email').style.opacity = '1'
     	}
     }
 
