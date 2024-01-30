@@ -2,7 +2,7 @@
 
 <h1 align="center">NanoPay.js</h1>
 
-<h3 align="center">Nano Payment Library</h3>
+<h3 align="center">Nano Web Payment Library</h3>
 
 ![line](https://github.com/fwd/n2/raw/master/.github/line.png)
 ![line](https://pbs.twimg.com/media/F_4K6f6XoAAYtPE?format=jpg&name=medium)
@@ -28,23 +28,9 @@
 
 ![line](https://github.com/fwd/n2/raw/master/.github/line.png)
 
-### Usage
+### Documentation
 
-```html
-<script>
-    // open up popup
-    nano.pay({ 
-        address: 'YOUR_ADDRESS', // required
-        amount: 0.001, // required
-        random: true, // recommended
-        shipping: true,
-        email: true,
-        success: (block) => {
-            console.log(block)
-        }
-    })
-</script>
-```
+[https://blog.nano.to/introducing-nano-pay-simple-web-payments](https://blog.nano.to/introducing-nano-pay-simple-web-payments)
 
 ![line](https://github.com/fwd/n2/raw/master/.github/line.png)
 
@@ -63,4 +49,4 @@
 
 ### Stargazers
 
-[![Star History Chart](https://api.star-history.com/svg?repos=fwd/nano-pay&type=Date)](https://star-history.com/#fwd/nano-pay&Date)
+[![Stargazers over time](https://starchart.cc/fwd/nano-pay.svg)](https://github.com/fwd/nano-pay)
