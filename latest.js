@@ -202,7 +202,6 @@
 					<div id="nano-pay-cancel" onclick="window.NanoPay.close(); return"> Cancel </div> 
 				</div>
 
-
 				<div style="display: ${config.contact ? 'flex' : 'none'}" onclick="window.NanoPay.configEmailAddress()" id="nano-pay-contact"> 
 					<div id="nano-pay-contact-label">${strings.email}</div> 
 					<div id="nano-pay-user-contact-email" style="line-height: 1.1; opacity: ${window.NanoPay.config.contact_email ? '1' : '0.5'}">${window.NanoPay.config.contact_email || 'N/A'}</div> 
@@ -312,7 +311,6 @@
     		if (window.NanoPay.config.localstorage !== false) localStorage.setItem('nano-pay-mailing-address', shipping)
     		window.NanoPay.config.mailing_address = shipping
     		document.getElementById('nano-pay-user-mailing-address').innerText = shipping
-    		// window.NanoPay.open(window.NanoPay.config)
     	}
     }
 

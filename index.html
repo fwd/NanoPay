@@ -463,13 +463,10 @@
                     notify: 'support@nano.to',
                     shipping: true,
                     contact: true,
-                    note: "NanoPay Demo",
+                    note: "NanoPay.js Demo",
                     line_items: ["Shirt (Small)", "Mens Shoes (9)"],
-                    // localstorage: false,
                     success: (block) => {
                         document.getElementById('success').innerText = 'Success'
-                        // alert('Success')
-                        // console.log("block", block)
                     }
                 })
 
