@@ -252,7 +252,7 @@
 	    	if (window.NanoPay.debug) return
 	    	if (checks < 60) {
 	    		checking = true
-		    	var block = (await window.NanoPay.RPC.get(checkout.check))
+		    	var block = (await window.NanoPay.RPC.post(checkout.check))
 		    	checking = false
 		    	if (block && block.block) {
 			    	var success_el = document.getElementById('nano-pay-button-image') 
@@ -262,10 +262,12 @@
 			    	success_el.style.filter = 'hue-rotate(40deg)'
 			    	success_el.style.filter = 'hue-rotate(115deg)' // blue
 			    	success_text.style.display = 'none'
-		    		if (config.success) {
-		    			if ( config.success.constructor.name === 'AsyncFunction' ) await config.success(block)
-		    			if ( config.success.constructor.name !== 'AsyncFunction' ) config.success(block)
-		    		}
+			    	setTimeout(() => {
+			    		if (config.success) {
+			    			if ( config.success.constructor.name === 'AsyncFunction' ) await config.success(block)
+			    			if ( config.success.constructor.name !== 'AsyncFunction' ) config.success(block)
+			    		}
+		    		}, 100)
 		    		setTimeout(() => {
 		    			window.NanoPay.close()
 		    		}, 2000)
@@ -313,6 +315,7 @@
 					contact: item.getAttribute('data-contact') || false,
 					position: item.getAttribute('data-position') || false,
 					button: item.getAttribute('data-button') || false,
+					notify: item.getAttribute('data-notify') || false,
 				}
 
 				var original_text =  all[i].innerText
