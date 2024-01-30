@@ -147,7 +147,7 @@
 			#nano-pay-details-labels { text-transform: uppercase;opacity: 0.5;font-size: 90%;line-height: 17px;letter-spacing: 0.8px; }
 			#nano-pay-details-values { text-transform: uppercase;opacity: 1;font-size: 90%;line-height: 17px;letter-spacing: 0.8px; margin-left: auto; }
 
-			#nano-pay-button { display: flex; flex-direction: column; align-items: center; margin: 15px 0 18px 0;  }
+			#nano-pay-button { display: flex; flex-direction: column; align-items: center; margin: 15px 0 18px 0; display: block; text-decoration: none; color: initial;  }
 			#nano-pay-button span {  margin-top: 10px; display: block; opacity: 0.5; font-size: 85%;  }
 		`;
 
@@ -242,17 +242,18 @@
 		    			if ( config.success.constructor.name === 'AsyncFunction' ) await config.success(block)
 		    			if ( config.success.constructor.name !== 'AsyncFunction' ) config.success(block)
 		    		}
-			    	var success_el = document.getElementById('nano-pay-button-image') 
-			    	var success_text = document.getElementById('nano-pay-button-text')
-			    	success_el.style.maxWidth = '55px'
-			    	success_el.src = 'https://pay.nano.to/img/success.gif'
-			    	success_el.style.filter = 'hue-rotate(40deg)'
-			    	success_el.style.filter = 'hue-rotate(115deg)' // blue
-			    	success_text.style.display = 'none'
-	    			// document.getElementById('nano-pay-button-text').innerText = 'Success'
+		    		setTimeout(() => {
+				    	var success_el = document.getElementById('nano-pay-button-image') 
+				    	var success_text = document.getElementById('nano-pay-button-text')
+				    	success_el.style.maxWidth = '55px'
+				    	success_el.src = 'https://pay.nano.to/img/success.gif'
+				    	success_el.style.filter = 'hue-rotate(40deg)'
+				    	success_el.style.filter = 'hue-rotate(115deg)' // blue
+				    	success_text.style.display = 'none'
+		    		}, 2000)
 		    		setTimeout(() => {
 		    			window.NanoPay.close()
-		    		}, 2000)
+		    		}, 4000)
 		    		clearInterval(window.NanoPay.interval)
 		    		return
 		    	}
