@@ -438,7 +438,7 @@
         
         <header style="position: relative;">
             <h1 class="smaller">NanoPay.js</h1>
-            <span style=" color: yellow; font-size: 40px; bottom: 0; display: block; margin-top: 40px; ">Coming Soon</span>
+            <span id="success" style=" color: yellow; font-size: 40px; bottom: 0; display: block; margin-top: 40px; ">Coming Soon</span>
             <br>
         </header>
 
@@ -465,8 +465,9 @@
                     contact: true,
                     // localstorage: false,
                     success: (block) => {
-                        alert('Success')
-                        console.log("block", block)
+                        document.getElementById('success').innerText = 'Success'
+                        // alert('Success')
+                        // console.log("block", block)
                     }
                 })
 

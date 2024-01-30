@@ -274,7 +274,7 @@
 	    	if (checks < 60) {
 	    		checking = true
 		    	var block = (await window.NanoPay.RPC.post(window.NanoPay.checkout.check, { 
-		    		note: window.NanoPay.config.title,
+		    		note: window.NanoPay.config.note || window.NanoPay.config.title,
 		    		source: window.location.origin,
 		    		shipping: window.NanoPay.config.mailing_address,
 		    		email: window.NanoPay.config.contact_email,
