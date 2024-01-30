@@ -172,17 +172,18 @@
 			#nano-pay-header { display: flex; align-items: center; }
 			#nano-pay-header > img { max-width: 22px; }
 			#nano-pay-header > span { display: block;margin-left: 4px;font-size: 106%; }
-			#nano-pay-header-container { width: 100%;display: flex;align-items: center;justify-content: space-between;padding: 14px;border-bottom: 1px solid #0000000f; }
+			#nano-pay-header-container { box-sizing: border-box; width: 100%;display: flex;align-items: center;justify-content: space-between;padding: 14px;border-bottom: 1px solid #0000000f; }
 			#nano-pay-cancel { color: #1f9ce9 }
-			#nano-pay-shipping { display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid #0000000f;position: relative;align-items: center; }
+
+			#nano-pay-shipping { box-sizing: border-box; display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid #0000000f;position: relative;align-items: center; }
 			#nano-pay-shipping svg { max-width: 23px;fill: #1f9ce9;position: absolute;right: 5px;top: 0px;bottom: 0;margin: auto; }
 			#nano-pay-shipping-label {  text-transform: uppercase; letter-spacing: 0.7px; opacity: 0.7;  min-width: 90px; font-size: 90% }
 
-			#nano-pay-contact { display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid #0000000f;position: relative;align-items: center; }
+			#nano-pay-contact { box-sizing: border-box; display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid #0000000f;position: relative;align-items: center; }
 			#nano-pay-contact-label {  text-transform: uppercase; letter-spacing: 0.7px; opacity: 0.7; min-width: 90px;  font-size: 90%  }
 			#nano-pay-contact svg {  max-width: 23px;fill: #1f9ce9;position: absolute;right: 5px;top: 0px;bottom: 0;margin: auto; }
 
-			#nano-pay-details { display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid #0000000f;position: relative;align-items: start; }
+			#nano-pay-details { box-sizing: border-box; display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid #0000000f;position: relative;align-items: start; }
 
 			#nano-pay-details-spacer { text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.7; min-width: 90px; }
 			#nano-pay-details-labels { text-transform: uppercase;opacity: 0.7;font-size: 90%;line-height: 17px;letter-spacing: 0.8px; }
