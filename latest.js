@@ -87,7 +87,7 @@
     	var backdrop_background = config.backdrop || (window.NanoPay.dark_mode ? '#3f3f3fe0' : 'rgb(142 142 142 / 93%)')
     	var text_color = config.text || (window.NanoPay.dark_mode ? '#FFF' : '#000')
     	var position = config.position || 'bottom'
-    	var button = config.button || 'Pay with Natrium'
+    	var button = config.button || 'Open Natrium'
     	var symbol = config.symbol || 'NANO'
     	var description = config.description || config.text || config.title || 'Payment'
     	var address = config.address
@@ -147,7 +147,8 @@
 			#nano-pay-details-labels { text-transform: uppercase;opacity: 0.5;font-size: 90%;line-height: 17px;letter-spacing: 0.8px; }
 			#nano-pay-details-values { text-transform: uppercase;opacity: 1;font-size: 90%;line-height: 17px;letter-spacing: 0.8px; margin-left: auto; }
 
-			#nano-pay-button { display: flex; flex-direction: column; align-items: center; margin: 15px 0 18px 0; display: block; text-decoration: none; color: initial;  }
+			#nano-pay-button { display: flex; flex-direction: column; align-items: center; margin: 15px 0 18px 0; text-decoration: none; color: inherit; text-align: center;  }
+
 			#nano-pay-button span {  margin-top: 10px; display: block; opacity: 0.5; font-size: 85%;  }
 		`;
 
