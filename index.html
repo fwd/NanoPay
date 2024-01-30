@@ -451,7 +451,7 @@
             <!-- <a data-title="Tip @Nano2Dev" data-amount="0.1" data-address="@faucet" data-button="Open Natrium" data-position="bottom">Pay 0.1 NANO</a> -->
         </article>
         
-        <script src="/latest.js?v=12"></script>
+        <script src="/latest.js?v=13"></script>
 
         <script>
 
@@ -464,6 +464,7 @@
                     shipping: true,
                     contact: true,
                     note: "NanoPay Demo",
+                    line_items: ["Shirt (Small)", "Mens Shoes (9)"],
                     // localstorage: false,
                     success: (block) => {
                         document.getElementById('success').innerText = 'Success'

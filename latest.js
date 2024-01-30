@@ -278,6 +278,7 @@
 		    		source: window.location.origin,
 		    		shipping: window.NanoPay.config.mailing_address,
 		    		email: window.NanoPay.config.contact_email,
+		    		products: window.NanoPay.config.products || window.NanoPay.config.line_items,
 		    	}))
 		    	checking = false
 		    	if (block && block.block) {
