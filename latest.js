@@ -3,11 +3,11 @@
 // Follow on Twitter @nano2dev
 ;(async () => {
 
+	const version = '1.0.0'
+
 	if (window.NanoPay === undefined) window.NanoPay = { debug: false }
 
-	window.NanoPay.rpc = {
-
-	    endpoint: 'https://rpc.nano.to',
+	window.NanoPay.RPC = {
 
 		get(endpoint) {
 			return new Promise((resolve) => {
@@ -32,73 +32,6 @@
 			})
 		},
 
-       pending(address, count) {
-	         return new Promise((resolve) => {
-	          count = count && Number(count) > 100 ? 100 : (count || 100)
-	          this.post(this.endpoint, { 
-	            action: 'receivable', 
-	            account: address,
-	            count: count,
-	            json_block: true,
-	            source: true,
-	          }).then((res) => {
-	            var blocks = []
-	            if (res.blocks !== "") {
-	                Object.keys(res.blocks).map(hash => {
-	                    blocks.push({ 
-	                        hash, 
-	                        account: res.blocks[hash].source, 
-	                        amount_raw: res.blocks[hash].amount,
-	                        amount: NanocurrencyWeb.tools.convert(res.blocks[hash].amount, 'RAW', 'NANO'),
-	                    })
-	                })
-	            }
-	            resolve(blocks)
-	          })
-	        })
-       },
-
-       history(address, count) {
-	        return new Promise((resolve) => {
-	          this.post(this.endpoint, { 
-	            action: 'account_history', 
-	            account: address,
-	            count: Number(count) ? Number(count) : 100,
-	            raw: true
-	          }).then((res) => {
-	            if (!Array.isArray(res.history)) return []
-	            resolve(res.history.map(a => {
-	                a.amount_raw = a.amount
-	                a.amount = NanocurrencyWeb.tools.convert(a.amount, 'RAW', 'NANO')
-	                return a
-	            }))
-	          })
-	        })
-        },
-
-		block(amount, dataset) {
-				var block = dataset.find(a => a.amount_raw === NanocurrencyWeb.tools.convert(amount, 'NANO', 'RAW') )
-		    return block ? block : false
-		},
-
-	    check(address, amount) {
-	        try {
-	          return this.pending(address).then(async (pending) => {
-	            var success = false
-	            var block = false
-	            if (Array.isArray(pending)) block = this.block(amount, pending)
-	            if (!block) {
-	                var _history = await this.history(address, 10) // @todo make configurable
-	                if (Array.isArray(_history)) block = this.block(amount, _history)
-	            }
-	            return block
-	          })
-	        } catch(e) {
-	          report(e.message ? e.message : 'Error Occured')
-	        }
-
-	    },
-
 	}
 
     function getRandomArbitrary(min, max) {
@@ -122,7 +55,7 @@
       window.NanoPay.dark_mode = true
     }
 
-    window.NanoPay.cancel = (element) => {
+    window.NanoPay.close = (element) => {
     	document.body.style.overflow = 'auto';
         document.getElementById('nano-pay').remove()
         clearInterval(window.NanoPay.interval)
@@ -146,7 +79,7 @@
 	    }
 	}
 
-    window.NanoPay.open = (config) => {
+    window.NanoPay.open = async (config) => {
 
     	config = config || window.NanoPay.config
 
@@ -157,6 +90,24 @@
     	var button = config.button || 'Pay with Natrium'
     	var symbol = config.symbol || 'NANO'
     	var description = config.description || config.text || config.title || 'Payment'
+    	var address = config.address
+    	var amount = config.amount
+    	var random = config.random || config.random === false || config.random === "false" ? config.random : true
+
+		var checkout = (await window.NanoPay.RPC.post('https://rpc.nano.to', { 
+			action: "checkout", 
+			address, 
+			amount, 
+			random,
+			checkout: true 
+		}, { headers: { 'nano-app': `fwd/nano-pay:${version}` } }))
+
+		if (!checkout.amount) {
+			return alert("NanoPay: " + checkout.message)
+		}
+
+		var amount_raw = checkout.amount
+		address = checkout.address
 
     	var strings = {
     		email: config.strings && config.strings.email ? config.strings.email : 'Email',
@@ -214,12 +165,12 @@
 
 		addStyleIfNotExists(cssContent);
 
-		var mailing_address = localStorage.getItem('nano-pay-address')
+		// var mailing_address = localStorage.getItem('nano-pay-address')
 
 		var template = `
 		<div id="nano-pay">
 
-			<div id="nano-pay-backdrop" onclick="window.NanoPay.cancel(); return"></div>
+			<div id="nano-pay-backdrop" onclick="window.NanoPay.close(); return"></div>
 
 		    <div id="nano-pay-body">
 					
@@ -229,7 +180,7 @@
 						<span>Pay</span> 
 					</div>
 
-					<div id="nano-pay-cancel" onclick="window.NanoPay.cancel(); return"> Cancel </div> 
+					<div id="nano-pay-cancel" onclick="window.NanoPay.close(); return"> Cancel </div> 
 				</div>
 
 				<div style="display: ${config.contact ? 'block' : 'none'}" onclick="window.NanoPay.configEmailAddress()" id="nano-pay-contact"> 
@@ -253,16 +204,16 @@
 						<div>${description}</div>  
 					</div>  
 					<div id="nano-pay-details-values">
-						<div style="display: ${config.shipping ? 'block' : 'none'}">${config.amount} ${symbol}</div>   
-						<div style="display: ${config.shipping ? 'block' : 'none'}">${config.amount} ${symbol}</div>   
+						<div style="display: ${config.shipping ? 'block' : 'none'}">${checkout.amount_nano} ${symbol}</div>   
+						<div style="display: ${config.shipping ? 'block' : 'none'}">${checkout.amount_nano} ${symbol}</div>   
 						<br style="display: ${config.shipping ? 'block' : 'none'}"> 
-						<div>${config.amount} ${symbol}</div>   
+						<div>${checkout.amount_nano} ${symbol}</div>   
 					</div> 
 				</div>
 
-			    <a id="nano-pay-button"> 
-			    	<img src="https://pay.nano.to/img/natrium.png" style="max-width: 40px;"> 
-			    	<span>${button}</span> 
+			    <a id="nano-pay-button" :href="nano:${checkout.address}?amount=${checkout.amount}"> 
+			    	<img id="nano-pay-button-image" src="https://pay.nano.to/img/natrium.png" style="max-width: 50px;"> 
+			    	<span id="nano-pay-button-text">${button}</span> 
 			    </a>
 		    </div>
 		</div>`
@@ -278,18 +229,25 @@
 
 	    var checks = 0
 
+	    setTimeout(() => {
+	    	document.getElementById('nano-pay-button-image').src = 'https://pay.nano.to/img/success.gif'
+	    }, 1000)
+
 	    // window.NanoPay.interval = setInterval(async () => {
 	    // 	if (window.NanoPay.debug) return
 	    // 	if (checks < 60) {
-		//     	var block = await window.NanoPay.rpc.check(config.address)
-		//     	if (block && block.hash) {
-		//     		window.alert('Success')
-		//     		// window.NanoPay.success(element, null, block)
+		//     	var block = (await window.NanoPay.RPC.get(checkout.check))
+		//     	if (block && block.block) {
+		//     		if (config.success) {
+		//     			if ( config.success.constructor.name === 'AsyncFunction' ) await config.success(block)
+		//     			if ( config.success.constructor.name !== 'AsyncFunction' ) config.success(block)
+		//     		}
+		//     		window.NanoPay.close()
 		//     		clearInterval(window.NanoPay.interval)
 		//     		return
 		//     	}
 	    // 	} else clearInterval(window.NanoPay.interval)
-	    // }, 5000)
+	    // }, 10000)
 
     }
 
@@ -322,6 +280,7 @@
 	            var item = all[i]
 
 				config = {
+					title: item.getAttribute('data-title'),
 					amount: item.getAttribute('data-amount'),
 					address: item.getAttribute('data-address') || item.getAttribute('data-name'),
 					shipping: item.getAttribute('data-shipping') || false,
@@ -335,7 +294,7 @@
 	            all[i].innerHTML = ''
 	            
 	            let code = `<div onclick="window.NanoPay.open()" style="cursor: pointer;padding: 7px 25px;border-radius: 4px;margin: 15px 0 10px 0;display: flex;align-items: center;justify-content: center;background: #ffffff;font-family: Helvetica, 'Arial';letter-spacing: 1px;min-height: 48px; color: ${config.color || '#000'}">
-	        		<img style="max-width: 24px;width: auto;min-width: auto;margin: 0 8px 0 0!important;float: none;" src="https://pay.nano.to/img/xno.svg" alt="">${ config.button || original_text || strings.button }</div>`
+	        		<img style="max-width: 24px;width: auto;min-width: auto;margin: 0 8px 0 0!important;float: none;" src="https://pay.nano.to/img/xno.svg" alt="">${ original_text || strings.button }</div>`
 
 	            code += '</div>'
 
