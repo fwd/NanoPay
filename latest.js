@@ -211,7 +211,7 @@
 					</div> 
 				</div>
 
-			    <a id="nano-pay-button" :href="nano:${checkout.address}?amount=${checkout.amount}"> 
+			    <a id="nano-pay-button" href="nano:${checkout.address}?amount=${checkout.amount}"> 
 			    	<img id="nano-pay-button-image" src="https://pay.nano.to/img/natrium.png" style="max-width: 45px;"> 
 			    	<span id="nano-pay-button-text">${button}</span> 
 			    </a>
