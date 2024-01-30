@@ -455,30 +455,15 @@
 
         <script>
 
-            // NanoPay.init({ 
-            //     // element: '[data-amount]', // optional css hex
-            //     address: '@bank', // required
-            //     amount: 0.01, // required
-            //     // position: 'top',
-            //     // random: true, // recommended
-            //     // shipping: true,
-            //     // contact: true,
-            //     success: (block) => {
-            //         console.log(block)
-            //     }
-            // })
-
             setTimeout(() => {
               
                 NanoPay.open({ 
-                    // element: '[data-amount]', // optional css hex
                     address: '@development', // required
                     amount: 0.11, // required
-                    notify: 'support@nano.to', // required
-                    // position: 'bottom',
-                    // random: true, // recommended
+                    notify: 'support@nano.to',
                     shipping: true,
                     contact: true,
+                    // localstorage: false,
                     success: (block) => {
                         alert('Success')
                         console.log("block", block)

@@ -79,6 +79,12 @@
 	    }
 	}
 
+    window.NanoPay.submit = (config) => {
+	    if (window.NanoPay.config.contact && !window.NanoPay.config.contact_email) return alert('Email Address Required.')
+	    if (window.NanoPay.config.shipping && !window.NanoPay.config.mailing_address) return alert('Shipping Address Required.')
+    	window.open(`nano:${window.NanoPay.checkout.address}?amount=${window.NanoPay.checkout.amount}`, '_blank')
+    }
+
     window.NanoPay.open = async (config) => {
 
     	config = config || window.NanoPay.config
@@ -92,13 +98,18 @@
     	var position = config.position || 'bottom'
     	var button = config.button || 'Open Natrium'
     	var symbol = config.symbol || 'NANO'
-    	var description = config.description || config.text || config.title || 'Payment'
+    	var description = config.description || config.text || config.title || 'TOTAL'
     	var address = config.address
-    	var amount = config.amount
+    	var amount = config.amount ? Number(config.amount) : ''
     	var random = config.random || config.random === false || config.random === "false" ? config.random : true
     	var notify = config.notify
 
-		var checkout = (await window.NanoPay.RPC.post('https://rpc.nano.to', { 
+    	if (!address) return alert("NanoPay: Address or Username required.")
+    	if (!amount) return alert("NanoPay: Amount required.")
+
+    	if (config.shipping !== true && Number(config.shipping)) amount += Number(config.shipping)
+
+		window.NanoPay.checkout = (await window.NanoPay.RPC.post('https://rpc.nano.to', { 
 			action: "checkout", 
 			address, 
 			amount, 
@@ -107,12 +118,12 @@
 			checkout: true 
 		}, { headers: { 'nano-app': `fwd/nano-pay:${version}` } }))
 
-		if (!checkout.amount) {
-			return alert("NanoPay: " + checkout.message)
+		if (!window.NanoPay.checkout.amount) {
+			return alert("NanoPay: " + window.NanoPay.checkout.message)
 		}
 
-		var amount_raw = checkout.amount
-		address = checkout.address
+		var amount_raw = window.NanoPay.amount
+		address = window.NanoPay.address
 
     	var strings = {
     		email: config.strings && config.strings.email ? config.strings.email : 'Email',
@@ -135,7 +146,7 @@
 
 			#nano-pay-header { display: flex; align-items: center; }
 			#nano-pay-header > img { max-width: 22px; }
-			#nano-pay-header > span { display: block;margin-left: 4px;font-weight: bold;font-size: 106%; }
+			#nano-pay-header > span { display: block;margin-left: 4px;font-size: 106%; }
 			#nano-pay-header-container { width: 100%;display: flex;align-items: center;justify-content: space-between;padding: 14px;border-bottom: 1px solid #0000000f; }
 			#nano-pay-cancel { color: #1f9ce9 }
 			#nano-pay-shipping { display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid #0000000f;position: relative;align-items: start; }
@@ -171,8 +182,8 @@
 
 		addStyleIfNotExists(cssContent);
 
-		window.NanoPay.config.mailing_address = localStorage.getItem('nano-pay-mailing-address')
-		window.NanoPay.config.contact_email = localStorage.getItem('nano-pay-contact-email')
+		window.NanoPay.config.mailing_address = config.email || localStorage.getItem('nano-pay-mailing-address')
+		window.NanoPay.config.contact_email = config.mailing_address || localStorage.getItem('nano-pay-contact-email')
 
 		var template = `
 		<div id="nano-pay">
@@ -197,7 +208,7 @@
 					<svg id="Layer_1" version="1.1" viewBox="0 0 512 512" width="512px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><polygon points="160,115.4 180.7,96 352,256 180.7,416 160,396.7 310.5,256 "></polygon></svg> 
 				</div>
 				
-				<div style="display: ${config.shipping ? 'flex' : 'none'}" onclick="window.NanoPay.configMailingAddress()" id="nano-pay-shipping"> 
+				<div style="display: ${Number(config.shipping) ? 'flex' : 'none'}" onclick="window.NanoPay.configMailingAddress()" id="nano-pay-shipping"> 
 					<div id="nano-pay-shipping-label">${strings.shipping}</div> 
 					<div id="nano-pay-user-mailing-address" style="line-height: 1.1; opacity: ${window.NanoPay.config.mailing_address ? '1' : '0.5'}">${window.NanoPay.config.mailing_address || 'N/A'}</div> 
 					<svg id="Layer_1" version="1.1" viewBox="0 0 512 512" width="512px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><polygon points="160,115.4 180.7,96 352,256 180.7,416 160,396.7 310.5,256 "></polygon></svg> 
@@ -206,20 +217,20 @@
 				<div id="nano-pay-details"> 
 					<div style="display: ${config.shipping ? 'block' : 'none'}" id="nano-pay-details-spacer"></div>
 					<div id="nano-pay-details-labels">
-						<div style="display: ${config.shipping ? 'block' : 'none'}">${strings.subtotal}</div>  
-						<div style="display: ${config.shipping ? 'block' : 'none'}">${strings.shipping}</div>  
-						<br style="display: ${config.shipping ? 'block' : 'none'}">
+						<div style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}">${strings.subtotal}</div>  
+						<div style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}">${strings.shipping}</div>  
+						<br style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}">
 						<div>${description}</div>  
 					</div>  
 					<div id="nano-pay-details-values">
-						<div style="display: ${config.shipping ? 'block' : 'none'}">${checkout.amount_nano} ${symbol}</div>   
-						<div style="display: ${config.shipping ? 'block' : 'none'}">${checkout.amount_nano} ${symbol}</div>   
-						<br style="display: ${config.shipping ? 'block' : 'none'}"> 
-						<div>${checkout.amount_nano} ${symbol}</div>   
+						<div style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}">${config.amount} ${symbol}</div>   
+						<div style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}">${config.shipping} ${symbol}</div>   
+						<br style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}"> 
+						<div>${window.NanoPay.checkout.amount_nano} ${symbol}</div>   
 					</div> 
 				</div>
 
-			    <a id="nano-pay-button" href="nano:${checkout.address}?amount=${checkout.amount}"> 
+			    <a id="nano-pay-button" onclick="window.NanoPay.submit()"> 
 			    	<img id="nano-pay-button-image" src="https://pay.nano.to/img/natrium.png" style="max-width: 45px;"> 
 			    	<span id="nano-pay-button-text">${button}</span> 
 			    </a>
@@ -238,6 +249,8 @@
 	    var checks = 0
 	    var checking = false
 	    var viewing_page = true
+	    var required_information = false
+
 
 		if (document.visibilityState) {
 		  document.addEventListener('visibilitychange', function() {
@@ -252,12 +265,14 @@
 		var delay = window.innerWidth < 1020 ? 1000 : 5000
 
 	    window.NanoPay.interval = setInterval(async () => {
+		    if (window.NanoPay.config.shipping && !window.NanoPay.config.mailing_address) return
+		    if (window.NanoPay.config.contact && !window.NanoPay.config.contact_email) return
 	    	if (!viewing_page) return
 	    	if (checking) return
 	    	if (window.NanoPay.debug) return
 	    	if (checks < 60) {
 	    		checking = true
-		    	var block = (await window.NanoPay.RPC.post(checkout.check, { 
+		    	var block = (await window.NanoPay.RPC.post(window.NanoPay.checkout.check, { 
 		    		note: window.NanoPay.config.title,
 		    		source: window.location.origin,
 		    		shipping: window.NanoPay.config.mailing_address,
@@ -290,9 +305,9 @@
     }
 
     window.NanoPay.configMailingAddress = () => {
-    	var shipping = window.prompt('Mailing Address: ')
+    	var shipping = window.prompt('Shipping Address: ')
     	if (shipping) {
-    		localStorage.setItem('nano-pay-mailing-address', shipping)
+    		if (window.NanoPay.config.localstorage !== false) localStorage.setItem('nano-pay-mailing-address', shipping)
     		window.NanoPay.config.mailing_address = shipping
     		document.getElementById('nano-pay-user-mailing-address').innerText = shipping
     		// window.NanoPay.open(window.NanoPay.config)
@@ -310,7 +325,7 @@
     		if (!validateEmail(email)) {
     			return alert('Invalid email address. Try again.')
     		}
-    		localStorage.setItem('nano-pay-contact-email', email)
+    		if (window.NanoPay.config.localstorage !== false) localStorage.setItem('nano-pay-contact-email', email)
     		window.NanoPay.config.contact_email = email
     		document.getElementById('nano-pay-user-contact-email').innerText = email
     	}
