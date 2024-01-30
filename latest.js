@@ -242,6 +242,8 @@
 		  });
 		}
 
+		var delay = window.innerWidth < 1024 ? 1000 : 5000
+
 	    window.NanoPay.interval = setInterval(async () => {
 	    	if (!viewing_page) return
 	    	if (checking) return
@@ -269,7 +271,7 @@
 		    		return
 		    	}
 	    	} else clearInterval(window.NanoPay.interval)
-	    }, 5000)
+	    }, delay)
 
     }
 

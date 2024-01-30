@@ -448,7 +448,7 @@
             <br>
             <br>
             <!-- <a>Pay 0.1 NANO</a> -->
-            <a data-title="Tip @Nano2Dev" data-amount="0.1" data-address="@faucet" data-button="Open Natrium" data-position="bottom">Pay 0.1 NANO</a>
+            <!-- <a data-title="Tip @Nano2Dev" data-amount="0.1" data-address="@faucet" data-button="Open Natrium" data-position="bottom">Pay 0.1 NANO</a> -->
         </article>
         
         <script src="/latest.js?v=5"></script>
@@ -468,7 +468,24 @@
             //     }
             // })
 
-            // NanoPay.open()
+            setTimeout(() => {
+              
+                NanoPay.open({ 
+                    // element: '[data-amount]', // optional css hex
+                    address: '@development', // required
+                    amount: 0.11, // required
+                    // position: 'bottom',
+                    // random: true, // recommended
+                    // shipping: true,
+                    // contact: true,
+                    success: (block) => {
+                        alert('Success')
+                        console.log("block", block)
+                    }
+                })
+
+            }, 1000)
+
 
         </script>
 
