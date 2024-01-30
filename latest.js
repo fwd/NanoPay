@@ -212,7 +212,7 @@
 				</div>
 
 			    <a id="nano-pay-button" :href="nano:${checkout.address}?amount=${checkout.amount}"> 
-			    	<img id="nano-pay-button-image" src="https://pay.nano.to/img/natrium.png" style="max-width: 50px;"> 
+			    	<img id="nano-pay-button-image" src="https://pay.nano.to/img/natrium.png" style="max-width: 45px;"> 
 			    	<span id="nano-pay-button-text">${button}</span> 
 			    </a>
 		    </div>
@@ -228,26 +228,36 @@
 	    }, 100)
 
 	    var checks = 0
+	    var checking = false
 
-	    setTimeout(() => {
-	    	document.getElementById('nano-pay-button-image').src = 'https://pay.nano.to/img/success.gif'
-	    }, 1000)
-
-	    // window.NanoPay.interval = setInterval(async () => {
-	    // 	if (window.NanoPay.debug) return
-	    // 	if (checks < 60) {
-		//     	var block = (await window.NanoPay.RPC.get(checkout.check))
-		//     	if (block && block.block) {
-		//     		if (config.success) {
-		//     			if ( config.success.constructor.name === 'AsyncFunction' ) await config.success(block)
-		//     			if ( config.success.constructor.name !== 'AsyncFunction' ) config.success(block)
-		//     		}
-		//     		window.NanoPay.close()
-		//     		clearInterval(window.NanoPay.interval)
-		//     		return
-		//     	}
-	    // 	} else clearInterval(window.NanoPay.interval)
-	    // }, 10000)
+	    window.NanoPay.interval = setInterval(async () => {
+	    	if (checking) return
+	    	if (window.NanoPay.debug) return
+	    	if (checks < 60) {
+	    		checking = true
+		    	var block = (await window.NanoPay.RPC.get(checkout.check))
+		    	checking = false
+		    	if (block && block.block) {
+		    		if (config.success) {
+		    			if ( config.success.constructor.name === 'AsyncFunction' ) await config.success(block)
+		    			if ( config.success.constructor.name !== 'AsyncFunction' ) config.success(block)
+		    		}
+			    	var success_el = document.getElementById('nano-pay-button-image') 
+			    	var success_text = document.getElementById('nano-pay-button-text')
+			    	success_el.style.maxWidth = '55px'
+			    	success_el.src = 'https://pay.nano.to/img/success.gif'
+			    	success_el.style.filter = 'hue-rotate(40deg)'
+			    	success_el.style.filter = 'hue-rotate(115deg)' // blue
+			    	success_text.style.display = 'none'
+	    			// document.getElementById('nano-pay-button-text').innerText = 'Success'
+		    		setTimeout(() => {
+		    			window.NanoPay.close()
+		    		}, 2000)
+		    		clearInterval(window.NanoPay.interval)
+		    		return
+		    	}
+	    	} else clearInterval(window.NanoPay.interval)
+	    }, 10000)
 
     }
 
