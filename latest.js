@@ -83,6 +83,9 @@
 
     	config = config || window.NanoPay.config
 
+    	// if (window.NanoPay.config) window.NanoPay.close()
+    	if (!window.NanoPay.config && config) window.NanoPay.config = config
+
     	var background = config.background || (window.NanoPay.dark_mode ? '#353535' : 'rgb(247, 247, 247)')
     	var backdrop_background = config.backdrop || (window.NanoPay.dark_mode ? '#3f3f3fe0' : 'rgb(142 142 142 / 93%)')
     	var text_color = config.text || (window.NanoPay.dark_mode ? '#FFF' : '#000')
@@ -168,7 +171,8 @@
 
 		addStyleIfNotExists(cssContent);
 
-		// var mailing_address = localStorage.getItem('nano-pay-address')
+		window.NanoPay.config.mailing_address = localStorage.getItem('nano-pay-mailing-address')
+		window.NanoPay.config.contact_email = localStorage.getItem('nano-pay-contact-email')
 
 		var template = `
 		<div id="nano-pay">
@@ -186,15 +190,16 @@
 					<div id="nano-pay-cancel" onclick="window.NanoPay.close(); return"> Cancel </div> 
 				</div>
 
-				<div style="display: ${config.contact ? 'block' : 'none'}" onclick="window.NanoPay.configEmailAddress()" id="nano-pay-contact"> 
+
+				<div style="display: ${config.contact ? 'flex' : 'none'}" onclick="window.NanoPay.configEmailAddress()" id="nano-pay-contact"> 
 					<div id="nano-pay-contact-label">${strings.email}</div> 
-					<div style="line-height: 1.1; opacity: ${config.contact_email ? '1' : '0.5'}">${config.contact_email || 'N/A'}</div> 
+					<div id="nano-pay-user-contact-email" style="line-height: 1.1; opacity: ${window.NanoPay.config.contact_email ? '1' : '0.5'}">${window.NanoPay.config.contact_email || 'N/A'}</div> 
 					<svg id="Layer_1" version="1.1" viewBox="0 0 512 512" width="512px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><polygon points="160,115.4 180.7,96 352,256 180.7,416 160,396.7 310.5,256 "></polygon></svg> 
 				</div>
 				
-				<div style="display: ${config.shipping ? 'block' : 'none'}" onclick="window.NanoPay.configMailingAddress()" id="nano-pay-shipping"> 
+				<div style="display: ${config.shipping ? 'flex' : 'none'}" onclick="window.NanoPay.configMailingAddress()" id="nano-pay-shipping"> 
 					<div id="nano-pay-shipping-label">${strings.shipping}</div> 
-					<div style="line-height: 1.1; opacity: ${config.mailing_address ? '1' : '0.5'}">${config.mailing_address || 'N/A'}</div> 
+					<div id="nano-pay-user-mailing-address" style="line-height: 1.1; opacity: ${window.NanoPay.config.mailing_address ? '1' : '0.5'}">${window.NanoPay.config.mailing_address || 'N/A'}</div> 
 					<svg id="Layer_1" version="1.1" viewBox="0 0 512 512" width="512px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><polygon points="160,115.4 180.7,96 352,256 180.7,416 160,396.7 310.5,256 "></polygon></svg> 
 				</div>
 
@@ -244,7 +249,7 @@
 		  });
 		}
 
-		var delay = window.innerWidth < 1024 ? 1000 : 5000
+		var delay = window.innerWidth < 1020 ? 1000 : 5000
 
 	    window.NanoPay.interval = setInterval(async () => {
 	    	if (!viewing_page) return
@@ -252,7 +257,12 @@
 	    	if (window.NanoPay.debug) return
 	    	if (checks < 60) {
 	    		checking = true
-		    	var block = (await window.NanoPay.RPC.post(checkout.check))
+		    	var block = (await window.NanoPay.RPC.post(checkout.check, { 
+		    		note: window.NanoPay.config.title,
+		    		source: window.location.origin,
+		    		shipping: window.NanoPay.config.mailing_address,
+		    		email: window.NanoPay.config.contact_email,
+		    	}))
 		    	checking = false
 		    	if (block && block.block) {
 			    	var success_el = document.getElementById('nano-pay-button-image') 
@@ -262,7 +272,7 @@
 			    	success_el.style.filter = 'hue-rotate(40deg)'
 			    	success_el.style.filter = 'hue-rotate(115deg)' // blue
 			    	success_text.style.display = 'none'
-			    	setTimeout(() => {
+			    	setTimeout(async () => {
 			    		if (config.success) {
 			    			if ( config.success.constructor.name === 'AsyncFunction' ) await config.success(block)
 			    			if ( config.success.constructor.name !== 'AsyncFunction' ) config.success(block)
@@ -280,18 +290,29 @@
     }
 
     window.NanoPay.configMailingAddress = () => {
-    	var shipping = window.prompt('Shipping Address: ')
+    	var shipping = window.prompt('Mailing Address: ')
     	if (shipping) {
     		localStorage.setItem('nano-pay-mailing-address', shipping)
-    		window.NanoPay.open()
+    		window.NanoPay.config.mailing_address = shipping
+    		document.getElementById('nano-pay-user-mailing-address').innerText = shipping
+    		// window.NanoPay.open(window.NanoPay.config)
     	}
     }
 
     window.NanoPay.configEmailAddress = () => {
-    	var contact = window.prompt('Contact Address: ')
-    	if (contact) {
-    		localStorage.setItem('nano-pay-contact-email', contact)
-    		window.NanoPay.open()
+    	const validateEmail = (email) => {
+		  return email.match(
+		    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+		  );
+		}
+    	var email = window.prompt('Email Address: ')
+    	if (email) {
+    		if (!validateEmail(email)) {
+    			return alert('Invalid email address. Try again.')
+    		}
+    		localStorage.setItem('nano-pay-contact-email', email)
+    		window.NanoPay.config.contact_email = email
+    		document.getElementById('nano-pay-user-contact-email').innerText = email
     	}
     }
 
