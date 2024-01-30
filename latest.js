@@ -323,6 +323,8 @@
 				    			success: block.success,
 				    			hash: block.block,
 				    			nanolooker: block.redirect,
+				    			shipping: window.NanoPay.config.mailing_address,
+				    			email: window.NanoPay.config.contact_email,
 				    			checkout: block.json
 				    		}
 			    			if ( config.success.constructor.name === 'AsyncFunction' ) await config.success(response)
