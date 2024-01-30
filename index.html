@@ -446,23 +446,29 @@
         <article class="premium">
             <br>
             <br>
-            <a data-amount="0.1" data-address="@faucet">Pay 5 NANO</a>
+            <!-- <a>Pay 0.1 NANO</a> -->
+            <a data-amount="0.1" data-address="@faucet" data-position="bottom">Pay 0.1 NANO</a>
         </article>
         
         <script src="/latest.js?v=1"></script>
 
         <script>
-            //  nano.pay({ 
-            //     element: '#button', // optional css hex
+
+            // NanoPay.init({ 
+            //     // element: '[data-amount]', // optional css hex
             //     address: '@bank', // required
-            //     amount: 0.001, // required
-            //     random: true, // recommended
-            //     shipping: true,
-            //     email: true,
+            //     amount: 0.01, // required
+            //     // position: 'top',
+            //     // random: true, // recommended
+            //     // shipping: true,
+            //     // contact: true,
             //     success: (block) => {
             //         console.log(block)
             //     }
             // })
+
+            // NanoPay.open()
+
         </script>
 
     </body>
