@@ -1,6 +1,5 @@
-// NanoPay
+// NanoPay 1.0.0
 // https://github.com/fwd/nano-pay
-// Follow on Twitter @nano2dev
 ;(async () => {
 
 	const version = '1.0.0'

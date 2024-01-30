@@ -453,7 +453,7 @@
             <!-- <a data-title="Tip @Nano2Dev" data-amount="0.4" data-address="@faucet" data-button="Open Natrium" data-position="bottom">Pay 0.4 NANO</a> -->
         </article>
         
-        <script src="/latest.js?v=14"></script>
+        <script src="/latest.js?v=15"></script>
 
         <script>
 
@@ -465,11 +465,14 @@
                     notify: 'support@nano.to',
                     // debug: true,
                     contact: true,
-                    random: false,
-                    title: "Demo",
-                    line_items: [{ name: "Shirt (X-Small)", price: 50 }, { name: "Mens Shoes (9.5)", price: 20 }],
-                    shipping: 10,
-                    currency: 'EUR',
+                    // random: false,
+                    title: "Demo Tip",
+                    line_items: [
+                        { name: "Shirt (X-Small)", price: 0.122 }, 
+                        { name: "Mens Shoes (9.5)", price: 0 }
+                    ],
+                    shipping: 0.012,
+                    // currency: 'EUR',
                     success: (block) => {
                         document.getElementById('success').innerText = 'Success'
                         console.log(block)
