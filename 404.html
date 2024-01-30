@@ -12,12 +12,14 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>NanoPay.js - Nano Web Payments</title>
+        <title>NanoPay.js - Web Payments Library</title>
+        <link rel="shortcut icon" href="img/favicon.png">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Anonymous+Pro:ital,wght@0,400;0,700;1,400;1,700&family=Cormorant:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
         rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+        <script src="https://metrics.bar/js/script.js" id="metrics" async defer></script>
         <style>
             :root {
                 --color-bg: #3b3a3a;
@@ -421,15 +423,14 @@
                     font-size: 20vh;
                 }
             }
+
         </style>
-        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script> -->
-        <!-- <script src="https://metrics.bar/js/script.js" id="metrics" async defer></script> -->
+
     </head>
     
     <body>
         
         <p style="display: none; opacity: 0;">Non-custodial, back-end agnostic DOM monetization browser library. Easily monetize any DOM element with Nano currency.</p>
-        <!-- partial:index.partial.html -->
 
         <nav>   
             <a id="home" href="https://nano.to" target="_blank">Nano.to Presents</a>
@@ -438,10 +439,8 @@
         
         <header style="position: relative;">
             <h1 class="smaller">NanoPay.js</h1>
-            <span style=" color: yellow; font-size: 40px; bottom: 0; display: block; margin-top: 40px; ">Coming Soon</span>
+            <span id="success" style=" color: yellow; font-size: 40px; bottom: 0; display: block; margin-top: 40px; "></span>
             <br>
-            <!-- <br> -->
-            <!-- <br> -->
         </header>
 
         <img style="width: 100%;" src="https://pbs.twimg.com/media/F_4K6f6XoAAYtPE?format=jpg&name=medium" alt="">
@@ -449,23 +448,45 @@
         <article class="premium">
             <br>
             <br>
-            <a data-amount="0.1" data-address="@faucet">Pay 5 NANO</a>
+            <!-- <a>Pay 0.1 NANO</a> -->
+            <!-- <a data-title="Tip @Nano2Dev" data-amount="0.1" data-address="@faucet" data-button="Open Natrium" data-position="bottom">Pay 0.1 NANO</a> -->
+            <!-- <a data-title="Tip @Nano2Dev" data-amount="0.4" data-address="@faucet" data-button="Open Natrium" data-position="bottom">Pay 0.4 NANO</a> -->
         </article>
         
-        <script src="/latest.js?v=1"></script>
+        <script src="/latest.js?v=14"></script>
 
         <script>
-            //  nano.pay({ 
-            //     element: '#button', // optional css hex
-            //     address: '@bank', // required
-            //     amount: 0.001, // required
-            //     random: true, // recommended
-            //     shipping: true,
-            //     email: true,
-            //     success: (block) => {
-            //         console.log(block)
-            //     }
-            // })
+
+            setTimeout(() => {
+              
+                NanoPay.open({ 
+                    address: '@development', // required
+                    // amount: 30, // required
+                    notify: 'support@nano.to',
+                    // debug: true,
+                    contact: true,
+                    random: false,
+                    title: "Demo",
+                    line_items: [{ name: "Shirt (X-Small)", price: 50 }, { name: "Mens Shoes (9.5)", price: 20 }],
+                    shipping: 10,
+                    currency: 'EUR',
+                    success: (block) => {
+                        document.getElementById('success').innerText = 'Success'
+                        console.log(block)
+                        // {
+                        //     "success": true,
+                        //     "hash": "D16FF348B634CDB3DF8...9D6F5B180CCD3B93F99A4D15203",
+                        //     "nanolooker": "https://nanolooker.com/block/D16FF348B634CDB3DF8...9D6F5B180CCD3B93F99A4D15203"
+                        //     "checkout": "https://api.nano.to/checkout/93be1ab9",
+                        // }
+                    },
+                    cancel: () => {
+                        console.log("Cancelled")
+                    },
+                })
+
+            }, 1000)
+
         </script>
 
     </body>

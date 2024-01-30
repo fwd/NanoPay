@@ -120,6 +120,7 @@
     	var line_items = config.line_items || config.items || config.products
     	var currency = config.currency
     	var public_key = config.public_key || config.key
+    	var node = config.node || config.rpc || config.endpoint || 'https://rpc.nano.to'
 
     	if (!address) return alert("NanoPay: Address or Username required.")
 
@@ -129,9 +130,7 @@
     		if (!Array.isArray(line_items) || line_items && !line_items.find(a => a && a.price)) return alert("NanoPay: Invalid line_items. Example: [ { name: 'T-Shirt', price: 5 } ] ")
     	}
 
-    	// if (config.shipping !== true && Number(config.shipping)) amount += Number(config.shipping)
-
-		window.NanoPay.checkout = (await window.NanoPay.RPC.post('https://rpc.nano.to', { 
+		window.NanoPay.checkout = (await window.NanoPay.RPC.post(node, { 
 			action: "checkout", 
 			line_items, 
 			shipping: Number(config.shipping) ? config.shipping : 0, 
@@ -308,7 +307,6 @@
 		    		source: window.location.origin,
 		    		shipping: window.NanoPay.config.mailing_address,
 		    		email: window.NanoPay.config.contact_email,
-		    		// products: window.NanoPay.config.products || window.NanoPay.config.line_items,
 		    	}))
 		    	checking = false
 		    	if (block && block.block) {
@@ -316,7 +314,7 @@
 			    	var success_text = document.getElementById('nano-pay-button-text')
 			    	success_el.style.maxWidth = '65px'
 			    	success_el.src = 'https://pay.nano.to/img/success.gif'
-			    	// success_el.style.filter = 'hue-rotate(40deg)'
+			    	// success_el.style.filter = 'hue-rotate(40deg)' // green
 			    	success_el.style.filter = 'hue-rotate(115deg)' // blue
 			    	success_text.style.display = 'none'
 		    		if (config.success) {
