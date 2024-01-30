@@ -283,7 +283,7 @@
 		    	if (block && block.block) {
 			    	var success_el = document.getElementById('nano-pay-button-image') 
 			    	var success_text = document.getElementById('nano-pay-button-text')
-			    	success_el.style.maxWidth = '55px'
+			    	success_el.style.maxWidth = '65px'
 			    	success_el.src = 'https://pay.nano.to/img/success.gif'
 			    	success_el.style.filter = 'hue-rotate(40deg)'
 			    	success_el.style.filter = 'hue-rotate(115deg)' // blue
