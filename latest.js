@@ -82,7 +82,8 @@
     window.NanoPay.submit = (config) => {
 	    if (window.NanoPay.config.contact && !window.NanoPay.config.contact_email) return alert('Email Address Required.')
 	    if (window.NanoPay.config.shipping && !window.NanoPay.config.mailing_address) return alert('Shipping Address Required.')
-    	window.open(`nano:${window.NanoPay.checkout.address}?amount=${window.NanoPay.checkout.amount}`, '_blank')
+    	window.open(`nano:${window.NanoPay.checkout.address}?amount=${window.NanoPay.checkout.amount}`, '_self')
+    	// window.open(`nano:${window.NanoPay.checkout.address}?amount=${window.NanoPay.checkout.amount}`, '_blank')
     }
 
     window.NanoPay.open = async (config) => {
@@ -149,11 +150,11 @@
 			#nano-pay-header > span { display: block;margin-left: 4px;font-size: 106%; }
 			#nano-pay-header-container { width: 100%;display: flex;align-items: center;justify-content: space-between;padding: 14px;border-bottom: 1px solid #0000000f; }
 			#nano-pay-cancel { color: #1f9ce9 }
-			#nano-pay-shipping { display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid #0000000f;position: relative;align-items: start; }
+			#nano-pay-shipping { display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid #0000000f;position: relative;align-items: center; }
 			#nano-pay-shipping svg { max-width: 23px;fill: #1f9ce9;position: absolute;right: 5px;top: 0px;bottom: 0;margin: auto; }
 			#nano-pay-shipping-label {  text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.5;  min-width: 90px; font-size: 90% }
 
-			#nano-pay-contact { display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid #0000000f;position: relative;align-items: start; }
+			#nano-pay-contact { display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid #0000000f;position: relative;align-items: center; }
 			#nano-pay-contact-label {  text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.5; min-width: 90px;  font-size: 90%  }
 			#nano-pay-contact svg {  max-width: 23px;fill: #1f9ce9;position: absolute;right: 5px;top: 0px;bottom: 0;margin: auto; }
 
@@ -265,11 +266,11 @@
 		var delay = window.innerWidth < 1020 ? 1000 : 5000
 
 	    window.NanoPay.interval = setInterval(async () => {
+	    	if (!window.NanoPay.checkout || !window.NanoPay.config || window.NanoPay.config.debug) return
 		    if (window.NanoPay.config.shipping && !window.NanoPay.config.mailing_address) return
 		    if (window.NanoPay.config.contact && !window.NanoPay.config.contact_email) return
 	    	if (!viewing_page) return
 	    	if (checking) return
-	    	if (window.NanoPay.debug) return
 	    	if (checks < 60) {
 	    		checking = true
 		    	var block = (await window.NanoPay.RPC.post(window.NanoPay.checkout.check, { 
@@ -287,12 +288,12 @@
 			    	success_el.style.filter = 'hue-rotate(40deg)'
 			    	success_el.style.filter = 'hue-rotate(115deg)' // blue
 			    	success_text.style.display = 'none'
-			    	setTimeout(async () => {
-			    		if (config.success) {
+		    		if (config.success) {
+				    	setTimeout(async () => {
 			    			if ( config.success.constructor.name === 'AsyncFunction' ) await config.success(block)
 			    			if ( config.success.constructor.name !== 'AsyncFunction' ) config.success(block)
-			    		}
-		    		}, 500)
+			    		}, 100)
+		    		}
 		    		setTimeout(() => {
 		    			window.NanoPay.close()
 		    		}, 2000)
