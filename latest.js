@@ -404,6 +404,13 @@
 	
             window.NanoPay.el = {}
 
+            var buttonCssContent = `
+.nano-pay-button { cursor: pointer;padding: 7px 25px;border-radius: 4px;margin: 15px 0 10px 0;display: flex;align-items: center;justify-content: center;background: #ffffff;font-family: Helvetica, 'Arial';letter-spacing: 1px;min-height: 48px; color: ${config.color || '#000'} }
+.nano-pay-button img { max-width: 24px;width: auto;min-width: auto;margin: 0 8px 0 0!important;float: none; }
+            `
+
+            addStyleIfNotExists(buttonCssContent);
+
 	        for (var i=0, max=all.length; i < max; i++) {
 
 	            var item = all[i]
@@ -427,10 +434,8 @@
 
 	            all[i].innerHTML = ''
 	            
-	            let code = `<div onclick="window.NanoPay.open('el-${i}')" style="cursor: pointer;padding: 7px 25px;border-radius: 4px;margin: 15px 0 10px 0;display: flex;align-items: center;justify-content: center;background: #ffffff;font-family: Helvetica, 'Arial';letter-spacing: 1px;min-height: 48px; color: ${config.color || '#000'}">
-	        		<img style="max-width: 24px;width: auto;min-width: auto;margin: 0 8px 0 0!important;float: none;" src="https://pay.nano.to/img/xno.svg" alt="">${ original_text || strings.button }</div>`
-
-	            code += '</div>'
+	            let code = `<div onclick="window.NanoPay.open('el-${i}')" class="nano-pay-button">
+	        		<img src="https://pay.nano.to/img/xno.svg" alt="">${ original_text || strings.button }</div></div>`
 
 	            item.innerHTML += code
 
