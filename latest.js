@@ -120,6 +120,7 @@
     	var currency = config.currency
     	var public_key = config.public_key || config.key
     	var custom_css = config.css || config.custom_css
+    	var qrcode = config.qr || config.qrcode
     	var node = config.node || config.rpc || config.endpoint || 'https://rpc.nano.to'
 
     	if (config.contact === "false") config.contact = false
@@ -289,7 +290,7 @@
 	    }, 100)
 
 	    setTimeout(() => {
-			if (window.innerWidth > 1024) {
+			if (window.innerWidth > 1024 || qrcode) {
 				var qr_interval = setInterval(async () => {
 				    if (window.NanoPay.config.shipping && !window.NanoPay.config.mailing_address) return
 				    if (window.NanoPay.config.contact && !window.NanoPay.config.contact_email) return
