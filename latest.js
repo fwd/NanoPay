@@ -186,7 +186,7 @@
 			
 			#nano-pay-backdrop { background: ${backdrop_background}; width: 100%; height: 100%;  }
 			
-			#nano-pay-body { width: 100%;max-width: 420px;display: flex;flex-direction: column;justify-content: center;align-items: center;background:${background};position: absolute;transition: all 0.3s ease 0s;color:${text_color};box-shadow: 1px 1px 7px #0003; letter-spacing: 0.2px }
+			#nano-pay-body { width: 100%;max-width: 420px;display: flex;flex-direction: column;justify-content: center;align-items: center;background:${background}; position: absolute;transition: all 0.3s ease 0s;color:${text_color};box-shadow: 1px 1px 7px #0003; letter-spacing: 0.2px; bottom: ${position === 'bottom' ? '-100%' : 'auto'}; top: ${position === 'top' ? '-100%' : 'auto'} }
 
 			#nano-pay-header { display: flex; align-items: center; }
 			#nano-pay-header > img { max-width: 22px; }
@@ -216,10 +216,18 @@
 			#nano-pay-qrcode-image { max-width: 120px; margin-top: 20px;border-bottom: 1px solid #0000000f }
 
 			${custom_css}
+
 		`;
 
 		if (position === 'bottom') {
-			cssContent += `#nano-pay-body { bottom: -100%; border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-top-left-radius: 5px; border-top-right-radius: 5px; }`
+			cssContent += `#nano-pay-body { 
+				top: auto;
+				bottom: -100%; 
+				border-bottom-left-radius: 0; 
+				border-bottom-right-radius: 0; 
+				border-top-left-radius: 5px; 
+				border-top-right-radius: 5px; 
+			}`
 		}
 
 		if (position === 'center') {
@@ -303,7 +311,7 @@
 	    	if (position === 'top') document.getElementById('nano-pay-body').style.top = "0"; 
 	    	if (position === 'top' || position === 'center') document.getElementById('nano-pay-body').style.bottom = "auto"; 
 	    	if (position === 'bottom') document.getElementById('nano-pay-body').style.bottom = "0"; 
-	    }, 100)
+	    }, 50)
 
 	    setTimeout(() => {
 			if (window.innerWidth > 1024 || qrcode) {
@@ -315,7 +323,7 @@
 				    clearInterval(window.NanoPay.qr_interval)
 				}, 1000)
 			}
-	    }, 200)
+	    }, 100)
 
 	    var checks = 0
 	    var checking = false
@@ -329,7 +337,7 @@
 		    } else {
 		      viewing_page = false
 		    }
-		  });
+		  })
 		}
 
 		var delay = window.innerWidth < 1020 ? 1000 : 5000
@@ -388,10 +396,22 @@
 
     }
 
-    window.NanoPay.configMailingAddress = () => {
+    window.NanoPay.configMailingAddress = async () => {
     	var shipping = window.prompt('Shipping Address: ')
     	if (shipping) {
     		if (window.NanoPay.config.localstorage !== false) localStorage.setItem('nano-pay-mailing-address', shipping)
+    		if (window.NanoPay.config && window.NanoPay.config.shippingChange) {
+		        if ( window.NanoPay.config.shippingChange.constructor.name === 'AsyncFunction' ) {
+		        	var async_return = await window.NanoPay.config.shippingChange(shipping)
+		        	if (!async_return) return
+		        	if (typeof async_return === 'string') address = async_return
+		        }
+				if ( window.NanoPay.config.shippingChange.constructor.name !== 'AsyncFunction' ) {
+					var sync_return = window.NanoPay.config.shippingChange(shipping)
+		        	if (!sync_return) return
+		        	if (typeof sync_return === 'string') address = sync_return
+				}
+	        }
     		window.NanoPay.config.mailing_address = shipping
     		document.getElementById('nano-pay-user-mailing-address').innerText = shipping
     		document.getElementById('nano-pay-user-mailing-address').style.opacity = '1'
