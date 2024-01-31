@@ -119,7 +119,10 @@
     	var line_items = config.line_items || config.items || config.products
     	var currency = config.currency
     	var public_key = config.public_key || config.key
+    	var custom_css = config.css || config.custom_css
     	var node = config.node || config.rpc || config.endpoint || 'https://rpc.nano.to'
+
+    	if (config.contact === "false") config.contact = false
 
     	if (!address) return alert("NanoPay: Address or Username required.")
 
@@ -138,10 +141,9 @@
 			amount, 
 			random,
 			notify,
-			public_key,
-			checkout: true 
+			public_key
 		}, { headers: { 'nano-app': `fwd/nano-pay:${version}` } }))
-
+		
 		if (!window.NanoPay.checkout.amount) {
 			return alert("NanoPay: " + window.NanoPay.checkout.message)
 		}
@@ -192,6 +194,11 @@
 			#nano-pay-button { display: flex; flex-direction: column; align-items: center; margin: 15px 0 18px 0; text-decoration: none; color: inherit; text-align: center;  }
 
 			#nano-pay-button span {  margin-top: 10px; display: block; opacity: 0.7; font-size: 85%;  }
+
+			#nano-pay-qrcode { display: flex;width: 100%;justify-content: center;border-bottom: 1px solid #0000000f;padding-bottom: 20px; }
+			#nano-pay-qrcode-image { max-width: 120px; margin-top: 20px;border-bottom: 1px solid #0000000f }
+
+			${custom_css}
 		`;
 
 		if (position === 'bottom') {
@@ -245,7 +252,7 @@
 				</div>
 
 				<div id="nano-pay-details"> 
-					<div style="display: ${config.shipping ? 'block' : 'none'}" id="nano-pay-details-spacer"></div>
+					<div style="display: ${Number(config.shipping) || config.shipping === true || config.shipping === "true" ? 'block' : 'none'}" id="nano-pay-details-spacer"></div>
 					<div id="nano-pay-details-labels">
 						<div style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}">${strings.subtotal}</div>  
 						<div style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}">${strings.shipping}</div>  
@@ -260,10 +267,15 @@
 					</div> 
 				</div>
 
+				<div id="nano-pay-qrcode" style="display: none">
+					<img id="nano-pay-qrcode-image"/>
+				</div>
+
 			    <a id="nano-pay-button" onclick="window.NanoPay.submit()"> 
 			    	<img id="nano-pay-button-image" src="https://pay.nano.to/img/natrium.png" style="max-width: 45px;"> 
 			    	<span id="nano-pay-button-text">${button}</span> 
 			    </a>
+
 		    </div>
 		</div>`
 
@@ -276,11 +288,22 @@
 	    	if (position === 'bottom') document.getElementById('nano-pay-body').style.bottom = "0"; 
 	    }, 100)
 
+	    setTimeout(() => {
+			if (window.innerWidth > 1024) {
+				var qr_interval = setInterval(async () => {
+				    if (window.NanoPay.config.shipping && !window.NanoPay.config.mailing_address) return
+				    if (window.NanoPay.config.contact && !window.NanoPay.config.contact_email) return
+					document.getElementById('nano-pay-qrcode').style.display = "flex"
+					document.getElementById('nano-pay-qrcode-image').src = window.NanoPay.checkout.qrcode
+				    clearInterval(innerWidth)
+				}, 1000)
+			}
+	    }, 200)
+
 	    var checks = 0
 	    var checking = false
 	    var viewing_page = true
 	    var required_information = false
-
 
 		if (document.visibilityState) {
 		  document.addEventListener('visibilitychange', function() {
