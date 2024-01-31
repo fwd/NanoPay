@@ -122,35 +122,51 @@
     	var custom_css = config.css || config.custom_css
     	var qrcode = config.qr || config.qrcode
     	var node = config.node || config.rpc || config.endpoint || 'https://rpc.nano.to'
+    	var checkout = config.checkout || config.url
 
     	if (config.contact === "false") config.contact = false
 
-    	if (!address) return alert("NanoPay: Address or Username required.")
+    	if (checkout) {
+    		
+    		var checkout_url = checkout.replace('https://api.nano.to/checkout/', '')
+    		
+    		window.NanoPay.checkout = (await window.NanoPay.RPC.get(`https://api.nano.to/checkout/${checkout_url}`, { headers: { 'nano-app': `fwd/nano-pay:${version}` } }))
 
-    	if (!amount && !line_items) return alert("NanoPay: Amount or line_items required.")
+    		window.NanoPay.config.title = window.NanoPay.checkout.title
+    		window.NanoPay.config.position = window.NanoPay.checkout.position
+    		window.NanoPay.config.symbol = window.NanoPay.checkout.symbol
+    		window.NanoPay.config.line_items = window.NanoPay.checkout.line_items
+    		window.NanoPay.config.shipping = window.NanoPay.checkout.shipping
+    		window.NanoPay.config.contact = window.NanoPay.checkout.contact
 
-    	if (line_items) {
-    		if (!Array.isArray(line_items) || line_items && !line_items.find(a => a && a.price)) return alert("NanoPay: Invalid line_items. Example: [ { name: 'T-Shirt', price: 5 } ] ")
+    	} else {
+
+	    	if (!address) return alert("NanoPay: Address or Username required.")
+	    	if (!amount && !line_items) return alert("NanoPay: Amount or line_items required.")
+
+	    	if (line_items) {
+	    		if (!Array.isArray(line_items) || line_items && !line_items.find(a => a && a.price)) return alert("NanoPay: Invalid line_items. Example: [ { name: 'T-Shirt', price: 5 } ] ")
+	    	}
+
+			window.NanoPay.checkout = (await window.NanoPay.RPC.post(node, { 
+				action: "checkout", 
+				line_items, 
+				shipping: Number(config.shipping) ? config.shipping : 0, 
+				currency, 
+				address, 
+				amount, 
+				random,
+				notify,
+				public_key
+			}, { headers: { 'nano-app': `fwd/nano-pay:${version}` } }))
     	}
 
-		window.NanoPay.checkout = (await window.NanoPay.RPC.post(node, { 
-			action: "checkout", 
-			line_items, 
-			shipping: Number(config.shipping) ? config.shipping : 0, 
-			currency, 
-			address, 
-			amount, 
-			random,
-			notify,
-			public_key
-		}, { headers: { 'nano-app': `fwd/nano-pay:${version}` } }))
-		
 		if (!window.NanoPay.checkout.amount) {
 			return alert("NanoPay: " + window.NanoPay.checkout.message)
 		}
 
-		var amount_raw = window.NanoPay.amount
-		address = window.NanoPay.address
+		// var amount_raw = window.NanoPay.amount
+		// address = window.NanoPay.address
 
     	var strings = {
     		email: config.strings && config.strings.email ? config.strings.email : 'Email',
