@@ -6,6 +6,10 @@
 
 	if (window.NanoPay === undefined) window.NanoPay = { debug: false }
 
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      window.NanoPay.dark_mode = true
+    }
+
 	window.NanoPay.RPC = {
 
 		get(endpoint) {
@@ -50,26 +54,6 @@
         })
     }
 
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      window.NanoPay.dark_mode = true
-    }
-
-    window.NanoPay.close = (element) => {
-    	document.body.style.overflow = 'auto';
-        document.getElementById('nano-pay').remove()
-        clearInterval(window.NanoPay.interval)
-    }
-
-    window.NanoPay.cancel = async (element) => {
-    	document.body.style.overflow = 'auto';
-        document.getElementById('nano-pay').remove()
-        clearInterval(window.NanoPay.interval)
-        if (window.NanoPay.config && window.NanoPay.config.cancel) {
-	        if ( window.NanoPay.config.cancel.constructor.name === 'AsyncFunction' ) await window.NanoPay.config.cancel()
-			if ( window.NanoPay.config.cancel.constructor.name !== 'AsyncFunction' ) window.NanoPay.config.cancel()
-        }
-    }
-
 	function addStyleIfNotExists(cssContent) {
 	    var styles = document.head.getElementsByTagName('style');
 	    var styleExists = false;
@@ -88,11 +72,108 @@
 	    }
 	}
 
+	window.NanoPay.unlock_request = async (title, element, amount, address, elementId) => {
+		window.NanoPay.open({
+			title,
+			amount,
+			address,
+			success: () => window.NanoPay.unlock_content(element, elementId)
+		})
+	}
+
+	window.NanoPay.unlock_content = async (element, elementId) => {
+
+		if (!element) return
+		
+		var all = document.querySelectorAll(element);
+
+        for (var i=0, max=all.length; i < max; i++) {
+            all[i].innerHTML = window.NanoPay.locked[i];
+            all[i].style.position = null; 
+            all[i].classList.add("unlocked");
+        }
+
+        var locked = document.querySelectorAll('.nano-locked');
+
+        for (var i = 0, max = locked.length; i < max; i++) {
+        	if ( locked[i] ) locked[i].remove()
+        }
+
+    	if (elementId) localStorage.setItem(elementId, true)
+
+	}
+
+	window.NanoPay.wall = async (config) => {
+
+        config = config || {}
+
+        if (!config.element) return console.error('Nano: No premium element provided:', config.element)
+        if (!config.address) return console.error('Nano: No address provided:', config.address)
+        if (!config.amount) return console.error('Nano: No price provided:', config.amount)
+
+        if (config.endpoint || config.node) window.nano.rpc.endpoint = config.endpoint || config.node
+        if (config.debug) window.nano.debug = config.debug 
+        if (config.success) window.user_success = config.success 
+        
+        var all = document.querySelectorAll(config.element);
+
+    	if (!window.NanoPay.locked) window.NanoPay.locked = {}
+
+    	var buttonCSS = `.nano-pay-unlock-button { cursor: pointer;padding: 7px 25px;border-radius: 4px;margin: 15px 0 10px 0;display: flex;align-items: center;justify-content: center;background: #ffffff;font-family: Helvetica, 'Arial';letter-spacing: 1px;min-height: 48px; color: ${config.color || '#000'} }
+    		.nano-pay-unlock-button img { max-width: 24px;width: auto;min-width: auto;margin: 0 8px 0 0!important;float: none; }
+    		.nano-pay-free-read { text-align: center }
+    		.nano-pay-free-read hr { margin: 20px 0 15px 0; }
+`
+
+    	addStyleIfNotExists(buttonCSS);
+
+        for (var i=0, max=all.length; i < max; i++) {
+
+            var item = all[i]
+
+            var articleId = window.location.pathname + '-' + item.tagName + '-' + i
+
+        	if (localStorage.getItem(articleId)) {
+        		item.style.display = config.display || 'block'
+        		return
+        	}
+
+            window.NanoPay.locked[i] = item.innerHTML
+
+            var code = `<div onclick="window.NanoPay.unlock_request('${config.title || 'Unlock'}', '${config.element}', '${config.amount}', '${config.address}', '${articleId}')" class="nano-pay-unlock-button"><img style="" src="https://wall.nano.to/img/xno.svg" alt="">${ config.button || 'Unlock with Nano' }</div></div>`
+
+            if (config.free) {
+                code += `<div class="nano-pay-free-read" onclick="window.NanoPay.unlock_content('${config.element}')"><hr>${ config.free_text ? config.free_text : 'Free Read' }</div>`
+            } 
+
+            all[i].innerHTML = code
+
+            item.style.display = config.display || 'block'
+
+        }
+
+    }
+
+    window.NanoPay.close = (element) => {
+    	document.body.style.overflow = 'auto';
+        document.getElementById('nano-pay').remove()
+        clearInterval(window.NanoPay.interval)
+    }
+
+    window.NanoPay.cancel = async (element) => {
+    	document.body.style.overflow = 'auto';
+        document.getElementById('nano-pay').remove()
+        clearInterval(window.NanoPay.interval)
+        if (window.NanoPay.config && window.NanoPay.config.cancel) {
+	        if ( window.NanoPay.config.cancel.constructor.name === 'AsyncFunction' ) await window.NanoPay.config.cancel()
+			if ( window.NanoPay.config.cancel.constructor.name !== 'AsyncFunction' ) window.NanoPay.config.cancel()
+        }
+    }
+
     window.NanoPay.submit = (config) => {
 	    if (window.NanoPay.config.contact && !window.NanoPay.config.contact_email) return alert('Email Address Required.')
 	    if (window.NanoPay.config.shipping && !window.NanoPay.config.mailing_address) return alert('Shipping Address Required.')
     	window.open(`nano:${window.NanoPay.checkout.address}?amount=${window.NanoPay.checkout.amount}`, '_self')
-    	// window.open(`nano:${window.NanoPay.checkout.address}?amount=${window.NanoPay.checkout.amount}`, '_blank')
     }
 
     window.NanoPay.open = async (config) => {
@@ -105,6 +186,7 @@
 
     	if (!window.NanoPay.config && config) window.NanoPay.config = config
 
+    	var desktop_width = 960
     	var background = config.background || (window.NanoPay.dark_mode ? '#353535' : 'rgb(247, 247, 247)')
     	var backdrop_background = config.backdrop || (window.NanoPay.dark_mode ? '#3f3f3fe0' : 'rgb(142 142 142 / 93%)')
     	var text_color = config.text || (window.NanoPay.dark_mode ? '#FFF' : '#000')
@@ -178,7 +260,7 @@
     	}
 
     	// looks better
-    	if (!config.position && window.innerWidth > 1024) position = 'top'
+    	if (!config.position && window.innerWidth > desktop_width) position = 'top'
 
 		// Example usage
 		var cssContent = `
@@ -314,7 +396,7 @@
 	    }, 50)
 
 	    setTimeout(() => {
-			if (window.innerWidth > 1024 || qrcode) {
+			if (window.innerWidth > desktop_width || qrcode) {
 				window.NanoPay.qr_interval = setInterval(async () => {
 				    if (window.NanoPay.config.shipping && !window.NanoPay.config.mailing_address) return
 				    if (window.NanoPay.config.contact && !window.NanoPay.config.contact_email) return
@@ -340,7 +422,7 @@
 		  })
 		}
 
-		var delay = window.innerWidth < 1020 ? 1000 : 5000
+		var delay = 5000
 
 	    window.NanoPay.interval = setInterval(async () => {
 	    	if (!window.NanoPay.checkout || !window.NanoPay.config || window.NanoPay.config.debug) return
@@ -355,16 +437,16 @@
 		    		source: window.location.origin,
 		    		shipping: window.NanoPay.config.mailing_address,
 		    		email: window.NanoPay.config.contact_email,
-		    	}))
+		    	}, { headers: { 'nano-app': `fwd/nano-pay:${version}` } } ))
 		    	checking = false
 		    	if (block && block.block) {
 			    	var success_el = document.getElementById('nano-pay-button-image') 
 			    	var success_text = document.getElementById('nano-pay-button-text')
+			    	success_text.style.display = 'none'
 			    	success_el.style.maxWidth = '60px'
 			    	success_el.src = 'https://pay.nano.to/img/success.gif'
 			    	// success_el.style.filter = 'hue-rotate(40deg)' // green
 			    	success_el.style.filter = 'hue-rotate(115deg)' // blue
-			    	success_text.style.display = 'none'
 		    		if (config.success) {
 				    	setTimeout(async () => {
 				    		var response = {
