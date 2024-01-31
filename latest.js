@@ -307,12 +307,12 @@
 
 	    setTimeout(() => {
 			if (window.innerWidth > 1024 || qrcode) {
-				var qr_interval = setInterval(async () => {
+				window.NanoPay.qr_interval = setInterval(async () => {
 				    if (window.NanoPay.config.shipping && !window.NanoPay.config.mailing_address) return
 				    if (window.NanoPay.config.contact && !window.NanoPay.config.contact_email) return
 					document.getElementById('nano-pay-qrcode').style.display = "flex"
 					document.getElementById('nano-pay-qrcode-image').src = window.NanoPay.checkout.qrcode
-				    clearInterval(innerWidth)
+				    clearInterval(window.NanoPay.qr_interval)
 				}, 1000)
 			}
 	    }, 200)
@@ -352,7 +352,7 @@
 		    	if (block && block.block) {
 			    	var success_el = document.getElementById('nano-pay-button-image') 
 			    	var success_text = document.getElementById('nano-pay-button-text')
-			    	success_el.style.maxWidth = '65px'
+			    	success_el.style.maxWidth = '60px'
 			    	success_el.src = 'https://pay.nano.to/img/success.gif'
 			    	// success_el.style.filter = 'hue-rotate(40deg)' // green
 			    	success_el.style.filter = 'hue-rotate(115deg)' // blue
@@ -360,12 +360,14 @@
 		    		if (config.success) {
 				    	setTimeout(async () => {
 				    		var response = {
-				    			success: block.success,
 				    			hash: block.block,
 				    			nanolooker: block.redirect,
 				    			shipping: window.NanoPay.config.mailing_address,
 				    			email: window.NanoPay.config.contact_email,
-				    			checkout: block.json
+				    			checkout: block.json,
+				    			username: block.username,
+				    			address: block.address,
+				    			height: block.height,
 				    		}
 			    			if ( config.success.constructor.name === 'AsyncFunction' ) await config.success(response)
 			    			if ( config.success.constructor.name !== 'AsyncFunction' ) config.success(response)
@@ -375,9 +377,13 @@
 		    			window.NanoPay.close()
 		    		}, 2000)
 		    		clearInterval(window.NanoPay.interval)
+		    		clearInterval(window.NanoPay.qr_interval)
 		    		return
 		    	}
-	    	} else clearInterval(window.NanoPay.interval)
+	    	} else {
+	    		clearInterval(window.NanoPay.interval)
+	    		clearInterval(window.NanoPay.qr_interval)
+	    	}
 	    }, delay)
 
     }
