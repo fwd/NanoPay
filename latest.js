@@ -361,7 +361,7 @@
 						<div style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}; text-align: right">${window.NanoPay.checkout.subtotal} ${symbol}</div>   
 						<div style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}; text-align: right">${window.NanoPay.checkout.shipping} ${symbol}</div>   
 						<br style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}; text-align: right"> 
-						<div>${window.NanoPay.checkout.amount_nano} ${symbol}</div>   
+						<div>${window.NanoPay.checkout.amount} ${symbol}</div>   
 					</div> 
 				</div>
 
