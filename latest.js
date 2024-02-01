@@ -41,19 +41,6 @@
         return Math.floor(Math.random() * (max - min) + min)
     }
 
-    function qrcode(address, amount) {
-        return new Promise((resolve) => {
-          var options = {
-            text: `nano:${address}?amount=${amount}`,
-            width: 300,
-            height: 280,
-            logo: "https://pay.nano.to/img/xno.svg", // @todo "Failed to execute 'toDataURL' on 'HTMLCanvasElement'"
-          }
-          new QRCode(document.getElementById("qrcode"), options);
-          resolve()
-        })
-    }
-
 	function addStyleIfNotExists(cssContent) {
 	    var styles = document.head.getElementsByTagName('style');
 	    var styleExists = false;
@@ -177,7 +164,7 @@
     window.NanoPay.submit = (config) => {
 	    if (window.NanoPay.config.contact && !window.NanoPay.config.contact_email) return alert('Email Address Required.')
 	    if (window.NanoPay.config.shipping && !window.NanoPay.config.mailing_address) return alert('Shipping Address Required.')
-    	window.open(`nano:${window.NanoPay.checkout.address}?amount=${window.NanoPay.checkout.amount}`, '_self')
+    	window.open(`nano:${window.NanoPay.checkout.address}?amount=${window.NanoPay.checkout.resp.amount_raw}`, '_self')
     }
 
     window.NanoPay.open = async (config) => {
