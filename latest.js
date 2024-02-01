@@ -72,11 +72,12 @@
 	    }
 	}
 
-	window.NanoPay.unlock_request = async (title, element, amount, address, elementId) => {
+	window.NanoPay.unlock_request = async (title, element, amount, address, notify, elementId) => {
 		window.NanoPay.open({
 			title,
 			amount,
 			address,
+			notify,
 			success: (block) => window.NanoPay.unlock_content(element, elementId, block)
 		})
 	}
@@ -143,7 +144,7 @@
 
             window.NanoPay.locked[i] = item.innerHTML
 
-            var code = `<div onclick="window.NanoPay.unlock_request('${config.title || 'Unlock'}', '${config.element}', '${config.amount}', '${config.address}', '${articleId}')" class="nano-pay-unlock-button"><img style="" src="https://wall.nano.to/img/xno.svg" alt="">${ config.button || 'Unlock with Nano' }</div></div>`
+            var code = `<div onclick="window.NanoPay.unlock_request('${config.title || 'Unlock'}', '${config.element}', '${config.amount}', '${config.address}', '${config.notify}', '${articleId}')" class="nano-pay-unlock-button"><img style="" src="https://wall.nano.to/img/xno.svg" alt="">${ config.button || 'Unlock with Nano' }</div></div>`
 
             if (config.free) {
                 code += `<div class="nano-pay-free-read" onclick="window.NanoPay.unlock_content('${config.element}')"><hr>${ config.free_text ? config.free_text : 'Free Read' }</div>`
