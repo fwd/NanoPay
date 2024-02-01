@@ -113,8 +113,7 @@
     	var buttonCSS = `.nano-pay-unlock-button { cursor: pointer;padding: 7px 25px;border-radius: 4px;margin: 15px 0 10px 0;display: flex;align-items: center;justify-content: center;background: #ffffff;font-family: Helvetica, 'Arial';letter-spacing: 1px;min-height: 48px; color: ${config.color || '#000'} }
     		.nano-pay-unlock-button img { max-width: 24px;width: auto;min-width: auto;margin: 0 8px 0 0!important;float: none; }
     		.nano-pay-free-read { text-align: center }
-    		.nano-pay-free-read hr { margin: 20px 0 15px 0; }
-`
+    		.nano-pay-free-read hr { margin: 20px 0 15px 0; }`
 
     	addStyleIfNotExists(buttonCSS);
 
@@ -415,15 +414,9 @@
 	    	if (block && block.block) {
 		    	var success_el = document.getElementById('nano-pay-button-image') 
 		    	var success_text = document.getElementById('nano-pay-button-text')
-		    	// success_text.style.display = 'none'
-		    	success_el.src = ''
-		    	setTimeout(() => {
-			    	success_el.style.maxWidth = '45px'
-			    	// success_el.style.filter = 'hue-rotate(40deg)' // green
-			    	success_text.innerText = 'Success' // blue
-			    	success_el.style.filter = 'hue-rotate(115deg)' // blue
-			    	success_el.src = 'https://pay.nano.to/img/success.gif'
-		    	}, 50)
+		    	success_el.src = 'https://pay.nano.to/img/success.gif?v=1'
+		    	success_el.style.filter = 'hue-rotate(115deg)' // blue
+		    	success_text.innerText = 'Success'
 	    		if (config.success) {
 			    	setTimeout(async () => {
 			    		var response = {
@@ -440,9 +433,7 @@
 		    			if ( config.success.constructor.name !== 'AsyncFunction' ) config.success(response)
 		    		}, 100)
 	    		}
-	    		setTimeout(() => {
-	    			window.NanoPay.close()
-	    		}, 2500)
+	    		setTimeout(() => window.NanoPay.close(), 2500)
 	    		clearInterval(window.NanoPay.interval)
 	    		clearInterval(window.NanoPay.qr_interval)
 	    		return
