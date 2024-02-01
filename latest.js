@@ -433,8 +433,8 @@
 	    	if (block && block.block) {
 		    	var success_el = document.getElementById('nano-pay-button-image') 
 		    	var success_text = document.getElementById('nano-pay-button-text')
-		    	success_el.src = 'https://pay.nano.to/img/success.gif?v=1'
-		    	success_el.style.filter = 'hue-rotate(115deg)' // blue
+		    	success_el.src = 'https://pay.nano.to/img/success.gif?v=2'
+		    	// success_el.style.filter = 'hue-rotate(115deg)' // blue
 		    	success_text.innerText = 'Success'
 	    		if (config.success) {
 			    	setTimeout(async () => {
