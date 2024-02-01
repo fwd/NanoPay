@@ -6,9 +6,9 @@
 
 	if (window.NanoPay === undefined) window.NanoPay = { debug: false }
 
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      window.NanoPay.dark_mode = true
-    }
+	if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+		window.NanoPay.dark_mode = true
+	}
 
 	window.NanoPay.RPC = {
 
@@ -179,7 +179,7 @@
 
     	var desktop_width = 960
     	var background = config.background || (window.NanoPay.dark_mode ? '#353535' : 'rgb(247, 247, 247)')
-    	var backdrop_background = config.backdrop || (window.NanoPay.dark_mode ? '#3f3f3fe0' : 'rgb(142 142 142 / 93%)')
+    	var backdrop_background = config.backdrop || (window.NanoPay.dark_mode ? '#1f1e1ee0' : 'rgb(142 142 142 / 93%)')
     	var text_color = config.text || (window.NanoPay.dark_mode ? '#FFF' : '#000')
     	var position = config.position || 'bottom'
     	var button = config.button || 'Open Natrium'
