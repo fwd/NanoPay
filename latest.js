@@ -164,7 +164,7 @@
     window.NanoPay.submit = (config) => {
 	    if (window.NanoPay.config.contact && !window.NanoPay.config.contact_email) return alert('Email Address Required.')
 	    if (window.NanoPay.config.shipping && !window.NanoPay.config.mailing_address) return alert('Shipping Address Required.')
-    	window.open(`nano:${window.NanoPay.checkout.address}?amount=${window.NanoPay.checkout.resp.amount_raw}`, '_self')
+    	window.open(`nano:${window.NanoPay.checkout.address}?amount=${window.NanoPay.checkout.amount_raw}`, '_self')
     }
 
     window.NanoPay.open = async (config) => {
