@@ -234,7 +234,7 @@
 			}, { headers: { 'nano-app': `fwd/nano-pay:${version}` } }))
     	}
 
-		if (!window.NanoPay.checkout.amount) {
+		if (!window.NanoPay.checkout.amount_raw) {
 			return alert("NanoPay: " + window.NanoPay.checkout.message)
 		}
 
