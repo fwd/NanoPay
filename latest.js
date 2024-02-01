@@ -206,6 +206,8 @@
     		cake: { image: 'https://pay.nano.to/img/cake.png', name: 'Cake Wallet' },
     	}
 
+    	if (!wallets[wallet])  return alert("NanoPay: Invalid wallet option. Supported: natrium, nault, nautilus, cake.")
+
     	if (config.contact === "false") config.contact = false
 
     	if (checkout) {
@@ -262,7 +264,7 @@
     		if (!config.wallet) wallet = 'nault'
     	}
 
-    	button = button + ' ' + wallets[wallet].name
+    	if (!config.button) button = button + ' ' + wallets[wallet].name
 
 		var cssContent = `
 		    #nano-pay { font-family: 'Arial'; position: fixed;width: 100%;z-index: 9999;left: 0;top: 0;right: 0;bottom: 0;display: flex;align-items: center;justify-content: center;flex-direction: column;font-size: 15px; }
