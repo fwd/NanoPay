@@ -77,11 +77,11 @@
 			title,
 			amount,
 			address,
-			success: () => window.NanoPay.unlock_content(element, elementId)
+			success: (block) => window.NanoPay.unlock_content(element, elementId, block)
 		})
 	}
 
-	window.NanoPay.unlock_content = async (element, elementId) => {
+	window.NanoPay.unlock_content = async (element, elementId, block) => {
 
 		if (!element) return
 		
@@ -101,6 +101,8 @@
 
     	if (elementId) localStorage.setItem(elementId, true)
 
+    	if (window.NanoPay.wall_success) window.NanoPay.wall_success(block, element, elementId)
+
 	}
 
 	window.NanoPay.wall = async (config) => {
@@ -117,6 +119,7 @@
         
         var all = document.querySelectorAll(config.element);
 
+    	if (config.success) window.NanoPay.wall_success = config.success
     	if (!window.NanoPay.locked) window.NanoPay.locked = {}
 
     	var buttonCSS = `.nano-pay-unlock-button { cursor: pointer;padding: 7px 25px;border-radius: 4px;margin: 15px 0 10px 0;display: flex;align-items: center;justify-content: center;background: #ffffff;font-family: Helvetica, 'Arial';letter-spacing: 1px;min-height: 48px; color: ${config.color || '#000'} }
