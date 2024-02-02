@@ -123,7 +123,7 @@
 
             var item = all[i]
 
-            var articleId = window.location.pathname + '-' + item.tagName + '-' + i
+            var articleId = config.seriesId || window.location.pathname + '-' + item.tagName + '-' + i
 
         	if (localStorage.getItem(articleId)) {
         		item.style.display = config.display || 'block'
