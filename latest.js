@@ -104,7 +104,7 @@
 	        	if ( locked[i] ) locked[i].remove()
 	        }
 
-		}, 2000)
+		}, 1900)
 
     	if (elementId) localStorage.setItem(elementId, true)
 
