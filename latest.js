@@ -146,6 +146,7 @@
 
         	if (localStorage.getItem(articleId)) {
         		item.style.display = config.display || 'block'
+        		if (wall_success) wall_success()
         		return
         	}
 
