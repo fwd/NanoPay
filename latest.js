@@ -321,7 +321,7 @@
 			#nano-pay-button span {  margin-top: 10px; display: block; opacity: 0.7; font-size: 85%;  }
 
 			#nano-pay-qrcode { display: flex;width: 100%;justify-content: center;border-bottom: 1px solid #0000000f;padding-bottom: 20px; }
-			#nano-pay-qrcode-image { max-width: 120px; margin-top: 20px;border-bottom: 1px solid #0000000f }
+			#nano-pay-qrcode-image {max-width: 140px; margin-top: 20px; border-bottom: 1px solid #0000000f; background: #3bb4ff; padding: 5px; border-radius: 5px;}
 
 			${custom_css}
 
