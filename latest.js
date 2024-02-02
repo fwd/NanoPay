@@ -104,12 +104,12 @@
 	        for (var i = 0, max = locked.length; i < max; i++) {
 	        	if ( locked[i] ) locked[i].remove()
 	        }
+    		
+    		if (elementId) localStorage.setItem(elementId, true)
+    		
+    		if (wall_success) wall_success(block, element, elementId)
 
 		}, 1900)
-
-    	if (elementId) localStorage.setItem(elementId, true)
-
-    	if (wall_success) wall_success(block, element, elementId)
 
 	}
 
