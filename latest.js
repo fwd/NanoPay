@@ -5,6 +5,8 @@
 ;(async () => {
 
 	const version = '1.0.1'
+	let payment_success = false
+	let locked_content = {}
 
 	if (window.NanoPay === undefined) window.NanoPay = { debug: false }
 
@@ -74,20 +76,25 @@
 	window.NanoPay.unlock_content = async (element, elementId, block) => {
 
 		if (!element) return
+		if (!payment_success) return
 		
-		var all = document.querySelectorAll(element);
+		setTimeout(() => {
 
-        for (var i=0, max=all.length; i < max; i++) {
-            all[i].innerHTML = window.NanoPay.locked[i];
-            all[i].style.position = null; 
-            all[i].classList.add("unlocked");
-        }
+			var all = document.querySelectorAll(element);
 
-        var locked = document.querySelectorAll('.nano-locked');
+	        for (var i=0, max=all.length; i < max; i++) {
+	            all[i].innerHTML = locked_content[i];
+	            all[i].style.position = null; 
+	            all[i].classList.add("unlocked");
+	        }
 
-        for (var i = 0, max = locked.length; i < max; i++) {
-        	if ( locked[i] ) locked[i].remove()
-        }
+	        var locked = document.querySelectorAll('.nano-locked');
+
+	        for (var i = 0, max = locked.length; i < max; i++) {
+	        	if ( locked[i] ) locked[i].remove()
+	        }
+
+		}, 2000)
 
     	if (elementId) localStorage.setItem(elementId, true)
 
@@ -110,7 +117,6 @@
         var all = document.querySelectorAll(config.element);
 
     	if (config.success) window.NanoPay.wall_success = config.success
-    	if (!window.NanoPay.locked) window.NanoPay.locked = {}
 
     	var buttonCSS = `.nano-pay-unlock-button { cursor: pointer;padding: 7px 25px;border-radius: 4px;margin: 15px 0 10px 0;display: flex;align-items: center;justify-content: center;background: #ffffff;font-family: Helvetica, 'Arial';letter-spacing: 1px;min-height: 48px; color: ${config.color || '#000'} }
     		.nano-pay-unlock-button img { max-width: 24px;width: auto;min-width: auto;margin: 0 8px 0 0!important;float: none; }
@@ -130,11 +136,12 @@
         		return
         	}
 
-            window.NanoPay.locked[i] = item.innerHTML
+            locked_content[i] = item.innerHTML
 
             var code = `<div onclick="window.NanoPay.unlock_request('${config.title || 'Unlock'}', '${config.element}', '${config.amount}', '${config.address}', '${config.notify}', '${articleId}')" class="nano-pay-unlock-button"><img style="" src="https://wall.nano.to/img/xno.svg" alt="">${ config.button || 'Unlock with Nano' }</div></div>`
 
             if (config.free) {
+            	payment_success = true
                 code += `<div class="nano-pay-free-read" onclick="window.NanoPay.unlock_content('${config.element}')"><hr>${ config.free_text ? config.free_text : 'Free Read' }</div>`
             } 
 
@@ -436,7 +443,6 @@
 		    	var success_el = document.getElementById('nano-pay-button-image') 
 		    	var success_text = document.getElementById('nano-pay-button-text')
 		    	success_el.src = 'https://pay.nano.to/img/success.gif?v=3'
-		    	// success_el.style.filter = 'hue-rotate(115deg)' // blue
 		    	success_text.innerText = 'Success'
 	    		if (config.success) {
 			    	setTimeout(async () => {
@@ -450,11 +456,12 @@
 			    			address: block.address,
 			    			height: block.height,
 			    		}
+	    				payment_success = true
 		    			if ( config.success.constructor.name === 'AsyncFunction' ) await config.success(response)
 		    			if ( config.success.constructor.name !== 'AsyncFunction' ) config.success(response)
 		    		}, 100)
 	    		}
-	    		setTimeout(() => window.NanoPay.close(), 2500)
+	    		setTimeout(() => window.NanoPay.close(), 2000)
 	    		clearInterval(window.NanoPay.interval)
 	    		clearInterval(window.NanoPay.qr_interval)
 	    		return
