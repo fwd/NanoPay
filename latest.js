@@ -273,12 +273,12 @@
 		}
 
     	var strings = {
+    		line_items: config.strings && config.strings.line_items ? config.strings.line_items : (config.line_items && config.line_items.length > 1 ? 'Items' : 'Item'),
     		email: config.strings && config.strings.email ? config.strings.email : 'Email',
     		shipping: config.strings && config.strings.shipping ? config.strings.shipping : 'Shipping',
     		tax: config.strings && config.strings.tax ? config.strings.tax : 'Sales Tax',
     		subtotal: config.strings && config.strings.subtotal ? config.strings.subtotal : 'Subtotal',
     		button: config.strings && config.strings.button ? config.strings.button : 'Pay with Nano',
-    		line_items: config.strings && config.strings.line_items ? config.strings.line_items : (config.line_items && config.line_items.length > 1 ? 'Items' : 'Item'),
     	}
 
     	// looks better
@@ -304,21 +304,22 @@
 
 			#nano-pay-shipping { box-sizing: border-box; display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid #0000000f;position: relative;align-items: center; }
 			#nano-pay-shipping svg { max-width: 23px;fill: #1f9ce9;position: absolute;right: 5px;top: 0px;bottom: 0;margin: auto; }
-			#nano-pay-shipping-label {  text-transform: uppercase; letter-spacing: 0.7px; opacity: 0.7;  min-width: 90px; font-size: 90% }
+			#nano-pay-shipping-label {  text-transform: uppercase; letter-spacing: 0.7px; opacity: 0.5;  min-width: 90px; font-size: 90% }
 
 			#nano-pay-contact { box-sizing: border-box; display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid #0000000f;position: relative;align-items: center; }
-			#nano-pay-contact-label {  text-transform: uppercase; letter-spacing: 0.7px; opacity: 0.7; min-width: 90px;  font-size: 90%  }
+			#nano-pay-contact-label {  text-transform: uppercase; letter-spacing: 0.7px; opacity: 0.5; min-width: 90px;  font-size: 90%  }
 			#nano-pay-contact svg {  max-width: 23px;fill: #1f9ce9;position: absolute;right: 5px;top: 0px;bottom: 0;margin: auto; }
 
 			#nano-pay-details { box-sizing: border-box; display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid #0000000f;position: relative;align-items: start; }
 
 			#nano-pay-details-spacer { text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.7; min-width: 90px; }
 			#nano-pay-details-labels { text-transform: uppercase;opacity: 0.7;font-size: 90%;line-height: 17px;letter-spacing: 0.8px; }
+			#nano-pay-details-labels > div, #nano-pay-details-values > div { margin: 3px 0; }
 			#nano-pay-details-values { text-transform: uppercase;opacity: 1;font-size: 90%;line-height: 17px;letter-spacing: 0.8px; margin-left: auto; }
 
-			#nano-pay-button { display: flex; flex-direction: column; align-items: center; margin: 15px 0 18px 0; text-decoration: none; color: inherit; text-align: center;  }
+			#nano-pay-submit { cursor: pointer; display: flex; flex-direction: column; align-items: center; margin: 15px 0 18px 0; text-decoration: none; color: inherit; text-align: center;  }
 
-			#nano-pay-button span {  margin-top: 10px; display: block; opacity: 0.7; font-size: 85%;  }
+			#nano-pay-submit span {  margin-top: 10px; display: block; opacity: 0.7; font-size: 85%;  }
 
 			#nano-pay-qrcode { display: flex;width: 100%;justify-content: center;border-bottom: 1px solid #0000000f;padding-bottom: 20px; }
 			#nano-pay-qrcode-image {max-width: 140px; margin-top: 20px; border-bottom: 1px solid #0000000f; background: #FFF; padding: 5px; border-radius: 5px;}
@@ -404,9 +405,9 @@
 					<img id="nano-pay-qrcode-image"/>
 				</div>
 
-			    <a id="nano-pay-button" onclick="window.NanoPay.submit()"> 
-			    	<img id="nano-pay-button-image" src="${wallets[wallet].image}" style="max-width: 45px;"> 
-			    	<span id="nano-pay-button-text">${button}</span> 
+			    <a id="nano-pay-submit" onclick="window.NanoPay.submit()"> 
+			    	<img id="nano-pay-submit-image" src="${wallets[wallet].image}" style="max-width: 45px;"> 
+			    	<span id="nano-pay-submit-text">${button}</span> 
 			    </a>
 
 		    </div>
@@ -451,8 +452,8 @@
 
 	    function do_success(block) {
 	    	if (block && block.block) {
-		    	var success_el = document.getElementById('nano-pay-button-image') 
-		    	var success_text = document.getElementById('nano-pay-button-text')
+		    	var success_el = document.getElementById('nano-pay-submit-image') 
+		    	var success_text = document.getElementById('nano-pay-submit-text')
 		    	success_el.src = 'https://pay.nano.to/img/success.gif?v=3'
 		    	success_text.innerText = 'Success'
 	    		if (config.success) {
