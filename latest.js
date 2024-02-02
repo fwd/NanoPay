@@ -1,12 +1,15 @@
-// NanoPay 1.0.1
+// NanoPay 1.0.2
 // https://github.com/fwd/nano-pay
-// Released under MIT
 // support@nano.to
+// Released under MIT
 ;(async () => {
 
-	const version = '1.0.1'
+	const version = '1.0.2'
+	let original_config = false
 	let payment_success = false
 	let locked_content = {}
+	let check_interval = null
+	let rpc_checkout = {}
 
 	if (window.NanoPay === undefined) window.NanoPay = { debug: false }
 
@@ -14,7 +17,7 @@
 		window.NanoPay.dark_mode = true
 	}
 
-	window.NanoPay.RPC = {
+	let RPC = {
 
 		get(endpoint) {
 			return new Promise((resolve) => {
@@ -64,6 +67,13 @@
 	}
 
 	window.NanoPay.unlock_request = async (title, element, amount, address, notify, elementId) => {
+		if (!original_config) return
+		if (original_config.seriesId && original_config.seriesId !== elementId) return
+		if (original_config.notify && original_config.notify !== notify) return
+		if (original_config.element !== element) return
+		if (Number(original_config.amount) !== Number(amount)) return
+		if (original_config.address !== address) return
+		window.NanoPay.close()
 		window.NanoPay.open({
 			title,
 			amount,
@@ -118,6 +128,8 @@
 
     	if (config.success) window.NanoPay.wall_success = config.success
 
+    	original_config = config
+
     	var buttonCSS = `.nano-pay-unlock-button { cursor: pointer;padding: 7px 25px;border-radius: 4px;margin: 15px 0 10px 0;display: flex;align-items: center;justify-content: center;background: #ffffff;font-family: Helvetica, 'Arial';letter-spacing: 1px;min-height: 48px; color: ${config.color || '#000'} }
     		.nano-pay-unlock-button img { max-width: 24px;width: auto;min-width: auto;margin: 0 8px 0 0!important;float: none; }
     		.nano-pay-free-read { text-align: center }
@@ -155,14 +167,16 @@
 
     window.NanoPay.close = (element) => {
     	document.body.style.overflow = 'auto';
-        document.getElementById('nano-pay').remove()
-        clearInterval(window.NanoPay.interval)
+        if (document.getElementById('nano-pay')) document.getElementById('nano-pay').remove()
+        clearInterval(check_interval)
+		payment_success = false
+		rpc_checkout = null
     }
 
     window.NanoPay.cancel = async (element) => {
     	document.body.style.overflow = 'auto';
         document.getElementById('nano-pay').remove()
-        clearInterval(window.NanoPay.interval)
+        clearInterval(check_interval)
         if (window.NanoPay.config && window.NanoPay.config.cancel) {
 	        if ( window.NanoPay.config.cancel.constructor.name === 'AsyncFunction' ) await window.NanoPay.config.cancel()
 			if ( window.NanoPay.config.cancel.constructor.name !== 'AsyncFunction' ) window.NanoPay.config.cancel()
@@ -172,7 +186,7 @@
     window.NanoPay.submit = (config) => {
 	    if (window.NanoPay.config.contact && !window.NanoPay.config.contact_email) return alert('Email Address Required.')
 	    if (window.NanoPay.config.shipping && !window.NanoPay.config.mailing_address) return alert('Shipping Address Required.')
-    	window.open(`nano:${window.NanoPay.checkout.address}?amount=${window.NanoPay.checkout.amount_raw}`, '_self')
+    	window.open(`nano:${rpc_checkout.address}?amount=${rpc_checkout.amount_raw}`, '_self')
     }
 
     window.NanoPay.open = async (config) => {
@@ -221,14 +235,14 @@
     		
     		var checkout_url = checkout.replace('https://api.nano.to/checkout/', '')
     		
-    		window.NanoPay.checkout = (await window.NanoPay.RPC.get(`https://api.nano.to/checkout/${checkout_url}`, { headers: { 'nano-app': `fwd/nano-pay:${version}` } }))
+    		rpc_checkout = (await RPC.get(`https://api.nano.to/checkout/${checkout_url}`, { headers: { 'nano-app': `fwd/nano-pay:${version}` } }))
 
-    		window.NanoPay.config.title = window.NanoPay.checkout.title
-    		window.NanoPay.config.position = window.NanoPay.checkout.position
-    		window.NanoPay.config.symbol = window.NanoPay.checkout.symbol
-    		window.NanoPay.config.line_items = window.NanoPay.checkout.line_items
-    		window.NanoPay.config.shipping = window.NanoPay.checkout.shipping
-    		window.NanoPay.config.contact = window.NanoPay.checkout.contact
+    		window.NanoPay.config.title = rpc_checkout.title
+    		window.NanoPay.config.position = rpc_checkout.position
+    		window.NanoPay.config.symbol = rpc_checkout.symbol
+    		window.NanoPay.config.line_items = rpc_checkout.line_items
+    		window.NanoPay.config.shipping = rpc_checkout.shipping
+    		window.NanoPay.config.contact = rpc_checkout.contact
 
     	} else {
 
@@ -239,7 +253,7 @@
 	    		if (!Array.isArray(line_items) || line_items && !line_items.find(a => a && a.price)) return alert("NanoPay: Invalid line_items. Example: [ { name: 'T-Shirt', price: 5 } ] ")
 	    	}
 
-			window.NanoPay.checkout = (await window.NanoPay.RPC.post(node, { 
+			rpc_checkout = (await RPC.post(node, { 
 				action: "checkout", 
 				line_items, 
 				shipping: Number(config.shipping) ? config.shipping : 0, 
@@ -252,8 +266,8 @@
 			}, { headers: { 'nano-app': `fwd/nano-pay:${version}` } }))
     	}
 
-		if (!window.NanoPay.checkout.amount_raw) {
-			return alert("NanoPay: " + window.NanoPay.checkout.message)
+		if (!rpc_checkout.amount_raw) {
+			return alert("NanoPay: " + rpc_checkout.message)
 		}
 
     	var strings = {
@@ -377,10 +391,10 @@
 						<div>${description}</div>  
 					</div>  
 					<div id="nano-pay-details-values">
-						<div style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}; text-align: right">${window.NanoPay.checkout.subtotal} ${symbol}</div>   
-						<div style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}; text-align: right">${window.NanoPay.checkout.shipping} ${symbol}</div>   
+						<div style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}; text-align: right">${rpc_checkout.subtotal} ${symbol}</div>   
+						<div style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}; text-align: right">${rpc_checkout.shipping} ${symbol}</div>   
 						<br style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}; text-align: right"> 
-						<div>${window.NanoPay.checkout.amount} ${symbol}</div>   
+						<div>${rpc_checkout.amount} ${symbol}</div>   
 					</div> 
 				</div>
 
@@ -406,15 +420,13 @@
 	    }, 50)
 
 		if (window.innerWidth > desktop_width || qrcode) {
-		    // setTimeout(() => {
-			window.NanoPay.qr_interval = setInterval(async () => {
+			var qr_interval = setInterval(async () => {
 			    if (window.NanoPay.config.shipping && !window.NanoPay.config.mailing_address) return
 			    if (window.NanoPay.config.contact && !window.NanoPay.config.contact_email) return
 				document.getElementById('nano-pay-qrcode').style.display = "flex"
-				document.getElementById('nano-pay-qrcode-image').src = window.NanoPay.checkout.qrcode
-			    clearInterval(window.NanoPay.qr_interval)
+				document.getElementById('nano-pay-qrcode-image').src = rpc_checkout.qrcode
+			    clearInterval(qr_interval)
 			}, 100)
-		    // }, 100)
 		}
 
 	    var checks = 0
@@ -426,10 +438,7 @@
 		  document.addEventListener('visibilitychange', function() {
 		    if (document.visibilityState === 'visible') {
 		      viewing_page = true
-		      // alert('back!')
-		      // setTimeout(() => {
 		      check_payment()
-		      // }, 500)
 		    } else {
 		      viewing_page = false
 		    }
@@ -462,20 +471,19 @@
 		    		}, 100)
 	    		}
 	    		setTimeout(() => window.NanoPay.close(), 2000)
-	    		clearInterval(window.NanoPay.interval)
-	    		clearInterval(window.NanoPay.qr_interval)
+	    		clearInterval(check_interval)
 	    		return
 	    	}
 	    }
 
 	    async function check_payment() {
-	    	if (!window.NanoPay.checkout || !window.NanoPay.config || window.NanoPay.config.debug) return
+	    	if (!rpc_checkout || !window.NanoPay.config || window.NanoPay.config.debug) return
 		    if (window.NanoPay.config.shipping && !window.NanoPay.config.mailing_address) return
 		    if (window.NanoPay.config.contact && !window.NanoPay.config.contact_email) return
 	    	if (!viewing_page) return
 	    	if (checking) return
 	    	checking = true
-			var block = (await window.NanoPay.RPC.post(window.NanoPay.checkout.check, { 
+			var block = (await RPC.post(rpc_checkout.check, { 
 	    		note: window.NanoPay.config.note || window.NanoPay.config.title,
 	    		source: window.location.origin,
 	    		shipping: window.NanoPay.config.mailing_address,
@@ -485,12 +493,11 @@
 	    	do_success(block)
 		}
 
-	    window.NanoPay.interval = setInterval(async () => {
+	    check_interval = setInterval(async () => {
 	    	if (checks < 60) {
 		    	await check_payment()
 	    	} else {
-	    		clearInterval(window.NanoPay.interval)
-	    		clearInterval(window.NanoPay.qr_interval)
+	    		clearInterval(check_interval)
 	    	}
 	    }, delay)
 
