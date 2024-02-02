@@ -10,6 +10,7 @@
 	let locked_content = {}
 	let check_interval = null
 	let rpc_checkout = {}
+	let wall_success = null
 
 	if (window.NanoPay === undefined) window.NanoPay = { debug: false }
 
@@ -108,7 +109,7 @@
 
     	if (elementId) localStorage.setItem(elementId, true)
 
-    	if (window.NanoPay.wall_success) window.NanoPay.wall_success(block, element, elementId)
+    	if (wall_success) wall_success(block, element, elementId)
 
 	}
 
@@ -126,7 +127,7 @@
         
         var all = document.querySelectorAll(config.element);
 
-    	if (config.success) window.NanoPay.wall_success = config.success
+    	if (config.success) wall_success = config.success
 
     	original_config = config
 
