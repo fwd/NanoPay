@@ -84,7 +84,16 @@
 		})
 	}
 
-	window.NanoPay.unlock_content = async (element, elementId, block) => {
+	function getStringBetween(string, start, end) {
+	    var startIndex = string.indexOf(start);
+	    if (startIndex === -1) return ''; // If start string not found, return empty string
+	    startIndex += start.length;
+	    var endIndex = string.indexOf(end, startIndex);
+	    if (endIndex === -1) return ''; // If end string not found, return empty string
+	    return string.substring(startIndex, endIndex);
+	}
+
+	window.NanoPay.unlock_content = async (element, elementId, block, delay) => {
 
 		if (!element) return
 		if (!payment_success) return
@@ -95,12 +104,15 @@
 
 	        for (var i=0, max=all.length; i < max; i++) {
 	        	if (original_config.decode) {
-	        		all[i].innerHTML = btoa(locked_content[i].replace('A', ''))
+	        		var body = getStringBetween(locked_content[i], 'PREMIUM-ARTICLE-A', '+HRT')
+	        		if (body) all[i].innerHTML = locked_content[i].replace('PREMIUM-ARTICLE-A' + body + '+HRT', atob(body))
+	        		else all[i].innerHTML = locked_content[i]
 	        	} else {
 	            	all[i].innerHTML = locked_content[i]
 	        	}
 	            all[i].style.position = null
 	            all[i].classList.add("unlocked")
+	            all[i].style.display = original_config.display || 'block'
 	        }
 
 	        var locked = document.querySelectorAll('.nano-locked');
@@ -113,7 +125,7 @@
     		
     		if (wall_success) wall_success(block, element, elementId)
 
-		}, 1900)
+		}, delay === false ? 0 : 1900)
 
 	}
 
@@ -148,13 +160,13 @@
 
             var articleId = config.seriesId || window.location.pathname + '-' + item.tagName + '-' + i
 
+            locked_content[i] = item.innerHTML
+        	
         	if (localStorage.getItem(articleId)) {
-        		item.style.display = config.display || 'block'
-        		if (wall_success) wall_success()
+        		payment_success = true
+        		window.NanoPay.unlock_content(config.element, null, null, false)
         		return
         	}
-
-            locked_content[i] = item.innerHTML
 
             var code = `<div onclick="window.NanoPay.unlock_request('${config.title || 'Unlock'}', '${config.element}', '${config.amount}', '${config.address}', '${config.notify}', '${articleId}')" class="nano-pay-unlock-button"><img style="" src="https://wall.nano.to/img/xno.svg" alt="">${ config.button || 'Unlock with Nano' }</div></div>`
 
