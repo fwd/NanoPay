@@ -93,10 +93,14 @@
 
 			var all = document.querySelectorAll(element);
 
-	        for (var i=0, max=all.length; i < max; i++) {
-	            all[i].innerHTML = locked_content[i];
-	            all[i].style.position = null; 
-	            all[i].classList.add("unlocked");
+	        for (var i=0, max=all.length; i < max; i++) {\
+	        	if (original_config.decode) {
+	        		all[i].innerHTML = btoa(locked_content[i].replace('A', ''))
+	        	} else {
+	            	all[i].innerHTML = locked_content[i]
+	        	}
+	            all[i].style.position = null
+	            all[i].classList.add("unlocked")
 	        }
 
 	        var locked = document.querySelectorAll('.nano-locked');
