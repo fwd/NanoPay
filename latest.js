@@ -93,7 +93,7 @@
 
 			var all = document.querySelectorAll(element);
 
-	        for (var i=0, max=all.length; i < max; i++) {\
+	        for (var i=0, max=all.length; i < max; i++) {
 	        	if (original_config.decode) {
 	        		all[i].innerHTML = btoa(locked_content[i].replace('A', ''))
 	        	} else {
