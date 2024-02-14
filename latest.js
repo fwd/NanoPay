@@ -1,4 +1,4 @@
-// NanoPay 1.0.7
+// NanoPay 1.0.72
 // https://github.com/fwd/nano-pay
 // support@nano.to
 // Released under MIT
@@ -12,7 +12,7 @@
 	let wall_success = null
 	var desktop_width = 960
 
-	if (window.NanoPay === undefined) window.NanoPay = { version: '1.0.7' }
+	if (window.NanoPay === undefined) window.NanoPay = { version: '1.0.72' }
 
 	if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
 		window.NanoPay.dark_mode = true
@@ -421,9 +421,9 @@
 
 			#nano-pay-copy-address { display: flex }
 
-			.nano-pay-copy-clipboard { background: ${ window.NanoPay.dark_mode ? '#484848' : '#e4e4e4' }; display: flex; min-width: 150px; align-items: center; justify-content: center; padding: 5px; border-radius: 5px; margin: 15px 5px 0 10px; cursor: pointer }
+			.nano-pay-copy-clipboard { background: ${ window.NanoPay.dark_mode ? '#484848' : '#e4e4e4' }; display: flex; min-width: 160px; align-items: center; justify-content: center; padding: 5px; border-radius: 5px; margin: 15px 5px 0 10px; cursor: pointer }
 
-			.nano-pay-copy-clipboard svg { max-width: 15px; margin-left: 10px; }
+			.nano-pay-copy-clipboard svg { max-width: 15px; margin-left: 10px; ${ window.NanoPay.dark_mode ? 'filter: invert(1)' : '' } }
 
 			${custom_css}
 
