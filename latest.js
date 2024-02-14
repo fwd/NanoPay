@@ -1,4 +1,4 @@
-// NanoPay 1.0.5
+// NanoPay 1.0.56
 // https://github.com/fwd/nano-pay
 // support@nano.to
 // Released under MIT
@@ -10,8 +10,9 @@
 	window.check_interval = null
 	let rpc_checkout = {}
 	let wall_success = null
+	var desktop_width = 1024
 
-	if (window.NanoPay === undefined) window.NanoPay = { version: '1.0.5' }
+	if (window.NanoPay === undefined) window.NanoPay = { version: '1.0.56' }
 
 	if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
 		window.NanoPay.dark_mode = true
@@ -89,13 +90,9 @@
 	}
 
 	window.NanoPay.onchange_custom_input_one = (e) => {
-		// rpc_checkout.amount = e.value.split(',')[0]
-		// rpc_checkout.amount_raw = e.value.split(',')[1]
 		window.NanoPay.config.provided_alias = e.value
-		if (e.value) document.getElementById('nano-pay-qrcode').style.display = 'flex'
+		if (e.value && window.innerWidth > desktop_width) document.getElementById('nano-pay-qrcode').style.display = 'flex'
 		if (!e.value) document.getElementById('nano-pay-qrcode').style.display = 'none'
-		// console.log()
-		
 	}
 
 	window.NanoPay.unlock_request = async (title, element, amount, address, notify, elementId) => {
@@ -250,7 +247,6 @@
 
     	if (!window.NanoPay.config && config) window.NanoPay.config = config
 
-    	var desktop_width = 960
     	var background = config.background || (window.NanoPay.dark_mode ? '#353535' : 'rgb(247, 247, 247)')
     	var backdrop_background = config.backdrop || (window.NanoPay.dark_mode ? '#1f1e1ee0' : 'rgb(142 142 142 / 93%)')
     	var text_color = config.text || (window.NanoPay.dark_mode ? '#FFF' : '#000')
