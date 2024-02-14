@@ -295,6 +295,7 @@
     		tax: config.strings && config.strings.tax ? config.strings.tax : 'Sales Tax',
     		subtotal: config.strings && config.strings.subtotal ? config.strings.subtotal : 'Subtotal',
     		button: config.strings && config.strings.button ? config.strings.button : 'Pay with Nano',
+    		title: config.strings && config.strings.title ? config.strings.title : 'Pay',
     	}
 
     	// looks better
@@ -378,7 +379,7 @@
 				<div id="nano-pay-header-container"> 
 					<div id="nano-pay-header">
 						<img src="https://pay.nano.to/img/xno.svg"> 
-						<span>Pay</span> 
+						<span>${strings.title}</span> 
 					</div>
 					
 					<div id="nano-pay-cancel" onclick="window.NanoPay.cancel(); return">Cancel</div> 
