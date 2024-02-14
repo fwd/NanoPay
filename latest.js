@@ -1,4 +1,4 @@
-// NanoPay 1.0.72
+// NanoPay 1.0.73
 // https://github.com/fwd/nano-pay
 // support@nano.to
 // Released under MIT
@@ -12,7 +12,7 @@
 	let wall_success = null
 	var desktop_width = 960
 
-	if (window.NanoPay === undefined) window.NanoPay = { version: '1.0.72' }
+	if (window.NanoPay === undefined) window.NanoPay = { version: '1.0.73' }
 
 	if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
 		window.NanoPay.dark_mode = true
@@ -303,6 +303,8 @@
 				    username: get_name,
 				    qrcode: true
 				}))
+
+				if (rpc_checkout.error) return alert("NanoPay: " + rpc_checkout.message || rpc_checkout.error)
 
     			var default_plan = 1
 
