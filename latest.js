@@ -1,10 +1,9 @@
-// NanoPay 1.0.4
+// NanoPay 1.0.5
 // https://github.com/fwd/nano-pay
 // support@nano.to
 // Released under MIT
 ;(async () => {
 
-	const version = '1.0.4'
 	let original_config = false
 	let payment_success = false
 	let locked_content = {}
@@ -12,7 +11,7 @@
 	let rpc_checkout = {}
 	let wall_success = null
 
-	if (window.NanoPay === undefined) window.NanoPay = { debug: false }
+	if (window.NanoPay === undefined) window.NanoPay = { version: '1.0.5' }
 
 	if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
 		window.NanoPay.dark_mode = true
@@ -286,7 +285,6 @@
 
     	if (config.contact === "false") config.contact = false
 
-
     	if (checkout) {
     		
     		var checkout_url = checkout.replace('https://api.nano.to/checkout/', '')
@@ -326,7 +324,13 @@
     				address: config.address
     			}))
 
+    			if (rpc_checkout.error) return alert("NanoPay: " + rpc_checkout.error)
+
     			window.NanoPay.config.require_alias = true
+
+    			if (!config.disclaimer) config.disclaimer = 'The address you pay with, will be associated with this alias. If already registered, alias will be updated.'
+
+    			if (!config.memo && !config.note) description = 'Register Alias'
 
     		} else {
 
@@ -591,20 +595,9 @@
 		    	success_text.innerText = 'Success'
 	    		if (config.success) {
 			    	setTimeout(async () => {
-			    		var response = {
-			    			hash: block.block,
-			    			nanolooker: block.redirect,
-			    			shipping: window.NanoPay.config.mailing_address,
-			    			email: window.NanoPay.config.contact_email,
-			    			checkout: block.json,
-			    			username: block.username,
-			    			address: block.address,
-			    			height: block.height,
-			    			alias: block.alias,
-			    		}
 	    				payment_success = true
-		    			if ( config.success.constructor.name === 'AsyncFunction' ) await config.success(response)
-		    			if ( config.success.constructor.name !== 'AsyncFunction' ) config.success(response)
+		    			if ( config.success.constructor.name === 'AsyncFunction' ) await config.success(block)
+		    			if ( config.success.constructor.name !== 'AsyncFunction' ) config.success(block)
 		    		}, 100)
 	    		}
 	    		setTimeout(() => window.NanoPay.close(), 2000)
