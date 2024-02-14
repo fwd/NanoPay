@@ -285,7 +285,7 @@
     		
     		var checkout_url = checkout.replace('https://api.nano.to/checkout/', '')
     		
-    		rpc_checkout = (await RPC.get(`https://api.nano.to/checkout/${checkout_url}`, { headers: { 'nano-app': `fwd/nano-pay:${version}` } }))
+    		rpc_checkout = (await RPC.get(`https://api.nano.to/checkout/${checkout_url}`, { headers: { 'nano-app': `fwd/nano-pay:${window.NanoPay.version}` } }))
 
     		window.NanoPay.config.title = rpc_checkout.title
     		window.NanoPay.config.position = rpc_checkout.position
@@ -348,7 +348,7 @@
 					random,
 					notify,
 					public_key
-				}, { headers: { 'nano-app': `fwd/nano-pay:${version}` } }))
+				}, { headers: { 'nano-app': `fwd/nano-pay:${window.NanoPay.version}` } }))
 
     		}
 
@@ -616,7 +616,7 @@
 	    		shipping: window.NanoPay.config.mailing_address,
 	    		email: window.NanoPay.config.contact_email,
 	    		alias: window.NanoPay.config.provided_alias,
-	    	}, { headers: { 'nano-app': `fwd/nano-pay:${version}` } } ))
+	    	}, { headers: { 'nano-app': `fwd/nano-pay:${window.NanoPay.version}` } } ))
 	    	checking = false
 	    	do_success(block)
 		}
