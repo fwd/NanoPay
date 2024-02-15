@@ -1,7 +1,7 @@
 // NanoPay 1.0.73
-// https://github.com/fwd/nano-pay
-// support@nano.to
-// Released under MIT
+// https://github.com/fwd/NanoPay
+// (c) Nano.to <support@nano.to>
+// Released under MIT License
 ;(async () => {
 
 	let original_config = false
@@ -45,10 +45,6 @@
 
 	}
 
-    function getRandomArbitrary(min, max) {
-        return Math.floor(Math.random() * (max - min) + min)
-    }
-
 	function addStyleIfNotExists(cssContent) {
 	    var styles = document.head.getElementsByTagName('style');
 	    var styleExists = false;
@@ -70,7 +66,6 @@
 	window.NanoPay.CopyToClipboard = function(text, el) {
 	    var self = this
 	    navigator.clipboard.writeText(text).then(function() {
-	        // nano.notify('Copied to clipboard.')
 			var span = el.getElementsByTagName("span")
 			var default_text = span[0].innerText
 			span[0].innerText = 'Copied!'
@@ -114,10 +109,10 @@
 
 	function getStringBetween(string, start, end) {
 	    var startIndex = string.indexOf(start);
-	    if (startIndex === -1) return ''; // If start string not found, return empty string
+	    if (startIndex === -1) return '';
 	    startIndex += start.length;
 	    var endIndex = string.indexOf(end, startIndex);
-	    if (endIndex === -1) return ''; // If end string not found, return empty string
+	    if (endIndex === -1) return '';
 	    return string.substring(startIndex, endIndex);
 	}
 
@@ -233,7 +228,6 @@
 	    if (window.NanoPay.config.require_alias && !window.NanoPay.config.provided_alias) return alert('Address alias required.')
 	    if (window.NanoPay.config.contact && !window.NanoPay.config.contact_email) return alert('Email address required.')
 	    if (window.NanoPay.config.shipping && !window.NanoPay.config.mailing_address) return alert('Shipping address required.')
-	    // console.log(`nano:${rpc_checkout.address}?amount=${rpc_checkout.amount_raw}`)
     	window.open(`nano:${rpc_checkout.address}?amount=${rpc_checkout.amount_raw}`, '_self')
     }
 
@@ -367,7 +361,6 @@
     		tax: config.strings && config.strings.tax ? config.strings.tax : 'Sales Tax',
     		subtotal: config.strings && config.strings.subtotal ? config.strings.subtotal : 'Subtotal',
     		button: config.strings && config.strings.button ? config.strings.button : 'Pay with Nano',
-    		// title: config.strings && config.strings.title ? config.strings.title : 'Pay',
     		duration: config.strings && config.strings.duration ? config.strings.duration : 'Duration',
     		alias: config.strings && config.strings.alias ? config.strings.alias : 'Your Alias',
     	}
