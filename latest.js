@@ -64,12 +64,13 @@
 	}
 
 	window.NanoPay.CopyToClipboard = function(text, el) {
-	    var self = this
 	    navigator.clipboard.writeText(text).then(function() {
 			var span = el.getElementsByTagName("span")
-			var default_text = span[0].innerText
-			span[0].innerText = 'Copied!'
-			setTimeout(() => span[0].innerText = default_text, 2000)
+			if (span) {
+				var default_text = span[0].innerText
+				span[0].innerText = 'Copied!'
+				setTimeout(() => span[0].innerText = default_text, 2000)
+			}
 	    }, function() {
 	        document.execCommand("copy");
 	    })
