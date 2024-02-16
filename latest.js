@@ -1,4 +1,4 @@
-// NanoPay 1.0.73
+// NanoPay 1.0.74
 // https://github.com/fwd/NanoPay
 // (c) Nano.to <support@nano.to>
 // Released under MIT License
@@ -7,12 +7,12 @@
 	let original_config = false
 	let payment_success = false
 	let locked_content = {}
-	window.check_interval = null
+	window.check_interval = false
 	let rpc_checkout = {}
 	let wall_success = null
 	var desktop_width = 960
 
-	if (window.NanoPay === undefined) window.NanoPay = { version: '1.0.73' }
+	if (window.NanoPay === undefined) window.NanoPay = { version: '1.0.74' }
 
 	if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
 		window.NanoPay.dark_mode = true
@@ -211,6 +211,7 @@
     	document.body.style.overflow = 'auto';
         if (document.getElementById('nano-pay')) document.getElementById('nano-pay').remove()
         clearInterval(window.check_interval)
+		window.check_interval = false
 		payment_success = false
 		rpc_checkout = null
     }
@@ -219,6 +220,7 @@
     	document.body.style.overflow = 'auto';
         document.getElementById('nano-pay').remove()
         clearInterval(window.check_interval)
+        window.check_interval = false
         if (window.NanoPay.config && window.NanoPay.config.cancel) {
 	        if ( window.NanoPay.config.cancel.constructor.name === 'AsyncFunction' ) await window.NanoPay.config.cancel()
 			if ( window.NanoPay.config.cancel.constructor.name !== 'AsyncFunction' ) window.NanoPay.config.cancel()
@@ -282,12 +284,11 @@
     		
     		rpc_checkout = (await RPC.get(`https://api.nano.to/checkout/${checkout_url}`, { headers: { 'nano-app': `fwd/nano-pay:${window.NanoPay.version}` } }))
 
-    		window.NanoPay.config.title = rpc_checkout.title
-    		window.NanoPay.config.position = rpc_checkout.position
-    		window.NanoPay.config.symbol = rpc_checkout.symbol
-    		window.NanoPay.config.line_items = rpc_checkout.line_items
-    		window.NanoPay.config.shipping = rpc_checkout.shipping
-    		window.NanoPay.config.contact = rpc_checkout.contact
+    		if (rpc_checkout.description) description = rpc_checkout.description
+    		if (rpc_checkout.symbol) window.NanoPay.config.symbol = rpc_checkout.symbol
+    		if (rpc_checkout.line_items) window.NanoPay.config.line_items = rpc_checkout.line_items
+    		if (rpc_checkout.shipping) window.NanoPay.config.shipping = rpc_checkout.shipping
+    		if (rpc_checkout.contact) window.NanoPay.config.contact = rpc_checkout.contact
 
     	} else {
 
@@ -570,7 +571,7 @@
 		  document.addEventListener('visibilitychange', function() {
 		    if (document.visibilityState === 'visible') {
 		      viewing_page = true
-		      check_payment()
+		      if (window.check_interval) check_payment()
 		    } else {
 		      viewing_page = false
 		    }
