@@ -1,4 +1,4 @@
-// NanoPay 1.0.76
+// NanoPay 1.0.77
 // https://github.com/fwd/NanoPay
 // (c) Nano.to <support@nano.to>
 // Released under MIT License
@@ -12,7 +12,7 @@
 	let wall_success = null
 	var desktop_width = 960
 
-	if (window.NanoPay === undefined) window.NanoPay = { version: '1.0.76' }
+	if (window.NanoPay === undefined) window.NanoPay = { version: '1.0.77' }
 
 	if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
 		window.NanoPay.dark_mode = true
@@ -62,7 +62,7 @@
 	}
 
 	window.NanoPay.CopyToClipboard = function(text, el) {
-	    navigator.clipboard.writeText(text).then(function() {
+	    navigator.clipboard.writeText(rpc_checkout[text]).then(function() {
 			var span = el.getElementsByTagName("span")
 			if (span) {
 				var default_text = span[0].innerText
@@ -80,6 +80,7 @@
 		rpc_checkout.amount = plan.value
 		rpc_checkout.amount_raw = plan.value_raw
 		document.getElementById('nano-pay-amount-value').innerText = `${rpc_checkout.amount} ${e.value.split(',')[1]}`
+		document.getElementById('nano-pay-copy-clipboard-amount').innerText = `${ String(rpc_checkout.amount).length > 7 ? String(rpc_checkout.amount).slice(0, 7) + '..' : String(rpc_checkout.amount) } ${e.value.split(',')[1]}`
 		document.getElementById('nano-pay-qrcode-image').src = plan.qrcode
 	}
 
@@ -524,12 +525,12 @@
 				<div id="nano-pay-qrcode" style="display: none;">
 					<img id="nano-pay-qrcode-image"/>
 					<div id="nano-pay-copy-address">
-						<div class="nano-pay-copy-clipboard" onclick="window.NanoPay.CopyToClipboard('${rpc_checkout.address}', this)">
+						<div class="nano-pay-copy-clipboard" onclick="window.NanoPay.CopyToClipboard('address', this)">
 							<span>${rpc_checkout.address.slice(0, config.vanity || 10)}..</span>
 							<svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M6 6V2c0-1.1.9-2 2-2h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-4v4a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V8c0-1.1.9-2 2-2h4zm2 0h4a2 2 0 0 1 2 2v4h4V2H8v4zM2 8v10h10V8H2z"/></svg>
 						</div>
-						<div class="nano-pay-copy-clipboard" onclick="window.NanoPay.CopyToClipboard('${rpc_checkout.amount}', this)">
-							<span>${String(rpc_checkout.amount).length > 7 ? String(rpc_checkout.amount).slice(0, 7) + '..' : String(rpc_checkout.amount)} ${symbol}</span>
+						<div class="nano-pay-copy-clipboard" onclick="window.NanoPay.CopyToClipboard('amount', this)">
+							<span id="nano-pay-copy-clipboard-amount">${String(rpc_checkout.amount).length > 7 ? String(rpc_checkout.amount).slice(0, 7) + '..' : String(rpc_checkout.amount)} ${symbol}</span>
 							<svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M6 6V2c0-1.1.9-2 2-2h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-4v4a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V8c0-1.1.9-2 2-2h4zm2 0h4a2 2 0 0 1 2 2v4h4V2H8v4zM2 8v10h10V8H2z"/></svg>
 						</div>
 					</div>
