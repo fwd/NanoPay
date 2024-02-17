@@ -1,4 +1,4 @@
-// NanoPay 1.0.75
+// NanoPay 1.0.76
 // https://github.com/fwd/NanoPay
 // (c) Nano.to <support@nano.to>
 // Released under MIT License
@@ -12,7 +12,7 @@
 	let wall_success = null
 	var desktop_width = 960
 
-	if (window.NanoPay === undefined) window.NanoPay = { version: '1.0.75' }
+	if (window.NanoPay === undefined) window.NanoPay = { version: '1.0.76' }
 
 	if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
 		window.NanoPay.dark_mode = true
@@ -291,7 +291,6 @@
 
     		if (rpc_checkout.description) description = rpc_checkout.description
     		if (rpc_checkout.symbol) window.NanoPay.config.symbol = rpc_checkout.symbol
-    		if (rpc_checkout.line_items) window.NanoPay.config.line_items = rpc_checkout.line_items
     		if (rpc_checkout.shipping) window.NanoPay.config.shipping = rpc_checkout.shipping
     		if (rpc_checkout.contact) window.NanoPay.config.contact = rpc_checkout.contact
 
@@ -487,7 +486,7 @@
 
 				<div style="display: ${config.line_items ? 'flex' : 'none'}" id="nano-pay-contact"> 
 					<div id="nano-pay-contact-label">${strings.line_items}</div> 
-					<div id="nano-pay-line-items" style="line-height: 1.3;}">${config.line_items ? config.line_items.map(a => a.name).join(', ') : ''}</div> 
+					<div id="nano-pay-line-items" style="line-height: 1.3;}">${config.line_items ? config.line_items.map(a => a.title || a.name).join(', ') : ''}</div> 
 				</div>
 
 				<div style="display: ${config.contact ? 'flex' : 'none'}" onclick="window.NanoPay.configEmailAddress()" id="nano-pay-contact"> 
