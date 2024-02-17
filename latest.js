@@ -1,4 +1,4 @@
-// NanoPay 1.0.74
+// NanoPay 1.0.75
 // https://github.com/fwd/NanoPay
 // (c) Nano.to <support@nano.to>
 // Released under MIT License
@@ -12,7 +12,7 @@
 	let wall_success = null
 	var desktop_width = 960
 
-	if (window.NanoPay === undefined) window.NanoPay = { version: '1.0.74' }
+	if (window.NanoPay === undefined) window.NanoPay = { version: '1.0.75' }
 
 	if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
 		window.NanoPay.dark_mode = true
@@ -48,14 +48,12 @@
 	function addStyleIfNotExists(cssContent) {
 	    var styles = document.head.getElementsByTagName('style');
 	    var styleExists = false;
-	    // Check if the style already exists
 	    for (var i = 0; i < styles.length; i++) {
 	        if (styles[i].textContent.trim() === cssContent.trim()) {
 	            styleExists = true;
 	            break;
 	        }
 	    }
-	    // If style doesn't exist, add it to the head
 	    if (!styleExists) {
 	        var style = document.createElement('style');
 	        style.textContent = cssContent;
@@ -284,6 +282,13 @@
     		
     		rpc_checkout = (await RPC.get(`https://api.nano.to/checkout/${checkout_url}`, { headers: { 'nano-app': `fwd/nano-pay:${window.NanoPay.version}` } }))
 
+    		if (rpc_checkout.plans) {
+    			var default_plan = config.default || config.plan || 1
+				rpc_checkout.amount = rpc_checkout.plans[default_plan].value
+				rpc_checkout.amount_raw = rpc_checkout.plans[default_plan].value_raw
+				rpc_checkout.qrcode = rpc_checkout.plans[default_plan].qrcode
+    		}
+
     		if (rpc_checkout.description) description = rpc_checkout.description
     		if (rpc_checkout.symbol) window.NanoPay.config.symbol = rpc_checkout.symbol
     		if (rpc_checkout.line_items) window.NanoPay.config.line_items = rpc_checkout.line_items
@@ -303,11 +308,9 @@
 				if (rpc_checkout.error) return alert("NanoPay: " + rpc_checkout.message || rpc_checkout.error)
 
     			var default_plan = 1
-
 				rpc_checkout.amount = rpc_checkout.plans[default_plan].value
 				rpc_checkout.amount_raw = rpc_checkout.plans[default_plan].value_raw
 				rpc_checkout.qrcode = rpc_checkout.plans[default_plan].qrcode
-
 				description = `@${rpc_checkout.lease.replace('@', '')}`
 
     		} else if (get_alias) {
@@ -363,7 +366,7 @@
     		tax: config.strings && config.strings.tax ? config.strings.tax : 'Sales Tax',
     		subtotal: config.strings && config.strings.subtotal ? config.strings.subtotal : 'Subtotal',
     		button: config.strings && config.strings.button ? config.strings.button : 'Pay with Nano',
-    		duration: config.strings && config.strings.duration ? config.strings.duration : 'Duration',
+    		quantity: config.strings && config.strings.quantity ? config.strings.quantity : 'Amount',
     		alias: config.strings && config.strings.alias ? config.strings.alias : 'Your Alias',
     	}
 
@@ -410,7 +413,7 @@
 			#nano-pay-qrcode { display: flex;width: 100%;justify-content: center;border-bottom: 1px solid #0000000f;padding-bottom: 20px; align-items: center; flex-direction: column }
 			#nano-pay-qrcode-image {max-width: 140px; margin-top: 20px; border-bottom: 1px solid #0000000f; background: #FFF; padding: 5px; border-radius: 5px;}
 
-			#nano-pay-select-one, #nano-pay-custom-input-one { min-width: 135px; background: transparent; border: 1px solid ${ window.NanoPay.dark_mode ? '#ffffff12' : '#00000045' }; height: 30px; border-radius: 5px; padding: 0 3px; }
+			#nano-pay-select-one, #nano-pay-custom-input-one { max-width: 285px; min-width: 135px; background: transparent; border: 1px solid ${ window.NanoPay.dark_mode ? '#ffffff12' : '#00000045' }; height: 30px; border-radius: 5px; padding: 0 3px; }
 
 			#nano-pay-custom-input-one { min-width: 230px; }
 
@@ -467,7 +470,7 @@
 				</div>
 
 				<div style="display: ${rpc_checkout.plans ? 'flex' : 'none'};justify-content: space-between;" id="nano-pay-contact"> 
-					<div id="nano-pay-contact-label">${strings.duration}</div> 
+					<div id="nano-pay-contact-label">${strings.quantity}</div> 
 					<div id="nano-pay-line-items" style="line-height: 1.3;}">
 						<select id="nano-pay-select-one" value="1, ${symbol}" onchange="window.NanoPay.onchange_select_one(this)">
 							${ rpc_checkout.plans ? rpc_checkout.plans.map((a, i) => '<option '+ (i === 1 ? 'selected' : '') +' value="'+i+', '+symbol+'">'+a.title+'</option>').join('') : '' }
