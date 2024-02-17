@@ -30,7 +30,7 @@
 
 ### Documentation
 
-[https://blog.nano.to/introducing-nano-pay-simple-web-payments](https://blog.nano.to/introducing-nano-pay-simple-web-payments)
+[https://docs.nano.to/nanopay](https://docs.nano.to/nanopayjs)
 
 ![line](https://github.com/fwd/n2/raw/master/.github/line.png)
 
