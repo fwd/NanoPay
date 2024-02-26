@@ -1,6 +1,7 @@
-// NanoPay 1.0.8
+// NanoPay 1.0.9
+// February 26, 2024
 // https://github.com/fwd/NanoPay
-// (c) Nano.to <support@nano.to>
+// (c) @nano2dev <support@nano.to>
 // Released under MIT License
 ;(async () => {
 
@@ -13,7 +14,7 @@
 	window.check_interval = false
 	window.expiration_interval = false
 
-	if (window.NanoPay === undefined) window.NanoPay = { version: '1.0.8' }
+	if (window.NanoPay === undefined) window.NanoPay = { version: '1.0.9', support: 'support@nano.to' }
 
 	if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
 		window.NanoPay.dark_mode = true
@@ -121,6 +122,7 @@
 		window.NanoPay.open({
 			title,
 			amount,
+			description: original_config.description,
 			address,
 			notify,
 			success: (block) => window.NanoPay.unlock_content(element, elementId, block)
@@ -211,7 +213,7 @@
         		return
         	}
 
-            var code = `<div onclick="window.NanoPay.unlock_request('${config.title || 'Unlock'}', '${config.element}', '${config.amount}', '${config.address}', '${config.notify}', '${articleId}')" class="nano-pay-unlock-button"><img style="" src="https://wall.nano.to/img/xno.svg" alt="">${ config.button || 'Unlock with Nano' }</div></div>`
+            var code = `<div onclick="window.NanoPay.unlock_request('${config.title || 'Pay'}', '${config.element}', '${config.amount}', '${config.address}', '${config.notify}', '${articleId}')" class="nano-pay-unlock-button"><img style="" src="https://wall.nano.to/img/xno.svg" alt="">${ config.button || 'Unlock with Nano' }</div></div>`
 
             if (config.free) {
             	payment_success = true
