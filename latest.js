@@ -1,5 +1,5 @@
-// NanoPay 1.0.9
-// February 26, 2024
+// NanoPay 1.1.0
+// February 28, 2024
 // https://github.com/fwd/NanoPay
 // (c) @nano2dev <support@nano.to>
 // Released under MIT License
@@ -14,7 +14,7 @@
 	window.check_interval = false
 	window.expiration_interval = false
 
-	if (window.NanoPay === undefined) window.NanoPay = { version: '1.0.9', support: 'support@nano.to' }
+	if (window.NanoPay === undefined) window.NanoPay = { version: '1.1.0', support: 'support@nano.to' }
 
 	if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
 		window.NanoPay.dark_mode = true
@@ -252,11 +252,36 @@
         }
     }
 
-    window.NanoPay.submit = (config) => {
-	    if (window.NanoPay.config.require_alias && !window.NanoPay.config.provided_alias) return alert('Address alias required.')
-	    if (window.NanoPay.config.contact && !window.NanoPay.config.contact_email) return alert('Email address required.')
-	    if (window.NanoPay.config.shipping && !window.NanoPay.config.mailing_address) return alert('Shipping address required.')
-    	window.open(`nano:${rpc_checkout.address}?amount=${rpc_checkout.amount_raw}`, '_self')
+    window.NanoPay.submit = async (config) => {
+
+    	if (window.NanoPay.config && window.NanoPay.config.submit) {
+    	
+    		var body = { 
+    			address: rpc_checkout.address, 
+    			amount: rpc_checkout.amount, 
+    			amount_raw: rpc_checkout.amount_raw,
+    			alias: window.NanoPay.config.provided_alias,
+    			email: window.NanoPay.config.contact_email,
+    			shipping: window.NanoPay.config.mailing_address,
+    		}
+
+    		var submit = window.NanoPay.config.submit
+
+	        if ( submit.constructor.name === 'AsyncFunction' ) await submit(body)
+			if ( submit.constructor.name !== 'AsyncFunction' ) submit(body)
+		
+			return
+
+        } else {
+		  
+		    if (window.NanoPay.config.require_alias && !window.NanoPay.config.provided_alias) return alert('Address alias required.')
+		    if (window.NanoPay.config.contact && !window.NanoPay.config.contact_email) return alert('Email address required.')
+		    if (window.NanoPay.config.shipping && !window.NanoPay.config.mailing_address) return alert('Shipping address required.')
+		    
+	    	window.open(`nano:${rpc_checkout.address}?amount=${rpc_checkout.amount_raw}`, '_self')
+        
+        }
+
     }
 
     window.NanoPay.open = async (config) => {
@@ -395,6 +420,7 @@
     		button: config.strings && config.strings.button ? config.strings.button : 'Pay with Nano',
     		quantity: config.strings && config.strings.quantity ? config.strings.quantity : 'Amount',
     		alias: config.strings && config.strings.alias ? config.strings.alias : 'Your Alias',
+    		account: config.strings && config.strings.account ? config.strings.account : 'Account',
     	}
 
     	// looks better
@@ -415,18 +441,18 @@
 			#nano-pay-header { display: flex; align-items: center; }
 			#nano-pay-header > img { max-width: 22px; }
 			#nano-pay-header > span { display: block;margin-left: 4px;font-size: 106%; }
-			#nano-pay-header-container { box-sizing: border-box; width: 100%;display: flex;align-items: center;justify-content: space-between;padding: 14px;border-bottom: 1px solid #0000000f; }
+			#nano-pay-header-container { box-sizing: border-box; width: 100%;display: flex;align-items: center;justify-content: space-between;padding: 14px;border-bottom: 1px solid ${ window.NanoPay.dark_mode ? '#ffffff08' : '#0000000f' }; }
 			#nano-pay-cancel { color: #1f9ce9 }
 
-			#nano-pay-shipping { box-sizing: border-box; display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid #0000000f;position: relative;align-items: center; }
+			#nano-pay-shipping { box-sizing: border-box; display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid ${ window.NanoPay.dark_mode ? '#ffffff08' : '#0000000f' };position: relative;align-items: center; }
 			#nano-pay-shipping svg { max-width: 23px;fill: #1f9ce9;position: absolute;right: 5px;top: 0px;bottom: 0;margin: auto; }
 			#nano-pay-shipping-label {  text-transform: uppercase; letter-spacing: 0.7px; opacity: 0.5;  min-width: 90px; font-size: 90% }
 
-			#nano-pay-contact { box-sizing: border-box; display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid #0000000f;position: relative;align-items: center; }
+			#nano-pay-contact { box-sizing: border-box; display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid ${ window.NanoPay.dark_mode ? '#ffffff08' : '#0000000f' };position: relative;align-items: center; }
 			#nano-pay-contact-label {  text-transform: uppercase; letter-spacing: 0.7px; opacity: 0.5; min-width: 90px;  font-size: 90%  }
 			#nano-pay-contact svg {  max-width: 23px;fill: #1f9ce9;position: absolute;right: 5px;top: 0px;bottom: 0;margin: auto; }
 
-			#nano-pay-details { box-sizing: border-box; display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid #0000000f;position: relative;align-items: start; }
+			#nano-pay-details { box-sizing: border-box; display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid ${ window.NanoPay.dark_mode ? '#ffffff08' : '#0000000f' };position: relative;align-items: start; }
 
 			#nano-pay-details-spacer { text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.5; min-width: 90px; }
 			#nano-pay-details-labels { font-family: sans-serif; text-transform: uppercase;opacity: 0.5;font-size: 95%;line-height: 17px;letter-spacing: 0.8px; }
@@ -437,14 +463,14 @@
 
 			#nano-pay-submit span {  margin-top: 10px; display: block; opacity: 0.7; font-size: 85%;  }
 
-			#nano-pay-qrcode { display: flex;width: 100%;justify-content: center;border-bottom: 1px solid #0000000f;padding-bottom: 20px; align-items: center; flex-direction: column }
-			#nano-pay-qrcode-image {max-width: 140px; margin-top: 20px; border-bottom: 1px solid #0000000f; background: #FFF; padding: 5px; border-radius: 5px;}
+			#nano-pay-qrcode { display: flex;width: 100%;justify-content: center;border-bottom: 1px solid ${ window.NanoPay.dark_mode ? '#ffffff08' : '#0000000f' };padding-bottom: 20px; align-items: center; flex-direction: column }
+			#nano-pay-qrcode-image {max-width: 140px; margin-top: 20px; border-bottom: 1px solid ${ window.NanoPay.dark_mode ? '#ffffff08' : '#0000000f' }; background: #FFF; padding: 5px; border-radius: 5px;}
 
 			#nano-pay-select-one, #nano-pay-custom-input-one { max-width: 285px; min-width: 135px; background: transparent; border: 1px solid ${ window.NanoPay.dark_mode ? '#ffffff12' : '#00000045' }; height: 30px; border-radius: 5px; padding: 0 3px; }
 
 			#nano-pay-custom-input-one { min-width: 230px; }
 
-			#nano-pay-disclaimer { box-sizing: border-box; display: flex; padding: 10px 20px;background: ${ window.NanoPay.dark_mode ? '#484848' : '#e4e4e4' }; text-align: center;font-size: 14px;width: 100%; }
+			#nano-pay-disclaimer { word-break: break-word; box-sizing: border-box; display: flex; padding: 10px 20px;background: ${ window.NanoPay.dark_mode ? '#484848' : '#e4e4e4' }; text-align: center;font-size: 14px;width: 100%; }
 
 			#nano-pay-copy-address { display: flex }
 
@@ -512,6 +538,11 @@
 					</div> 
 				</div>
 
+				<div style="display: ${config.qrcode === false ? 'flex' : 'none'};justify-content: space-between;" id="nano-pay-contact"> 
+					<div id="nano-pay-contact-label">${strings.account}</div> 
+					<div id="nano-pay-line-items">${ config.address && config.address.includes('nano_') ? ( config.address.slice(0, 12) + '...' + config.address.slice(58, 999) ) : config.address }</div> 
+				</div>
+
 				<div style="display: ${config.line_items ? 'flex' : 'none'}" id="nano-pay-contact"> 
 					<div id="nano-pay-contact-label">${strings.line_items}</div> 
 					<div id="nano-pay-line-items" style="line-height: 1.3;}">${config.line_items ? config.line_items.map(a => a.title || a.name).join(', ') : ''}</div> 
@@ -529,9 +560,6 @@
 					<svg id="Layer_1" version="1.1" viewBox="0 0 512 512" width="512px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><polygon points="160,115.4 180.7,96 352,256 180.7,416 160,396.7 310.5,256 "></polygon></svg> 
 				</div>
 				
-				<div id="nano-pay-disclaimer" style="display: ${config.disclaimer ? 'flex' : 'none'}">
-					<div>${config.disclaimer}</div>
-				</div>
 
 				<div id="nano-pay-details"> 
 					<div style="display: ${Number(config.shipping) || config.shipping === true || config.shipping === "true" ? 'block' : 'none'}" id="nano-pay-details-spacer"></div>
@@ -547,6 +575,10 @@
 						<br style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}; text-align: right"> 
 						<div id="nano-pay-amount-value">${rpc_checkout.amount} ${symbol}</div>   
 					</div> 
+				</div>
+				
+				<div id="nano-pay-disclaimer" style="display: ${config.disclaimer ? 'flex' : 'none'}">
+					<div>${config.disclaimer}</div>
 				</div>
 
 				<div id="nano-pay-qrcode" style="display: none;">
@@ -581,16 +613,18 @@
 	    	if (position === 'bottom') document.getElementById('nano-pay-body').style.bottom = "0"; 
 	    }, 50)
 
-		if (window.innerWidth > desktop_width || qrcode) {
-			var qr_interval = setInterval(async () => {
-			    if (window.NanoPay.config.require_alias && !window.NanoPay.config.provided_alias) return
-			    if (window.NanoPay.config.shipping && !window.NanoPay.config.mailing_address) return
-			    if (window.NanoPay.config.contact && !window.NanoPay.config.contact_email) return
-				document.getElementById('nano-pay-qrcode').style.display = "flex"
-				document.getElementById('nano-pay-qrcode-image').src = rpc_checkout.qrcode
-			    clearInterval(qr_interval)
-			}, 100)
-		}
+	    if (qrcode !== false) {
+			if (window.innerWidth > desktop_width || qrcode) {
+				var qr_interval = setInterval(async () => {
+				    if (window.NanoPay.config.require_alias && !window.NanoPay.config.provided_alias) return
+				    if (window.NanoPay.config.shipping && !window.NanoPay.config.mailing_address) return
+				    if (window.NanoPay.config.contact && !window.NanoPay.config.contact_email) return
+					document.getElementById('nano-pay-qrcode').style.display = "flex"
+					document.getElementById('nano-pay-qrcode-image').src = rpc_checkout.qrcode
+				    clearInterval(qr_interval)
+				}, 100)
+			}
+	    }
 
 	    var checks = 0
 	    var checking = false

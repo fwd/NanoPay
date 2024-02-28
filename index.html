@@ -461,17 +461,18 @@
               
                 NanoPay.open({ 
                     address: '@development', // required
-                    // amount: 30, // required
+                    amount: 30, // required
                     notify: 'support@nano.to',
+                    qrcode: false,
                     // debug: true,
-                    contact: true,
+                    // contact: true,
                     // button: "Open Cake",
                     // wallet: "cake",
-                    line_items: [
-                        { name: "Shirt (X-Small)", price: 0.122 }, 
-                        { name: "Mens Shoes (9.5)", price: 0 }
-                    ],
-                    shipping: 0.011,
+                    // line_items: [
+                    //     { name: "Shirt (X-Small)", price: 0.122 }, 
+                    //     { name: "Mens Shoes (9.5)", price: 0 }
+                    // ],
+                    // shipping: 0.011,
                     // currency: 'EUR',
                     success: (block) => {
                         document.getElementById('success').innerText = 'Success'
