@@ -325,6 +325,18 @@
     		cake: { image: 'https://pay.nano.to/img/cake.png', name: 'Cake Wallet' },
     	}
 
+    	var strings = {
+    		line_items: config.strings && config.strings.line_items ? config.strings.line_items : (config.line_items && config.line_items.length > 1 ? 'Items' : 'Item'),
+    		email: config.strings && config.strings.email ? config.strings.email : 'Email',
+    		shipping: config.strings && config.strings.shipping ? config.strings.shipping : 'Shipping',
+    		tax: config.strings && config.strings.tax ? config.strings.tax : 'Sales Tax',
+    		subtotal: config.strings && config.strings.subtotal ? config.strings.subtotal : 'Subtotal',
+    		button: config.strings && config.strings.button ? config.strings.button : 'Pay with Nano',
+    		quantity: config.strings && config.strings.quantity ? config.strings.quantity : 'Amount',
+    		alias: config.strings && config.strings.alias ? config.strings.alias : 'Your Alias',
+    		account: config.strings && config.strings.account ? config.strings.account : 'Account',
+    	}
+
     	if (!wallets[wallet])  return alert("NanoPay: Invalid wallet option. Supported: natrium, nault, nautilus, cake.")
 
     	if (config.contact === "false") config.contact = false
@@ -357,6 +369,10 @@
 				    qrcode: true
 				}))
 
+				if (rpc_checkout.available === false) {
+					config.disclaimer = 'Username taken. Only original owner can add time.'
+				}
+
 				if (rpc_checkout.error) return alert("NanoPay: " + rpc_checkout.message || rpc_checkout.error)
 
     			var default_plan = 1
@@ -364,6 +380,7 @@
 				rpc_checkout.amount_raw = rpc_checkout.plans[default_plan].value_raw
 				rpc_checkout.qrcode = rpc_checkout.plans[default_plan].qrcode
 				description = description || `@${rpc_checkout.lease.replace('@', '')}`
+				strings.quantity = 'Duration'
 
     		} else if (get_alias) {
 
@@ -411,18 +428,6 @@
 			return alert("NanoPay: " + rpc_checkout.message || 'Checkout Error. Please contact support@nano.to with error code #112')
 		}
 
-    	var strings = {
-    		line_items: config.strings && config.strings.line_items ? config.strings.line_items : (config.line_items && config.line_items.length > 1 ? 'Items' : 'Item'),
-    		email: config.strings && config.strings.email ? config.strings.email : 'Email',
-    		shipping: config.strings && config.strings.shipping ? config.strings.shipping : 'Shipping',
-    		tax: config.strings && config.strings.tax ? config.strings.tax : 'Sales Tax',
-    		subtotal: config.strings && config.strings.subtotal ? config.strings.subtotal : 'Subtotal',
-    		button: config.strings && config.strings.button ? config.strings.button : 'Pay with Nano',
-    		quantity: config.strings && config.strings.quantity ? config.strings.quantity : 'Amount',
-    		alias: config.strings && config.strings.alias ? config.strings.alias : 'Your Alias',
-    		account: config.strings && config.strings.account ? config.strings.account : 'Account',
-    	}
-
     	// looks better
     	if (!config.position && window.innerWidth > desktop_width) {
     		position = 'top'
@@ -466,11 +471,11 @@
 			#nano-pay-qrcode { display: flex;width: 100%;justify-content: center;border-bottom: 1px solid ${ window.NanoPay.dark_mode ? '#ffffff08' : '#0000000f' };padding-bottom: 20px; align-items: center; flex-direction: column }
 			#nano-pay-qrcode-image {max-width: 140px; margin-top: 20px; border-bottom: 1px solid ${ window.NanoPay.dark_mode ? '#ffffff08' : '#0000000f' }; background: #FFF; padding: 5px; border-radius: 5px;}
 
-			#nano-pay-select-one, #nano-pay-custom-input-one { max-width: 285px; min-width: 135px; background: transparent; border: 1px solid ${ window.NanoPay.dark_mode ? '#ffffff12' : '#00000045' }; height: 30px; border-radius: 5px; padding: 0 3px; }
+			#nano-pay-select-one, #nano-pay-custom-input-one { color: inherit; max-width: 285px; min-width: 135px; background: transparent; border: 1px solid ${ window.NanoPay.dark_mode ? '#ffffff12' : '#00000045' }; height: 30px; border-radius: 5px; padding: 0 3px; }
 
 			#nano-pay-custom-input-one { min-width: 230px; }
 
-			#nano-pay-disclaimer { word-break: break-word; box-sizing: border-box; display: flex; padding: 10px 20px;background: ${ window.NanoPay.dark_mode ? '#484848' : '#e4e4e4' }; text-align: center;font-size: 14px;width: 100%; }
+			#nano-pay-disclaimer { justify-content: center; word-break: break-word; box-sizing: border-box; display: flex; padding: 10px 20px;background: ${ window.NanoPay.dark_mode ? '#484848' : '#e4e4e4' }; text-align: center;font-size: 14px;width: 100%; }
 
 			#nano-pay-copy-address { display: flex }
 
