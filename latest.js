@@ -490,7 +490,8 @@
 
 			#nano-pay-copy-address { display: flex }
 
-			.nano-pay-copy-clipboard { background: ${ window.NanoPay.dark_mode ? '#484848' : '#e4e4e4' }; display: flex; min-width: 160px; align-items: center; justify-content: center; padding: 5px; border-radius: 5px; margin: 15px 10px 0 10px; cursor: pointer; zoom: 0.9 }
+			.nano-pay-copy-clipboard { background: ${ window.NanoPay.dark_mode ? '#323846' : '#e4e4e4' }; display: flex; min-width: 160px; align-items: center; justify-content: center; padding: 5px; border-radius: 5px; margin: 15px 10px 0 10px; cursor: pointer; zoom: 0.9 }
+			
 			#nano-pay-copy-address .nano-pay-copy-clipboard:last-child { margin: 15px 5px 0 10px; }
 
 			.nano-pay-copy-clipboard svg { max-width: 15px; margin-left: 10px; ${ window.NanoPay.dark_mode ? 'filter: invert(1)' : '' } }
