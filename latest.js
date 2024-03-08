@@ -1,5 +1,5 @@
-// NanoPay 1.1.2
-// February 28, 2024
+// NanoPay 1.1.3
+// March 7, 2024
 // https://github.com/fwd/NanoPay
 // (c) @nano2dev <support@nano.to>
 // Released under MIT License
@@ -14,7 +14,7 @@
 	window.check_interval = false
 	window.expiration_interval = false
 
-	if (window.NanoPay === undefined) window.NanoPay = { version: '1.1.2', support: 'support@nano.to' }
+	if (window.NanoPay === undefined) window.NanoPay = { version: '1.1.3', support: 'support@nano.to' }
 
 	if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
 		window.NanoPay.dark_mode = true
@@ -564,7 +564,6 @@
 					</div> 
 				</div>
 
-
 				<div style="display: ${config.line_items ? 'flex' : 'none'}" id="nano-pay-contact"> 
 					<div id="nano-pay-contact-label">${strings.line_items}</div> 
 					<div id="nano-pay-line-items" style="line-height: 1.3;}">${config.line_items ? config.line_items.map(a => a.title || a.name).join(', ') : ''}</div> 
@@ -625,7 +624,10 @@
 		    </div>
 		</div>`
 
-	    document.body.innerHTML += template;
+		var NanoPayDiv = document.createElement('div');
+		NanoPayDiv.id = 'nano-pay';
+		NanoPayDiv.innerHTML = template;
+		document.body.appendChild(NanoPayDiv);
 	    
 	    setTimeout(() => {
 	    	document.body.style.overflow = 'hidden';
