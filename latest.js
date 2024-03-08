@@ -296,7 +296,7 @@
 
     	if (!window.NanoPay.config && config) window.NanoPay.config = config
 
-    	var background = config.background || (window.NanoPay.dark_mode ? '#353535' : 'rgb(247, 247, 247)')
+    	var background = config.background || (window.NanoPay.dark_mode ? '#282c37' : 'rgb(247, 247, 247)')
     	var backdrop_background = config.backdrop || (window.NanoPay.dark_mode ? '#1f1e1ee0' : 'rgb(142 142 142 / 93%)')
     	var text_color = config.text || (window.NanoPay.dark_mode ? '#FFF' : '#000')
     	var position = config.position || 'bottom'
@@ -523,106 +523,102 @@
 		window.NanoPay.config.contact_email = config.email || localStorage.getItem('nano-pay-contact-email')
 		window.NanoPay.config.mailing_address = config.mailing_address || localStorage.getItem('nano-pay-mailing-address')
 
-		var template = `
-		<div id="nano-pay">
+		var template = `<div id="nano-pay-backdrop" onclick="window.NanoPay.cancel(); return"></div>
 
-			<div id="nano-pay-backdrop" onclick="window.NanoPay.cancel(); return"></div>
+<div id="nano-pay-body">
+		
+	<div id="nano-pay-header-container"> 
+		<div id="nano-pay-header">
+			<svg width="1080" height="1080" viewBox="0 0 1080 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<circle cx="540" cy="540" r="540" fill="#209CE9"/>
+			<path d="M792.911 881H740.396L541.099 570.561L338.761 881H286.68L513.452 529.3L306.882 206.222H360.42L541.95 490.393L727.322 206.222H777.555L568.762 528.379L792.911 881Z" fill="white"/>
+			<path d="M336.487 508.737H744.807V547.116H336.487V508.737ZM336.487 623.872H744.824V662.251H336.47L336.487 623.872Z" fill="white"/>
+			</svg>
+			<span>${config.title || 'Pay'}</span> 
+		</div>
+		
+		<div id="nano-pay-cancel" onclick="window.NanoPay.cancel(); return">Cancel</div> 
+	</div>
+	
+	<div style="display: ${config.account ? 'flex' : 'none'};justify-content: space-between;" id="nano-pay-contact"> 
+		<div id="nano-pay-contact-label">${strings.account}</div> 
+		<div id="nano-pay-line-items">${ config.account && config.account.includes('nano_') ? ( config.account.slice(0, 12) + '...' + config.account.slice(58, 999) ) : config.account }</div> 
+	</div>
 
-		    <div id="nano-pay-body">
-					
-				<div id="nano-pay-header-container"> 
-					<div id="nano-pay-header">
-						<svg width="1080" height="1080" viewBox="0 0 1080 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
-						<circle cx="540" cy="540" r="540" fill="#209CE9"/>
-						<path d="M792.911 881H740.396L541.099 570.561L338.761 881H286.68L513.452 529.3L306.882 206.222H360.42L541.95 490.393L727.322 206.222H777.555L568.762 528.379L792.911 881Z" fill="white"/>
-						<path d="M336.487 508.737H744.807V547.116H336.487V508.737ZM336.487 623.872H744.824V662.251H336.47L336.487 623.872Z" fill="white"/>
-						</svg>
-						<span>${config.title || 'Pay'}</span> 
-					</div>
-					
-					<div id="nano-pay-cancel" onclick="window.NanoPay.cancel(); return">Cancel</div> 
-				</div>
-				
-				<div style="display: ${config.account ? 'flex' : 'none'};justify-content: space-between;" id="nano-pay-contact"> 
-					<div id="nano-pay-contact-label">${strings.account}</div> 
-					<div id="nano-pay-line-items">${ config.account && config.account.includes('nano_') ? ( config.account.slice(0, 12) + '...' + config.account.slice(58, 999) ) : config.account }</div> 
-				</div>
+	<div style="display: ${(rpc_checkout.plans || get_name) && rpc_checkout.amount ? 'flex' : 'none'};justify-content: space-between;" id="nano-pay-contact"> 
+		<div id="nano-pay-contact-label">${strings.quantity}</div> 
+		<div id="nano-pay-line-items" style="line-height: 1.3;}">
+			<select id="nano-pay-select-one" value="1, ${symbol}" onchange="window.NanoPay.onchange_select_one(this)">
+				${ rpc_checkout.plans ? rpc_checkout.plans.map((a, i) => '<option '+ (i === 1 ? 'selected' : '') +' value="'+i+', '+symbol+'">'+a.title+'</option>').join('') : '' }
+			</select>
+		</div> 
+	</div>
 
-				<div style="display: ${(rpc_checkout.plans || get_name) && rpc_checkout.amount ? 'flex' : 'none'};justify-content: space-between;" id="nano-pay-contact"> 
-					<div id="nano-pay-contact-label">${strings.quantity}</div> 
-					<div id="nano-pay-line-items" style="line-height: 1.3;}">
-						<select id="nano-pay-select-one" value="1, ${symbol}" onchange="window.NanoPay.onchange_select_one(this)">
-							${ rpc_checkout.plans ? rpc_checkout.plans.map((a, i) => '<option '+ (i === 1 ? 'selected' : '') +' value="'+i+', '+symbol+'">'+a.title+'</option>').join('') : '' }
-						</select>
-					</div> 
-				</div>
+	<div style="display: ${window.NanoPay.config.require_alias ? 'flex' : 'none'};justify-content: space-between;" id="nano-pay-contact"> 
+		<div id="nano-pay-contact-label">${strings.alias}<sup style="color: #ff5f5f; opacity: 1">*</sup></div> 
+		<div id="nano-pay-line-items" style="line-height: 1.3;}">
+			<input id="nano-pay-custom-input-one" oninput="window.NanoPay.onchange_custom_input_one(this)" type="text" placeholder="Custom Alias">
+		</div> 
+	</div>
 
-				<div style="display: ${window.NanoPay.config.require_alias ? 'flex' : 'none'};justify-content: space-between;" id="nano-pay-contact"> 
-					<div id="nano-pay-contact-label">${strings.alias}<sup style="color: #ff5f5f; opacity: 1">*</sup></div> 
-					<div id="nano-pay-line-items" style="line-height: 1.3;}">
-						<input id="nano-pay-custom-input-one" oninput="window.NanoPay.onchange_custom_input_one(this)" type="text" placeholder="Custom Alias">
-					</div> 
-				</div>
+	<div style="display: ${config.line_items ? 'flex' : 'none'}" id="nano-pay-contact"> 
+		<div id="nano-pay-contact-label">${strings.line_items}</div> 
+		<div id="nano-pay-line-items" style="line-height: 1.3;}">${config.line_items ? config.line_items.map(a => a.title || a.name).join(', ') : ''}</div> 
+	</div>
 
-				<div style="display: ${config.line_items ? 'flex' : 'none'}" id="nano-pay-contact"> 
-					<div id="nano-pay-contact-label">${strings.line_items}</div> 
-					<div id="nano-pay-line-items" style="line-height: 1.3;}">${config.line_items ? config.line_items.map(a => a.title || a.name).join(', ') : ''}</div> 
-				</div>
+	<div style="display: ${config.contact ? 'flex' : 'none'}" onclick="window.NanoPay.configEmailAddress()" id="nano-pay-contact"> 
+		<div id="nano-pay-contact-label">${strings.email}</div> 
+		<div id="nano-pay-user-contact-email" style="line-height: 1.1; opacity: ${window.NanoPay.config.contact_email ? '1' : '0.5'}">${window.NanoPay.config.contact_email || strings.email_placeholder}</div> 
+		<svg id="Layer_1" version="1.1" viewBox="0 0 512 512" width="512px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><polygon points="160,115.4 180.7,96 352,256 180.7,416 160,396.7 310.5,256 "></polygon></svg> 
+	</div>
+	
+	<div style="display: ${Number(config.shipping) || config.shipping === true || config.shipping === "true" ? 'flex' : 'none'}" onclick="window.NanoPay.configMailingAddress()" id="nano-pay-shipping"> 
+		<div id="nano-pay-shipping-label">${strings.shipping}</div> 
+		<div id="nano-pay-user-mailing-address" style="line-height: 1.1; opacity: ${window.NanoPay.config.mailing_address ? '1' : '0.5'}">${window.NanoPay.config.mailing_address || strings.shipping_placeholder}</div> 
+		<svg id="Layer_1" version="1.1" viewBox="0 0 512 512" width="512px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><polygon points="160,115.4 180.7,96 352,256 180.7,416 160,396.7 310.5,256 "></polygon></svg> 
+	</div>
+	
+	<div id="nano-pay-details" style="${ config.line_items || get_name || get_alias ? '' : 'display: none' }"> 
+		<div style="display: ${Number(config.shipping) || config.shipping === true || config.shipping === "true" ? 'block' : 'none'}" id="nano-pay-details-spacer"></div>
+		<div id="nano-pay-details-labels">
+			<div style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}">${strings.subtotal}</div>  
+			<div style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}">${strings.shipping}</div>  
+			<br style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}">
+			<div id="nano-pay-description">${description}</div>  
+		</div>  
+		<div id="nano-pay-details-values">
+			<div style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}; text-align: right">${rpc_checkout.subtotal} ${symbol}</div>   
+			<div style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}; text-align: right">${rpc_checkout.shipping} ${symbol}</div>   
+			<br style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}; text-align: right"> 
+			<div id="nano-pay-amount-value">${rpc_checkout.amount} ${symbol}</div>   
+		</div> 
+	</div>
+	
+	<div id="nano-pay-disclaimer" style="display: ${config.disclaimer ? 'flex' : 'none'}">
+		<div>${config.disclaimer}</div>
+	</div>
 
-				<div style="display: ${config.contact ? 'flex' : 'none'}" onclick="window.NanoPay.configEmailAddress()" id="nano-pay-contact"> 
-					<div id="nano-pay-contact-label">${strings.email}</div> 
-					<div id="nano-pay-user-contact-email" style="line-height: 1.1; opacity: ${window.NanoPay.config.contact_email ? '1' : '0.5'}">${window.NanoPay.config.contact_email || strings.email_placeholder}</div> 
-					<svg id="Layer_1" version="1.1" viewBox="0 0 512 512" width="512px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><polygon points="160,115.4 180.7,96 352,256 180.7,416 160,396.7 310.5,256 "></polygon></svg> 
-				</div>
-				
-				<div style="display: ${Number(config.shipping) || config.shipping === true || config.shipping === "true" ? 'flex' : 'none'}" onclick="window.NanoPay.configMailingAddress()" id="nano-pay-shipping"> 
-					<div id="nano-pay-shipping-label">${strings.shipping}</div> 
-					<div id="nano-pay-user-mailing-address" style="line-height: 1.1; opacity: ${window.NanoPay.config.mailing_address ? '1' : '0.5'}">${window.NanoPay.config.mailing_address || strings.shipping_placeholder}</div> 
-					<svg id="Layer_1" version="1.1" viewBox="0 0 512 512" width="512px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><polygon points="160,115.4 180.7,96 352,256 180.7,416 160,396.7 310.5,256 "></polygon></svg> 
-				</div>
-				
-				<div id="nano-pay-details" style="${ config.line_items || get_name || get_alias ? '' : 'display: none' }"> 
-					<div style="display: ${Number(config.shipping) || config.shipping === true || config.shipping === "true" ? 'block' : 'none'}" id="nano-pay-details-spacer"></div>
-					<div id="nano-pay-details-labels">
-						<div style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}">${strings.subtotal}</div>  
-						<div style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}">${strings.shipping}</div>  
-						<br style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}">
-						<div id="nano-pay-description">${description}</div>  
-					</div>  
-					<div id="nano-pay-details-values">
-						<div style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}; text-align: right">${rpc_checkout.subtotal} ${symbol}</div>   
-						<div style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}; text-align: right">${rpc_checkout.shipping} ${symbol}</div>   
-						<br style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}; text-align: right"> 
-						<div id="nano-pay-amount-value">${rpc_checkout.amount} ${symbol}</div>   
-					</div> 
-				</div>
-				
-				<div id="nano-pay-disclaimer" style="display: ${config.disclaimer ? 'flex' : 'none'}">
-					<div>${config.disclaimer}</div>
-				</div>
+	<div id="nano-pay-qrcode" style="display: none;">
+		<img id="nano-pay-qrcode-image"/>
+		<div id="nano-pay-copy-address">
+			<div class="nano-pay-copy-clipboard" onclick="window.NanoPay.CopyToClipboard('address', this)">
+				<span>${rpc_checkout.address.slice(0, config.vanity || 10)}..</span>
+				<svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M6 6V2c0-1.1.9-2 2-2h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-4v4a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V8c0-1.1.9-2 2-2h4zm2 0h4a2 2 0 0 1 2 2v4h4V2H8v4zM2 8v10h10V8H2z"/></svg>
+			</div>
+			<div style="${rpc_checkout.amount === undefined ? 'display: none' : ''}" class="nano-pay-copy-clipboard" onclick="window.NanoPay.CopyToClipboard('amount', this)">
+				<span id="nano-pay-copy-clipboard-amount">${String(rpc_checkout.amount).length > 7 ? String(rpc_checkout.amount).slice(0, 7) + '..' : String(rpc_checkout.amount)} ${symbol}</span>
+				<svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M6 6V2c0-1.1.9-2 2-2h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-4v4a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V8c0-1.1.9-2 2-2h4zm2 0h4a2 2 0 0 1 2 2v4h4V2H8v4zM2 8v10h10V8H2z"/></svg>
+			</div>
+		</div>
+	</div>
+	
 
-				<div id="nano-pay-qrcode" style="display: none;">
-					<img id="nano-pay-qrcode-image"/>
-					<div id="nano-pay-copy-address">
-						<div class="nano-pay-copy-clipboard" onclick="window.NanoPay.CopyToClipboard('address', this)">
-							<span>${rpc_checkout.address.slice(0, config.vanity || 10)}..</span>
-							<svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M6 6V2c0-1.1.9-2 2-2h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-4v4a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V8c0-1.1.9-2 2-2h4zm2 0h4a2 2 0 0 1 2 2v4h4V2H8v4zM2 8v10h10V8H2z"/></svg>
-						</div>
-						<div style="${rpc_checkout.amount === undefined ? 'display: none' : ''}" class="nano-pay-copy-clipboard" onclick="window.NanoPay.CopyToClipboard('amount', this)">
-							<span id="nano-pay-copy-clipboard-amount">${String(rpc_checkout.amount).length > 7 ? String(rpc_checkout.amount).slice(0, 7) + '..' : String(rpc_checkout.amount)} ${symbol}</span>
-							<svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M6 6V2c0-1.1.9-2 2-2h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-4v4a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V8c0-1.1.9-2 2-2h4zm2 0h4a2 2 0 0 1 2 2v4h4V2H8v4zM2 8v10h10V8H2z"/></svg>
-						</div>
-					</div>
-				</div>
-				
+    <a id="nano-pay-submit" onclick="window.NanoPay.submit()"> 
+    	<img id="nano-pay-submit-image" src="${wallets[wallet].image}" style="max-width: 45px;"> 
+    	<span id="nano-pay-submit-text">${button}</span> 
+    </a>
 
-			    <a id="nano-pay-submit" onclick="window.NanoPay.submit()"> 
-			    	<img id="nano-pay-submit-image" src="${wallets[wallet].image}" style="max-width: 45px;"> 
-			    	<span id="nano-pay-submit-text">${button}</span> 
-			    </a>
-
-		    </div>
-		</div>`
+</div>`
 
 		var NanoPayDiv = document.createElement('div');
 		NanoPayDiv.id = 'nano-pay';
