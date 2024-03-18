@@ -1,5 +1,5 @@
-// NanoPay 1.1.3
-// March 7, 2024
+// NanoPay 1.1.4
+// March 18, 2024
 // https://github.com/fwd/NanoPay
 // (c) @nano2dev <support@nano.to>
 // Released under MIT License
@@ -14,7 +14,7 @@
 	window.check_interval = false
 	window.expiration_interval = false
 
-	if (window.NanoPay === undefined) window.NanoPay = { version: '1.1.3', support: 'support@nano.to' }
+	if (window.NanoPay === undefined) window.NanoPay = { version: '1.1.4', support: 'support@nano.to' }
 
 	if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
 		window.NanoPay.dark_mode = true
@@ -239,6 +239,7 @@
 		window.expiration_interval = false
 		payment_success = false
 		rpc_checkout = null
+		localStorage.removeItem('NanoPayCheckoutId')
     }
 
     window.NanoPay.cancel = async (element) => {
@@ -252,6 +253,7 @@
 	        if ( window.NanoPay.config.cancel && window.NanoPay.config.cancel.constructor.name === 'AsyncFunction' ) await window.NanoPay.config.cancel()
 			if ( window.NanoPay.config.cancel && window.NanoPay.config.cancel.constructor.name !== 'AsyncFunction' ) window.NanoPay.config.cancel()
         }
+    	localStorage.removeItem('NanoPayCheckoutId')
     }
 
     window.NanoPay.submit = async (config) => {
@@ -302,7 +304,7 @@
     	var position = config.position || 'bottom'
     	var button = config.button || 'Open'
     	var symbol = config.symbol || 'NANO'
-    	var description = config.description || config.text || config.note || config.memo || 'TOTAL'
+    	var description = config.description || config.text || config.note || config.memo || 'AMOUNT'
     	var address = config.address
     	var amount = config.amount ? Number(config.amount) : undefined
     	var random = config.random || config.random === false || config.random === "false" ? config.random : true
@@ -313,10 +315,10 @@
     	var custom_css = config.css || config.custom_css
     	var qrcode = config.qr || config.qrcode
     	var node = config.node || config.rpc || config.endpoint || 'https://rpc.nano.to'
-    	var checkout = config.checkout || config.url
+    	var checkout = config.checkout || config.url || localStorage.getItem('NanoPayCheckoutId')
     	var wallet = config.wallet ? config.wallet.toLowerCase() : 'natrium'
     	var get_alias = config.alias || config.get_alias
-    	var get_name = config.claim || config.lease || config.name || config.get_name
+    	var get_name = config.claim || config.lease || config.name || config.get_name || config.username
     	var disclaimer = config.disclaimer
     	var expiration = config.timeout || config.expiration || config.time || config.time
 
@@ -335,7 +337,7 @@
     		subtotal: config.strings && config.strings.subtotal ? config.strings.subtotal : 'Subtotal',
     		button: config.strings && config.strings.button ? config.strings.button : 'Pay with Nano',
     		quantity: config.strings && config.strings.quantity ? config.strings.quantity : 'Amount',
-    		alias: config.strings && config.strings.alias ? config.strings.alias : 'Your Name',
+    		alias: config.strings && config.strings.alias ? config.strings.alias : 'Set Alias',
     		account: config.strings && config.strings.account ? config.strings.account : 'Account',
     		email_placeholder: config.strings && config.strings.email_placeholder ? config.strings.email_placeholder : 'N/A',
     		shipping_placeholder: config.strings && config.strings.shipping_placeholder ? config.strings.shipping_placeholder : 'N/A',
@@ -367,6 +369,8 @@
 
     		if (get_name) {
 
+    			if (get_name === true || get_name === 'true') get_name = window.prompt('Username: ')
+
 				rpc_checkout = (await RPC.post('https://api.nano.to', {
 				    action: 'get_name',
 				    username: get_name,
@@ -383,11 +387,9 @@
 				rpc_checkout.amount = rpc_checkout.plans[default_plan].value
 				rpc_checkout.amount_raw = rpc_checkout.plans[default_plan].value_raw
 				rpc_checkout.qrcode = rpc_checkout.plans[default_plan].qrcode
-				// description = description || `@${rpc_checkout.lease.replace('@', '')}`
-				strings.quantity = 'Lease'
+				strings.quantity = 'Duration'
 				config.title = 'Name'
 				description = '@' + rpc_checkout.lease
-				// config.account = '@' + rpc_checkout.lease
 
     		} else if (get_alias) {
 
@@ -409,10 +411,9 @@
 
 		    	if (!address) return alert("NanoPay: Address or Username required.")
 
-		    	// if (!amount && !line_items) return alert("NanoPay: Amount or line_items required.")
-
 		    	if (line_items) {
 		    		if (!Array.isArray(line_items) || line_items && !line_items.find(a => a && a.price)) return alert("NanoPay: Invalid line_items. Example: [ { name: 'T-Shirt', price: 5 } ] ")
+		    		description = original_config.description || 'TOTAL'
 		    	}
 
 				rpc_checkout = (await RPC.post(node, { 
@@ -465,7 +466,8 @@
 			#nano-pay-shipping-label {  text-transform: uppercase; letter-spacing: 0.7px; opacity: 0.5;  min-width: 90px; font-size: 90% }
 
 			#nano-pay-contact { box-sizing: border-box; display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid ${ window.NanoPay.dark_mode ? '#ffffff08' : '#0000000f' };position: relative;align-items: center; }
-			#nano-pay-contact-label {  text-transform: uppercase; letter-spacing: 0.7px; opacity: 0.5; min-width: 90px;  font-size: 90%  }
+			#nano-pay-contact-label { text-transform: uppercase; letter-spacing: 0.7px; opacity: 0.5; min-width: 90px; font-size: 85%  }
+			#nano-pay-description { font-size: 90% }
 			#nano-pay-contact svg {  max-width: 23px;fill: #1f9ce9;position: absolute;right: 5px;top: 0px;bottom: 0;margin: auto; }
 
 			#nano-pay-details { box-sizing: border-box; display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid ${ window.NanoPay.dark_mode ? '#ffffff08' : '#0000000f' };position: relative;align-items: start; }
@@ -486,7 +488,7 @@
 
 			#nano-pay-custom-input-one { min-width: 230px; }
 
-			#nano-pay-disclaimer { justify-content: center; word-break: break-word; box-sizing: border-box; display: flex; padding: 10px 20px;background: ${ window.NanoPay.dark_mode ? '#484848' : '#e4e4e4' }; text-align: center;font-size: 14px;width: 100%; }
+			#nano-pay-disclaimer { justify-content: center; word-break: break-word; box-sizing: border-box; display: flex; padding: 10px 20px;background: ${ window.NanoPay.dark_mode ? '#333846' : '#e4e4e4' }; text-align: center;font-size: 14px;width: 100%; }
 
 			#nano-pay-copy-address { display: flex }
 
@@ -579,7 +581,7 @@
 		<svg id="Layer_1" version="1.1" viewBox="0 0 512 512" width="512px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><polygon points="160,115.4 180.7,96 352,256 180.7,416 160,396.7 310.5,256 "></polygon></svg> 
 	</div>
 	
-	<div id="nano-pay-details" style="${ config.line_items || get_name || get_alias ? '' : 'display: none' }"> 
+	<div id="nano-pay-details" style="${ config.amount || config.line_items || get_name || get_alias ? '' : 'display: none' }"> 
 		<div style="display: ${Number(config.shipping) || config.shipping === true || config.shipping === "true" ? 'block' : 'none'}" id="nano-pay-details-spacer"></div>
 		<div id="nano-pay-details-labels">
 			<div style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}">${strings.subtotal}</div>  
@@ -719,6 +721,8 @@
 				window.NanoPay.close()
 	    	})
 	    }
+
+	    if (rpc_checkout && rpc_checkout.id) localStorage.setItem('NanoPayCheckoutId', rpc_checkout.id)
 
     }
 
