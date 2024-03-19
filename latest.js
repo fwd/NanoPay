@@ -722,7 +722,9 @@
 	    	})
 	    }
 
-	    if (rpc_checkout && rpc_checkout.id) localStorage.setItem('NanoPayCheckoutId', rpc_checkout.id)
+	    // needs more testing
+	    // goal is to prevent un-intentional browser refresh from breaking checkout flow
+	    // if (rpc_checkout && rpc_checkout.id) localStorage.setItem('NanoPayCheckoutId', rpc_checkout.id)
 
     }
 
