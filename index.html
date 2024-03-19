@@ -460,20 +460,20 @@
             setTimeout(() => {
               
                 NanoPay.open({ 
-                    alias: true, // required
-                    // amount: 30, // required
+                    // alias: true, // required
+                    amount: 30, // required
                     // notify: 'support@nano.to',
-                    // contact: true,
+                    contact: true,
                     // // random: false,
                     // strings: {
                     //     email_placeholder: 'Required *',
                     //     shipping_placeholder: 'Required *',
                     // },
-                    // line_items: [
-                    //     { name: "Shirt (X-Small)", price: 0.122 }, 
-                    //     { name: "Mens Shoes (9.5)", price: 0 }
-                    // ],
-                    // shipping: 0.011,
+                    line_items: [
+                        { name: "Shirt (X-Small)", price: 0.122 }, 
+                        { name: "Mens Shoes (9.5)", price: 0 }
+                    ],
+                    shipping: 0.011,
                     // currency: 'EUR',
                     success: (block) => {
                         document.getElementById('success').innerText = 'Success'
