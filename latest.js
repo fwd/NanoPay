@@ -338,7 +338,7 @@
     		subtotal: config.strings && config.strings.subtotal ? config.strings.subtotal : 'Subtotal',
     		button: config.strings && config.strings.button ? config.strings.button : 'Pay with Nano',
     		quantity: config.strings && config.strings.quantity ? config.strings.quantity : 'Amount',
-    		alias: config.strings && config.strings.alias ? config.strings.alias : 'Set Alias',
+    		alias: config.strings && config.strings.alias ? config.strings.alias : 'Your Alias',
     		account: config.strings && config.strings.account ? config.strings.account : 'Account',
     		email_placeholder: config.strings && config.strings.email_placeholder ? config.strings.email_placeholder : 'N/A',
     		shipping_placeholder: config.strings && config.strings.shipping_placeholder ? config.strings.shipping_placeholder : 'N/A',
@@ -711,6 +711,7 @@
 	    	if (!viewing_page) return
 	    	if (checking) return
 	    	checking = true
+	    	document.getElementById('nano-pay-submit-text').innerText = 'Waiting for payment..'
 			var block = (await RPC.post(rpc_checkout.check, { 
 	    		note: window.NanoPay.config.note || window.NanoPay.config.memo || window.NanoPay.config.title,
 	    		source: window.location.origin,
