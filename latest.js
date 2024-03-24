@@ -322,6 +322,7 @@
     	var get_name = config.claim || config.lease || config.name || config.get_name || config.username
     	var disclaimer = config.disclaimer
     	var expiration = config.timeout || config.expiration || config.time || config.time
+    	var service_fee = config.fee || config.service_fee
 
     	var wallets = {
     		nault: { image: 'https://pay.nano.to/img/nault.png', name: 'Nault' },
@@ -334,6 +335,7 @@
     		line_items: config.strings && config.strings.line_items ? config.strings.line_items : (config.line_items && config.line_items.length > 1 ? 'Items' : 'Item'),
     		email: config.strings && config.strings.email ? config.strings.email : 'Email',
     		shipping: config.strings && config.strings.shipping ? config.strings.shipping : 'Shipping',
+    		service_fee: config.strings && config.strings.shipping ? config.strings.shipping : 'Service Fee',
     		tax: config.strings && config.strings.tax ? config.strings.tax : 'Sales Tax',
     		subtotal: config.strings && config.strings.subtotal ? config.strings.subtotal : 'Subtotal',
     		button: config.strings && config.strings.button ? config.strings.button : 'Pay with Nano',
@@ -359,7 +361,10 @@
 
 		show_loading(true)
 
-    	if (!wallets[wallet])  return alert("NanoPay: Invalid wallet option. Supported: natrium, nault, nautilus, cake.")
+    	if (!wallets[wallet]) {
+    		show_loading(false)
+    		return alert("NanoPay: Invalid wallet option. Supported: natrium, nault, nautilus, cake.")
+    	}
 
     	if (config.contact === "false") config.contact = false
 
@@ -397,7 +402,10 @@
 					config.disclaimer = 'Username taken. Only original owner can add time.'
 				}
 
-				if (rpc_checkout.error) return alert("NanoPay: " + rpc_checkout.message || rpc_checkout.error)
+				if (rpc_checkout.error) {
+					show_loading(false)
+					return alert("NanoPay: " + rpc_checkout.message || rpc_checkout.error)
+				}
 
     			var default_plan = 1
 				rpc_checkout.amount = rpc_checkout.plans[default_plan].value
@@ -415,7 +423,10 @@
     				address: config.address
     			}))
 
-    			if (rpc_checkout.error) return alert("NanoPay: " + rpc_checkout.message || rpc_checkout.error)
+    			if (rpc_checkout.error) {
+    				show_loading(false)
+    				return alert("NanoPay: " + rpc_checkout.message || rpc_checkout.error)
+    			}
 
     			window.NanoPay.config.require_alias = true
 
@@ -425,10 +436,16 @@
 
     		} else {
 
-		    	if (!address) return alert("NanoPay: Address or Username required.")
+		    	if (!address) {
+		    		show_loading(false)
+		    		return alert("NanoPay: Address or Username required.")
+		    	}
 
 		    	if (line_items) {
-		    		if (!Array.isArray(line_items) || line_items && !line_items.find(a => a && a.price)) return alert("NanoPay: Invalid line_items. Example: [ { name: 'T-Shirt', price: 5 } ] ")
+		    		if (!Array.isArray(line_items) || line_items && !line_items.find(a => a && a.price)) {
+		    			show_loading(false)
+		    			return alert("NanoPay: Invalid line_items. Example: [ { name: 'T-Shirt', price: 5 } ] ")
+		    		}
 		    		description = original_config.description || 'TOTAL'
 		    	}
 
@@ -449,7 +466,9 @@
     	}
 
 		if (amount && !rpc_checkout.amount_raw) {
-			return alert("NanoPay: " + rpc_checkout.message || 'Checkout Error. Please contact support@nano.to with error code #112')
+			alert("NanoPay: " + rpc_checkout.message || 'Checkout Error. Please contact support@nano.to with error code #112')
+			show_loading(false)
+			return 
 		}
 
 		if (!config.plans && !config.line_items && !get_alias && !get_alias) {
@@ -489,7 +508,7 @@
 			#nano-pay-details { box-sizing: border-box; display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid ${ window.NanoPay.dark_mode ? '#ffffff08' : '#0000000f' };position: relative;align-items: start; }
 
 			#nano-pay-details-spacer { text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.5; min-width: 90px; }
-			#nano-pay-details-labels { font-family: sans-serif; text-transform: uppercase;opacity: 0.5;font-size: 95%;line-height: 17px;letter-spacing: 0.8px; }
+			#nano-pay-details-labels { font-family: sans-serif; opacity: 0.5;font-size: 95%;line-height: 17px;letter-spacing: 0.8px; }
 			#nano-pay-details-labels > div, #nano-pay-details-values > div { margin: 3px 0; }
 			#nano-pay-details-values { text-transform: uppercase;opacity: 1;font-size: 90%;line-height: 17px;letter-spacing: 0.8px; margin-left: auto; }
 
@@ -609,6 +628,22 @@
 			<div style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}; text-align: right">${rpc_checkout.subtotal} ${symbol}</div>   
 			<div style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}; text-align: right">${rpc_checkout.shipping} ${symbol}</div>   
 			<br style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}; text-align: right"> 
+			<div id="nano-pay-amount-value">${rpc_checkout.amount} ${symbol}</div>   
+		</div> 
+	</div>
+
+	<div id="nano-pay-details" style="${ rpc_checkout.service_fee || rpc_checkout.service_fee === 0 ? '' : 'display: none' }"> 
+		<div style="display: ${Number(config.shipping) || config.shipping === true || config.shipping === "true" ? 'block' : 'none'}" id="nano-pay-details-spacer"></div>
+		<div id="nano-pay-details-labels">
+			<div style="display: ${rpc_checkout.subtotal ? 'block' : 'none'}">${strings.description || 'Amount'}</div>  
+			<div>${strings.service_fee}</div>  
+			<br>
+			<div id="nano-pay-description">Total Amount</div>  
+		</div>  
+		<div id="nano-pay-details-values">
+			<div style="display: ${rpc_checkout.subtotal ? 'block' : 'none'}; text-align: right">${rpc_checkout.subtotal} ${symbol}</div>   
+			<div style="text-align: right">${rpc_checkout.service_fee} ${symbol}</div>   
+			<br> 
 			<div id="nano-pay-amount-value">${rpc_checkout.amount} ${symbol}</div>   
 		</div> 
 	</div>
