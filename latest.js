@@ -1,10 +1,11 @@
-// NanoPay 1.1.4
+// NanoPay 1.1.5
 // March 18, 2024
 // https://github.com/fwd/NanoPay
 // (c) @nano2dev <support@nano.to>
 // Released under MIT License
 ;(async () => {
 
+	let nanopay_loading = false
 	let original_config = false
 	let payment_success = false
 	let locked_content = {}
@@ -14,7 +15,7 @@
 	window.check_interval = false
 	window.expiration_interval = false
 
-	if (window.NanoPay === undefined) window.NanoPay = { version: '1.1.4', support: 'support@nano.to' }
+	if (window.NanoPay === undefined) window.NanoPay = { version: '1.1.5', support: 'support@nano.to' }
 
 	if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
 		window.NanoPay.dark_mode = true
@@ -343,6 +344,21 @@
     		shipping_placeholder: config.strings && config.strings.shipping_placeholder ? config.strings.shipping_placeholder : 'N/A',
     	}
 
+    	function show_loading(bool) {
+    		if (bool) {
+				var loaderCSS = `#nano-pay-backdrop-initial { background: ${backdrop_background}; width: 100%; height: 100%; position: fixed; z-index: 99999999; top: 0; opacity: 0.7; background-image: url('https://pay.nano.to/img/loader.gif'); background-size: 70px; background-position: center; background-repeat: no-repeat; }`
+				addStyleIfNotExists(loaderCSS)
+				var loadingDiv = document.createElement('div');
+				loadingDiv.id = 'nano-pay-backdrop-initial';
+				document.body.appendChild(loadingDiv);
+    		} else {
+    			document.getElementById("nano-pay-backdrop-initial").remove();
+    		}
+			nanopay_loading = bool
+		}
+
+		show_loading(true)
+
     	if (!wallets[wallet])  return alert("NanoPay: Invalid wallet option. Supported: natrium, nault, nautilus, cake.")
 
     	if (config.contact === "false") config.contact = false
@@ -622,6 +638,8 @@
     </a>
 
 </div>`
+
+		show_loading(false)
 
 		var NanoPayDiv = document.createElement('div');
 		NanoPayDiv.id = 'nano-pay';
