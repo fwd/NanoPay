@@ -1,4 +1,4 @@
-// NanoPay 1.1.5
+// NanoPay 1.1.6
 // March 18, 2024
 // https://github.com/fwd/NanoPay
 // (c) @nano2dev <support@nano.to>
@@ -15,7 +15,7 @@
 	window.check_interval = false
 	window.expiration_interval = false
 
-	if (window.NanoPay === undefined) window.NanoPay = { version: '1.1.5', support: 'support@nano.to' }
+	if (window.NanoPay === undefined) window.NanoPay = { version: '1.1.6', support: 'support@nano.to' }
 
 	if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
 		window.NanoPay.dark_mode = true
@@ -316,7 +316,7 @@
     	var custom_css = config.css || config.custom_css
     	var qrcode = config.qr || config.qrcode
     	var node = config.node || config.rpc || config.endpoint || 'https://rpc.nano.to'
-    	var checkout = config.checkout || config.url || localStorage.getItem('NanoPayCheckoutId')
+    	var checkout = config.checkout || config.url
     	var wallet = config.wallet ? config.wallet.toLowerCase() : 'natrium'
     	var get_alias = config.alias || config.get_alias
     	var get_name = config.claim || config.lease || config.name || config.get_name || config.username
@@ -370,9 +370,12 @@
 
     	if (checkout) {
     		
-    		var checkout_url = checkout.replace('https://api.nano.to/checkout/', '')
-    		
-    		rpc_checkout = (await RPC.get(`https://api.nano.to/checkout/${checkout_url}`, { headers: { 'nano-app': `fwd/nano-pay-${window.NanoPay.version}` } }))
+    		if (checkout.id) {
+    			rpc_checkout = checkout
+    		} else {
+	    		var checkout_url = checkout.replace('https://api.nano.to/checkout/', '')
+	    		rpc_checkout = (await RPC.get(`https://api.nano.to/checkout/${checkout_url}`, { headers: { 'nano-app': `fwd/nano-pay-${window.NanoPay.version}` } }))
+    		}
 
     		if (rpc_checkout.plans) {
     			var default_plan = config.default || config.plan || 1
