@@ -594,8 +594,8 @@
     		quantity: config.strings && config.strings.quantity ? config.strings.quantity : 'Amount',
     		alias: config.strings && config.strings.alias ? config.strings.alias : 'Your Alias',
     		account: config.strings && config.strings.account ? config.strings.account : 'Account',
-    		email_placeholder: config.strings && config.strings.email_placeholder ? config.strings.email_placeholder : 'N/A',
-    		shipping_placeholder: config.strings && config.strings.shipping_placeholder ? config.strings.shipping_placeholder : 'N/A',
+    		email_placeholder: config.strings && config.strings.email_placeholder ? config.strings.email_placeholder : 'Required <span style="color: red">*</span>',
+    		shipping_placeholder: config.strings && config.strings.shipping_placeholder ? config.strings.shipping_placeholder : 'Required <span style="color: red">*</span>',
     	}
 
     	// TODO
@@ -815,7 +815,7 @@
 			#nano-pay-user-contact-email { line-height: 1.1;max-width: 280px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis; }
 			#nano-pay-user-mailing-address { line-height: 1.1;max-width: 280px; }
 
-			#nano-pay-shipping-input input, #nano-pay-shipping-input select { width: 100%; margin-bottom: 10px; box-sizing: border-box; display: block; min-height: 40px; appearance: none; border: 1px solid #ffffff54; background: transparent; color: #FFF; padding: 0 10px; border-radius: 5px; }
+			#nano-pay-shipping-input input, #nano-pay-shipping-input select { width: 100%; margin-bottom: 10px; box-sizing: border-box; display: block; min-height: 40px; appearance: none; border: 1px solid ${ window.NanoPay.dark_mode ? '#ffffff54' : '#00000054' }; background: transparent; color: ${ window.NanoPay.dark_mode ? '#FFF' : '#000' };; padding: 0 10px; border-radius: 5px; }
 
 			#nano-pay-save-shipping { text-align: center; border: 0; color: #FFF; padding: 12px 10px; border-radius: 5px; background: #209ce9; margin-top: 15px; }
 
