@@ -524,7 +524,14 @@
 		  
 		    if (window.NanoPay.config.require_alias && !window.NanoPay.config.provided_alias) return alert('Address alias required.')
 		    if (window.NanoPay.config.contact && !window.NanoPay.config.contact_email) return alert('Email address required.')
-		    if (window.NanoPay.config.shipping && !window.NanoPay.config.mailing_address) return alert('Shipping address required.')
+		    if (window.NanoPay.config.shipping && 
+				    	(!window.NanoPay.config.mailing_address || 
+				    	!window.NanoPay.config.mailing_address.first_name ||
+				    	!window.NanoPay.config.mailing_address.last_name ||
+				    	!window.NanoPay.config.mailing_address.country ||
+				    	!window.NanoPay.config.mailing_address.city ||
+				    	!window.NanoPay.config.mailing_address.state)
+				    ) return alert('Shipping address required.')
 		    
 	    	window.open(`nano:${rpc_checkout.address}?amount=${rpc_checkout.amount_raw}`, '_self')
         
@@ -1006,7 +1013,14 @@
 			if (window.innerWidth > desktop_width || qrcode) {
 				var qr_interval = setInterval(async () => {
 				    if (window.NanoPay.config.require_alias && !window.NanoPay.config.provided_alias) return
-				    if (window.NanoPay.config.shipping && !window.NanoPay.config.mailing_address && !window.NanoPay.config.mailing_address.first_name) return
+				    if (window.NanoPay.config.shipping && 
+				    	(!window.NanoPay.config.mailing_address || 
+				    	!window.NanoPay.config.mailing_address.first_name ||
+				    	!window.NanoPay.config.mailing_address.last_name ||
+				    	!window.NanoPay.config.mailing_address.country ||
+				    	!window.NanoPay.config.mailing_address.city ||
+				    	!window.NanoPay.config.mailing_address.state)
+				    ) return
 				    if (window.NanoPay.config.contact && !window.NanoPay.config.contact_email) return
 					document.getElementById('nano-pay-qrcode').style.display = "flex"
 					document.getElementById('nano-pay-qrcode-image').src = rpc_checkout.qrcode
@@ -1055,7 +1069,14 @@
 	    async function check_payment() {
 	    	if (!rpc_checkout || !window.NanoPay.config || window.NanoPay.config.debug) return
 		    if (window.NanoPay.config.require_alias && !window.NanoPay.config.provided_alias) return
-		    if (window.NanoPay.config.shipping && !window.NanoPay.config.mailing_address) return
+		    if (window.NanoPay.config.shipping && 
+				    	(!window.NanoPay.config.mailing_address || 
+				    	!window.NanoPay.config.mailing_address.first_name ||
+				    	!window.NanoPay.config.mailing_address.last_name ||
+				    	!window.NanoPay.config.mailing_address.country ||
+				    	!window.NanoPay.config.mailing_address.city ||
+				    	!window.NanoPay.config.mailing_address.state)
+				    ) return
 		    if (window.NanoPay.config.contact && !window.NanoPay.config.contact_email) return
 	    	if (!viewing_page) return
 	    	if (checking) return
@@ -1106,6 +1127,15 @@
 	}
 
     window.NanoPay.saveShipping = async () => {
+
+    	if (window.NanoPay.config.shipping && 
+				    	(!window.NanoPay.config.mailing_address || 
+				    	!window.NanoPay.config.mailing_address.first_name ||
+				    	!window.NanoPay.config.mailing_address.last_name ||
+				    	!window.NanoPay.config.mailing_address.country ||
+				    	!window.NanoPay.config.mailing_address.city ||
+				    	!window.NanoPay.config.mailing_address.state)
+				    ) return alert('Full shipping address required.')
 		
 		if (window.NanoPay.config && window.NanoPay.config.onShippingUpdate) {
 		    if ( window.NanoPay.config.onShippingUpdate && window.NanoPay.config.onShippingUpdate.constructor.name === 'AsyncFunction' ) {
