@@ -460,12 +460,14 @@
             setTimeout(() => {
               
                 NanoPay.open({ 
-                    // alias: true, // required
+                    login: true, // required
                     address: '@development', // required
                     // amount: 30, // required
                     // notify: 'support@nano.to',
-                    // contact: true,
-                    // // random: false,
+                    debug: true,
+                    contact: true,
+                    // unique: true,
+                    random: false,
                     strings: {
                         email_placeholder: 'Required *',
                         shipping_placeholder: 'Required *',
@@ -474,19 +476,15 @@
                         { name: "Shirt (X-Small)", price: 0.122 }, 
                         { name: "Mens Shoes (9.5)", price: 0 }
                     ],
-                    // shipping: 0.011,
-                    // currency: 'USD',
+                    shipping: 5,
+                    onShippingUpdate: (address, updateShipping) => {
+                        if (address.country === 'US') updateShipping(5)
+                        else updateShipping(20)
+                        return address
+                    },
                     success: (block) => {
                         document.getElementById('success').innerText = 'Success'
                         console.log(block)
-                        // {
-                        //     "hash": "D16FF348B634CDB3DF8...9D6F5B180CCD3B93F99A4D15203",
-                        //     "address": "PAYEE_NANO_ADDRESS",
-                        //     "username": "PAYEE_USERNAME",
-                        //     "height": "PAYEE_BLOCK_HEIGHT",
-                        //     "nanolooker": "https://nanolooker.com/block/D16FF348B634CDB3DF8...9D6F5B180CCD3B93F99A4D15203"
-                        //     "checkout": "https://api.nano.to/checkout/93be1ab9",
-                        // }
                     },
                     cancel: () => {
                         console.log("Cancelled")
