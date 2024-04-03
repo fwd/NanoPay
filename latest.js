@@ -1006,7 +1006,7 @@
 			if (window.innerWidth > desktop_width || qrcode) {
 				var qr_interval = setInterval(async () => {
 				    if (window.NanoPay.config.require_alias && !window.NanoPay.config.provided_alias) return
-				    if (window.NanoPay.config.shipping && !window.NanoPay.config.mailing_address) return
+				    if (window.NanoPay.config.shipping && !window.NanoPay.config.mailing_address && !window.NanoPay.config.mailing_address.first_name) return
 				    if (window.NanoPay.config.contact && !window.NanoPay.config.contact_email) return
 					document.getElementById('nano-pay-qrcode').style.display = "flex"
 					document.getElementById('nano-pay-qrcode-image').src = rpc_checkout.qrcode
