@@ -598,13 +598,11 @@
     		shipping_placeholder: config.strings && config.strings.shipping_placeholder ? config.strings.shipping_placeholder : 'Required <span style="color: red">*</span>',
     	}
 
-    	// TODO
-		window.NanoPay.updateShipping = async (amount) => {
-			// TODO: update checkout
+		window.NanoPay.updateShipping = async (new_shipping) => {
 			rpc_checkout = (await RPC.post(node, { 
 				action: "checkout", 
 				line_items, 
-				shipping: amount, 
+				shipping: new_shipping, 
 				currency, 
 				cloud, 
 				address, 
