@@ -915,7 +915,7 @@
 
 		<div style="display: ${(rpc_checkout.plans || get_name) && rpc_checkout.amount ? 'flex' : 'none'};justify-content: space-between;" id="nano-pay-contact"> 
 			<div id="nano-pay-contact-label">${strings.quantity}</div> 
-			<div id="nano-pay-line-items" style="line-height: 1.3;}">
+			<div id="nano-pay-line-items" style="line-height: 1.3;">
 				<select id="nano-pay-select-one" value="1, ${symbol}" onchange="window.NanoPay.onchange_select_one(this)">
 					${ rpc_checkout.plans ? rpc_checkout.plans.map((a, i) => '<option '+ (i === 1 ? 'selected' : '') +' value="'+i+', '+symbol+'">'+a.title+'</option>').join('') : '' }
 				</select>
@@ -924,14 +924,14 @@
 
 		<div style="display: ${window.NanoPay.config.require_alias ? 'flex' : 'none'};justify-content: space-between;" id="nano-pay-contact"> 
 			<div id="nano-pay-contact-label">${strings.alias}<sup style="color: #ff5f5f; opacity: 1">*</sup></div> 
-			<div id="nano-pay-line-items" style="line-height: 1.3;}">
+			<div id="nano-pay-line-items" style="line-height: 1.3;">
 				<input id="nano-pay-custom-input-one" oninput="window.NanoPay.onchange_custom_input_one(this)" type="text" placeholder="Custom Alias">
 			</div> 
 		</div>
 
-		<div style="display: ${config.line_items ? 'flex' : 'none'}" id="nano-pay-contact"> 
+		<div style="display: ${config.line_items ? 'flex' : 'none'};max-height: 20vh;overflow: auto;justify-content: unset;align-items: start;" id="nano-pay-contact"> 
 			<div id="nano-pay-contact-label">${strings.line_items}</div> 
-			<div id="nano-pay-line-items" style="line-height: 1.3;}">${config.line_items ? config.line_items.map(a => a.title || a.name).join('<br>') : ''}</div> 
+			<div id="nano-pay-line-items" style="line-height: 1.3;">${config.line_items ? config.line_items.map(a => a.title || a.name).join('<br>') : ''}</div> 
 		</div>
 
 		<div style="display: ${config.contact ? 'flex' : 'none'}" onclick="window.NanoPay.configEmailAddress()" id="nano-pay-contact"> 
