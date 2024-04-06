@@ -41,7 +41,7 @@
 		{name: 'Bermuda', code: 'BM'}, 
 		{name: 'Bhutan', code: 'BT'}, 
 		{name: 'Bolivia', code: 'BO'}, 
-		{name: 'Bosnia and Herzegovina', code: 'BA'}, 
+		// {name: 'Bosnia and Herzegovina', code: 'BA'}, 
 		{name: 'Botswana', code: 'BW'}, 
 		{name: 'Bouvet Island', code: 'BV'}, 
 		{name: 'Brazil', code: 'BR'}, 
@@ -59,15 +59,15 @@
 		{name: 'Chad', code: 'TD'}, 
 		{name: 'Chile', code: 'CL'}, 
 		{name: 'China', code: 'CN'}, 
-		{name: 'Christmas Island', code: 'CX'}, 
-		{name: 'Cocos (Keeling) Islands', code: 'CC'}, 
+		// {name: 'Christmas Island', code: 'CX'}, 
+		// {name: 'Cocos (Keeling) Islands', code: 'CC'}, 
 		{name: 'Colombia', code: 'CO'}, 
 		{name: 'Comoros', code: 'KM'}, 
 		{name: 'Congo', code: 'CG'}, 
-		{name: 'Congo, The Democratic Republic of the', code: 'CD'}, 
-		{name: 'Cook Islands', code: 'CK'}, 
+		// {name: 'Congo, The Democratic Republic of the', code: 'CD'}, 
+		// {name: 'Cook Islands', code: 'CK'}, 
 		{name: 'Costa Rica', code: 'CR'}, 
-		{name: 'Cote D\'Ivoire', code: 'CI'}, 
+		// {name: 'Cote D\'Ivoire', code: 'CI'}, 
 		{name: 'Croatia', code: 'HR'}, 
 		{name: 'Cuba', code: 'CU'}, 
 		{name: 'Cyprus', code: 'CY'}, 
@@ -325,6 +325,19 @@
 	window.NanoPay.update_description = (text) => {
 		document.getElementById('nano-pay-description').innerText = text
 	}
+
+	window.NanoPay.updateDescription = window.NanoPay.update_description
+
+	window.NanoPay.update_disclaimer = (text) => {
+		if (text) {
+			document.getElementById('nano-pay-disclaimer').style.display = 'block'
+			document.getElementById('nano-pay-disclaimer').innerText = text
+		} else {
+			document.getElementById('nano-pay-disclaimer').style.display = 'none'
+		}
+	}
+
+	window.NanoPay.updateDisclaimer = window.NanoPay.update_disclaimer
 
 	function countdownTimer(duration, onTick, onComplete) {
 		let timeLeft = duration;
@@ -722,7 +735,7 @@
 		    			show_loading(false)
 		    			return alert("NanoPay: Invalid line_items. Example: [ { name: 'T-Shirt', price: 5 } ] ")
 		    		}
-		    		description = original_config.description || 'Total'
+		    		description = original_config.description || 'Amount'
 		    	}
 
 				rpc_checkout = (await RPC.post(node, { 
@@ -779,7 +792,7 @@
 
 			#nano-pay-contact { box-sizing: border-box; display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid ${ window.NanoPay.dark_mode ? '#ffffff08' : '#0000000f' };position: relative;align-items: center; }
 			#nano-pay-contact-label { text-transform: uppercase; letter-spacing: 0.7px; opacity: 0.5; min-width: 90px; font-size: 85%  }
-			#nano-pay-description { font-size: 90% }
+
 			#nano-pay-contact svg {  max-width: 23px;fill: #1f9ce9;position: absolute;right: 5px;top: 0px;bottom: 0;margin: auto; }
 
 			#nano-pay-details { box-sizing: border-box; display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid ${ window.NanoPay.dark_mode ? '#ffffff08' : '#0000000f' };position: relative;align-items: start; }
@@ -813,7 +826,7 @@
 			#nano-pay-user-contact-email { line-height: 1.1;max-width: 280px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis; }
 			#nano-pay-user-mailing-address { line-height: 1.1;max-width: 280px; }
 
-			#nano-pay-shipping-input input, #nano-pay-shipping-input select { width: 100%; margin-bottom: 10px; box-sizing: border-box; display: block; min-height: 40px; appearance: none; border: 1px solid ${ window.NanoPay.dark_mode ? '#ffffff54' : '#00000054' }; background: transparent; color: ${ window.NanoPay.dark_mode ? '#FFF' : '#000' }; padding: 10px; border-radius: 5px; }
+			#nano-pay-shipping-input input, #nano-pay-shipping-input select { width: 100%; margin-bottom: 10px; box-sizing: border-box; display: block; min-height: 40px; appearance: none; border: 1px solid ${ window.NanoPay.dark_mode ? '#ffffff54' : '#00000054' }; background: transparent; color: ${ window.NanoPay.dark_mode ? '#FFF' : '#000' }; padding: 10px; border-radius: 5px; font-size: 14px }
 
 			#nano-pay-save-shipping { text-align: center; border: 0; color: #FFF; padding: 12px 10px; border-radius: 5px; background: #209ce9; margin-top: 15px; }
 
@@ -863,7 +876,7 @@
 			<div id="nano-pay-cancel" onclick="window.NanoPay.cancelShipping(); return">Cancel</div> 
 		</div>
 
-		<div style="padding: 20px">
+		<div style="padding: 15px 20px 19px;">
 			<div style="display: flex; justify-content: space-between; align-items: center">
 				<input onchange="window.NanoPay.onchange_shipping(this, 'first_name')" value="${window.NanoPay.config.mailing_address ? window.NanoPay.config.mailing_address.first_name : ''}" placeholder="First Name" style="margin-right: 10px"></input>
 				<input onchange="window.NanoPay.onchange_shipping(this, 'last_name')" value="${window.NanoPay.config.mailing_address ? window.NanoPay.config.mailing_address.last_name : ''}" placeholder="Last Name"></input>
@@ -918,7 +931,7 @@
 
 		<div style="display: ${config.line_items ? 'flex' : 'none'}" id="nano-pay-contact"> 
 			<div id="nano-pay-contact-label">${strings.line_items}</div> 
-			<div id="nano-pay-line-items" style="line-height: 1.3;}">${config.line_items ? config.line_items.map(a => a.title || a.name).join(', ') : ''}</div> 
+			<div id="nano-pay-line-items" style="line-height: 1.3;}">${config.line_items ? config.line_items.map(a => a.title || a.name).join('<br>') : ''}</div> 
 		</div>
 
 		<div style="display: ${config.contact ? 'flex' : 'none'}" onclick="window.NanoPay.configEmailAddress()" id="nano-pay-contact"> 
@@ -934,17 +947,17 @@
 		</div>
 		
 		<div id="nano-pay-details" style="${ config.amount || config.line_items || get_name || get_alias ? '' : 'display: none' }"> 
-			<div style="display: ${Number(config.shipping) || config.shipping === true || config.shipping === "true" ? 'block' : 'none'}" id="nano-pay-details-spacer"></div>
+			<div style="display: ${Number(config.shipping) || config.shipping === 0 || config.shipping === true || config.shipping === "true" ? 'block' : 'none'}" id="nano-pay-details-spacer"></div>
 			<div id="nano-pay-details-labels">
-				<div style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}">${strings.subtotal}</div>  
-				<div style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}">${strings.shipping}</div>  
-				<br style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}">
+				<div style="display: ${config.shipping !== true && Number(config.shipping) || config.shipping === 0 ? 'block' : 'none'}">${strings.subtotal}</div>  
+				<div style="display: ${config.shipping !== true && Number(config.shipping) || config.shipping === 0 ? 'block' : 'none'}">${strings.shipping}</div>  
+				<br style="display: ${config.shipping !== true && Number(config.shipping) || config.shipping === 0 ? 'block' : 'none'}">
 				<div id="nano-pay-description">${description}</div>  
 			</div>  
 			<div id="nano-pay-details-values">
-				<div style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}; text-align: right">${rpc_checkout.subtotal} ${symbol}</div>   
-				<div id="nano-pay-shipping-amount" style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}; text-align: right">${rpc_checkout.shipping} ${symbol}</div>   
-				<br style="display: ${config.shipping !== true && Number(config.shipping) ? 'block' : 'none'}; text-align: right"> 
+				<div style="display: ${config.shipping !== true && Number(config.shipping) || config.shipping === 0 ? 'block' : 'none'}; text-align: right">${rpc_checkout.subtotal} ${symbol}</div>   
+				<div id="nano-pay-shipping-amount" style="display: ${config.shipping !== true && Number(config.shipping) || config.shipping === 0 ? 'block' : 'none'}; text-align: right">${rpc_checkout.shipping ? rpc_checkout.shipping + ' ' + symbol : 'FREE'}</div>   
+				<br style="display: ${config.shipping !== true && Number(config.shipping) || config.shipping === 0 ? 'block' : 'none'}; text-align: right"> 
 				<div id="nano-pay-amount-value">${rpc_checkout.amount} ${symbol}</div>   
 			</div> 
 		</div>
