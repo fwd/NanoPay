@@ -1,4 +1,4 @@
-// NanoPay 1.1.7
+// NanoPay 1.1.8
 // March 18, 2024
 // https://github.com/fwd/NanoPay
 // (c) @nano2dev <support@nano.to>
@@ -12,8 +12,6 @@
 	let rpc_checkout = {}
 	let wall_success = null
 	let desktop_width = 600
-	window.check_interval = false
-	window.expiration_interval = false
 	let shipping_countries = [ 
 		{name: 'United States', code: 'US'}, 
 		{name: 'Afghanistan', code: 'AF'}, 
@@ -41,7 +39,6 @@
 		{name: 'Bermuda', code: 'BM'}, 
 		{name: 'Bhutan', code: 'BT'}, 
 		{name: 'Bolivia', code: 'BO'}, 
-		// {name: 'Bosnia and Herzegovina', code: 'BA'}, 
 		{name: 'Botswana', code: 'BW'}, 
 		{name: 'Bouvet Island', code: 'BV'}, 
 		{name: 'Brazil', code: 'BR'}, 
@@ -59,15 +56,10 @@
 		{name: 'Chad', code: 'TD'}, 
 		{name: 'Chile', code: 'CL'}, 
 		{name: 'China', code: 'CN'}, 
-		// {name: 'Christmas Island', code: 'CX'}, 
-		// {name: 'Cocos (Keeling) Islands', code: 'CC'}, 
 		{name: 'Colombia', code: 'CO'}, 
 		{name: 'Comoros', code: 'KM'}, 
 		{name: 'Congo', code: 'CG'}, 
-		// {name: 'Congo, The Democratic Republic of the', code: 'CD'}, 
-		// {name: 'Cook Islands', code: 'CK'}, 
 		{name: 'Costa Rica', code: 'CR'}, 
-		// {name: 'Cote D\'Ivoire', code: 'CI'}, 
 		{name: 'Croatia', code: 'HR'}, 
 		{name: 'Cuba', code: 'CU'}, 
 		{name: 'Cyprus', code: 'CY'}, 
@@ -257,8 +249,10 @@
 		{name: 'Zambia', code: 'ZM'}, 
 		{name: 'Zimbabwe', code: 'ZW'} 
 	]
+	window.check_interval = false
+	window.expiration_interval = false
 
-	if (window.NanoPay === undefined) window.NanoPay = { version: '1.1.7', support: 'support@nano.to' }
+	if (window.NanoPay === undefined) window.NanoPay = { version: '1.1.8', support: 'support@nano.to' }
 
 	if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
 		window.NanoPay.dark_mode = true
@@ -370,7 +364,7 @@
 		if (!e.value) document.getElementById('nano-pay-qrcode').style.display = 'none'
 	}
 
-	window.NanoPay.unlock_request = async (title, element, amount, address, notify, elementId) => {
+	window.NanoPay.unlock_request = async (title, element, amount, address, notify, elementId, cloud) => {
 		if (!original_config) return
 		if (original_config.seriesId && original_config.seriesId !== elementId) return
 		if (original_config.notify && original_config.notify !== notify) return
@@ -381,6 +375,7 @@
 		window.NanoPay.open({
 			title,
 			amount,
+			cloud,
 			description: original_config.description,
 			address,
 			notify,
@@ -472,7 +467,7 @@
         		return
         	}
 
-            var code = `<div onclick="window.NanoPay.unlock_request('${config.title || 'Pay'}', '${config.element}', '${config.amount}', '${config.address}', '${config.notify}', '${articleId}')" class="nano-pay-unlock-button"><img style="" src="https://wall.nano.to/img/xno.svg" alt="">${ config.button || 'Unlock with Nano' }</div></div>`
+            var code = `<div onclick="window.NanoPay.unlock_request('${config.title || 'Pay'}', '${config.element}', '${config.amount}', '${config.address}', '${config.notify}', '${articleId}', '${config.unique || config.cloud}')" class="nano-pay-unlock-button"><img style="" src="https://wall.nano.to/img/xno.svg" alt="">${ config.button || 'Unlock with Nano' }</div></div>`
 
             if (config.free) {
             	payment_success = true
@@ -906,11 +901,6 @@
 				<span>${config.title || 'Pay'}</span> 
 			</div>
 			<div id="nano-pay-cancel" onclick="window.NanoPay.cancel(); return">Cancel</div> 
-		</div>
-		
-		<div style="display: ${config.account ? 'flex' : 'none'};justify-content: space-between;" id="nano-pay-contact"> 
-			<div id="nano-pay-contact-label">${strings.account}</div> 
-			<div id="nano-pay-line-items">${ config.account && config.account.includes('nano_') ? ( config.account.slice(0, 12) + '...' + config.account.slice(58, 999) ) : config.account }</div> 
 		</div>
 
 		<div style="display: ${(rpc_checkout.plans || get_name) && rpc_checkout.amount ? 'flex' : 'none'};justify-content: space-between;" id="nano-pay-contact"> 
