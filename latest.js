@@ -1,4 +1,4 @@
-// NanoPay 1.1.8
+// NanoPay 1.1.9
 // March 18, 2024
 // https://github.com/fwd/NanoPay
 // (c) @nano2dev <support@nano.to>
@@ -252,7 +252,7 @@
 	window.check_interval = false
 	window.expiration_interval = false
 
-	if (window.NanoPay === undefined) window.NanoPay = { version: '1.1.8', support: 'support@nano.to' }
+	if (window.NanoPay === undefined) window.NanoPay = { version: '1.1.9', support: 'support@nano.to' }
 
 	if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
 		window.NanoPay.dark_mode = true
@@ -786,7 +786,7 @@
 			#nano-pay-shipping-label {  text-transform: uppercase; letter-spacing: 0.7px; opacity: 0.5;  min-width: 90px; font-size: 90% }
 
 			#nano-pay-contact { box-sizing: border-box; display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid ${ window.NanoPay.dark_mode ? '#ffffff08' : '#0000000f' };position: relative;align-items: center; }
-			#nano-pay-contact-label { text-transform: uppercase; letter-spacing: 0.7px; opacity: 0.5; min-width: 90px; font-size: 85%  }
+			#nano-pay-contact-label { letter-spacing: 0.7px; opacity: 0.5; min-width: 90px; }
 
 			#nano-pay-contact svg {  max-width: 23px;fill: #1f9ce9;position: absolute;right: 5px;top: 0px;bottom: 0;margin: auto; }
 
