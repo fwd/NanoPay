@@ -28,9 +28,9 @@
 
 ![line](https://github.com/fwd/n2/raw/master/.github/line.png)
 
-### Documentation
+### Docs
 
-[https://docs.nano.to/nanopay](https://docs.nano.to/nanopayjs)
+[https://docs.nano.to/nanopay](https://docs.nano.to/nanopay)
 
 ![line](https://github.com/fwd/n2/raw/master/.github/line.png)
 
