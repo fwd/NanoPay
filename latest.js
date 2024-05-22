@@ -853,6 +853,10 @@
 		window.NanoPay.config.contact_email = config.email || localStorage.getItem('nano-pay-contact-email')
 		window.NanoPay.config.mailing_address = config.mailing_address || (localStorage.getItem('nano-pay-mailing-address') ? JSON.parse(localStorage.getItem('nano-pay-mailing-address')) : { first_name: '', last_name: '', street_address: '', street_address_two: '', city: '', state: '', postal_code: '', country: 'US' })
 
+		if (localStorage.getItem('nano-pay-mailing-address')) {
+			config.onShippingUpdate(window.NanoPay.config.mailing_address, window.NanoPay.updateShipping)
+		}
+
 		var template = `<div id="nano-pay-backdrop" onclick="window.NanoPay.cancel(); return"></div>
 
 <div id="nano-pay-body">
@@ -1141,12 +1145,12 @@
 		if (window.NanoPay.config && window.NanoPay.config.onShippingUpdate) {
 		    if ( window.NanoPay.config.onShippingUpdate && window.NanoPay.config.onShippingUpdate.constructor.name === 'AsyncFunction' ) {
 		    	var async_return = await window.NanoPay.config.onShippingUpdate(window.NanoPay.config.mailing_address, window.NanoPay.updateShipping)
-		    	if (!async_return) return
+		    	// if (!async_return) return
 		    	if (typeof async_return === 'Object') window.NanoPay.config.mailing_addres = async_return
 		    }
 			if ( window.NanoPay.config.onShippingUpdate && window.NanoPay.config.onShippingUpdate.constructor.name !== 'AsyncFunction' ) {
 				var sync_return = window.NanoPay.config.onShippingUpdate(window.NanoPay.config.mailing_address, window.NanoPay.updateShipping)
-		    	if (!sync_return) return
+		    	// if (!sync_return) return
 		    	if (typeof sync_return === 'Object') window.NanoPay.config.mailing_addres = sync_return
 			}
 		}
