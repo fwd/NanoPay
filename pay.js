@@ -585,10 +585,10 @@
     	var countries = config.contries || shipping_countries
 
     	var wallets = {
-    		nault: { image: 'https://pay.nano.to/img/nault.png', name: 'Nault' },
-    		natrium: { image: 'https://pay.nano.to/img/natrium.png', name: 'Natrium' },
-    		nautilus: { image: 'https://pay.nano.to/img/nautilus.png', name: 'Nautilus' },
-    		cake: { image: 'https://pay.nano.to/img/cake.png', name: 'Cake Wallet' },
+    		nault: { image: 'https://cdn.nano.to/img/nault.png', name: 'Nault' },
+    		natrium: { image: 'https://cdn.nano.to/img/natrium.png', name: 'Natrium' },
+    		nautilus: { image: 'https://cdn.nano.to/img/nautilus.png', name: 'Nautilus' },
+    		cake: { image: 'https://cdn.nano.to/img/cake.png', name: 'Cake Wallet' },
     	}
 
     	var strings = {
@@ -629,7 +629,7 @@
 
     	function show_loading(bool) {
     		if (bool) {
-				var loaderCSS = `#nano-pay-backdrop-initial { background: ${backdrop_background}; width: 100%; height: 100%; position: fixed; z-index: 99999999; top: 0; opacity: 0.7; background-image: url('https://pay.nano.to/img/loader.gif'); background-size: 50px; background-position: center; background-repeat: no-repeat; }`
+				var loaderCSS = `#nano-pay-backdrop-initial { background: ${backdrop_background}; width: 100%; height: 100%; position: fixed; z-index: 99999999; top: 0; opacity: 0.7; background-image: url('https://cdn.nano.to/img/loader.gif'); background-size: 50px; background-position: center; background-repeat: no-repeat; }`
 				addStyleIfNotExists(loaderCSS)
 				var loadingDiv = document.createElement('div');
 				loadingDiv.id = 'nano-pay-backdrop-initial';
@@ -1056,7 +1056,7 @@
 	    	if (block && block.block) {
 		    	var success_el = document.getElementById('nano-pay-submit-image') 
 		    	var success_text = document.getElementById('nano-pay-submit-text')
-		    	if (success_el) success_el.src = 'https://pay.nano.to/img/success.gif?v=3'
+		    	if (success_el) success_el.src = 'https://cdn.nano.to/img/success.gif?v=3'
 		    	if (success_text) success_text.innerText = 'Success'
 	    		if (config.success) {
 			    	setTimeout(async () => {
@@ -1276,7 +1276,7 @@
 
 	            all[i].innerHTML = ''
 	            
-	            let code = `<div onclick="window.NanoPay.open('el-${i}')" class="nano-pay-button"><img src="https://pay.nano.to/img/xno.svg" alt="">${ original_text || strings.button }</div></div>`
+	            let code = `<div onclick="window.NanoPay.open('el-${i}')" class="nano-pay-button"><img src="https://cdn.nano.to/img/xno.svg" alt="">${ original_text || strings.button }</div></div>`
 
 	            item.innerHTML += code
 

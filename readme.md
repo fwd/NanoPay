@@ -16,14 +16,8 @@
 
 ### Install
 
-**Local:**
 ```html
-<script src="/latest.js"></script>
-```
-
-**CDN:**
-```html
-<script src="https://pay.nano.to/latest.js"></script>
+<script src="https://cdn.nano.to/pay.js"></script>
 ```
 
 ![line](https://github.com/fwd/n2/raw/master/.github/line.png)
