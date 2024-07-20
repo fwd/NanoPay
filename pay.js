@@ -1,4 +1,4 @@
-// NanoPay 1.1.9
+// NanoPay 1.2.0
 // March 18, 2024
 // https://github.com/fwd/NanoPay
 // (c) @nano2dev <support@nano.to>
@@ -563,7 +563,7 @@
     	var position = config.position || 'bottom'
     	var button = config.button || 'Open'
     	var symbol = config.symbol || 'NANO'
-    	var description = config.description || config.text || config.note || config.memo || 'AMOUNT'
+    	var description = config.description || config.text || config.note || config.memo || 'Total'
     	var address = config.address
     	var amount = config.amount ? Number(config.amount) : undefined
     	var random = config.random || config.random === false || config.random === "false" ? config.random : true
@@ -720,12 +720,12 @@
 
     		} else {
 
-		    	if (!address) {
+		    	if (!address && !node) {
 		    		show_loading(false)
 		    		return alert("NanoPay: Address or Username required.")
 		    	}
 
-		    	if (line_items) {
+		    	if (line_items && !node) {
 		    		if (!Array.isArray(line_items) || line_items && !line_items.find(a => a && a.price)) {
 		    			show_loading(false)
 		    			return alert("NanoPay: Invalid line_items. Example: [ { name: 'T-Shirt', price: 5 } ] ")
@@ -733,7 +733,7 @@
 		    		description = original_config.description || 'Amount'
 		    	}
 
-				rpc_checkout = (await RPC.post(node, { 
+				rpc_checkout = (await RPC.post(node, {
 					action: "checkout", 
 					line_items, 
 					shipping: Number(config.shipping) ? config.shipping : undefined, 
@@ -745,6 +745,13 @@
 					notify,
 					public_key
 				}))
+
+				if (rpc_checkout.shipping) {
+					config.contact = true
+					config.shipping = rpc_checkout.shipping
+				}
+				if (rpc_checkout.title) config.title = rpc_checkout.title
+				if (rpc_checkout.line_items) config.line_items = rpc_checkout.line_items
 
     		}
 
@@ -777,7 +784,7 @@
 
 			#nano-pay-header { display: flex; align-items: center; }
 			#nano-pay-header > svg { max-width: 22px; height: 22px }
-			#nano-pay-header > span { display: block;margin-left: 4px;font-size: 106%; }
+			#nano-pay-header > span { display: block;margin-left: 7px;font-size: 106%; }
 			#nano-pay-header-container { box-sizing: border-box; width: 100%;display: flex;align-items: center;justify-content: space-between;padding: 14px;border-bottom: 1px solid ${ window.NanoPay.dark_mode ? '#ffffff08' : '#0000000f' }; }
 			#nano-pay-cancel { color: #1f9ce9 }
 
@@ -934,30 +941,30 @@
 			<svg id="Layer_1" version="1.1" viewBox="0 0 512 512" width="512px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><polygon points="160,115.4 180.7,96 352,256 180.7,416 160,396.7 310.5,256 "></polygon></svg> 
 		</div>
 		
-		<div style="display: ${Number(config.shipping) || config.shipping === true || config.shipping === "true" ? 'flex' : 'none'}" onclick="window.NanoPay.openShipping()" id="nano-pay-shipping"> 
+		<div style="display: ${config.shipping || config.shipping === true || config.shipping === "true" ? 'flex' : 'none'}" onclick="window.NanoPay.openShipping()" id="nano-pay-shipping"> 
 			<div id="nano-pay-shipping-label">${strings.shipping}</div> 
 			<div id="nano-pay-user-mailing-address" style="opacity: ${window.NanoPay.config.mailing_address && window.NanoPay.config.mailing_address.first_name ? '1' : '0.5'}">${window.NanoPay.config.mailing_address && window.NanoPay.config.mailing_address.first_name ? fullAddress(window.NanoPay.config.mailing_address) : strings.shipping_placeholder}</div> 
 			<svg id="Layer_1" version="1.1" viewBox="0 0 512 512" width="512px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><polygon points="160,115.4 180.7,96 352,256 180.7,416 160,396.7 310.5,256 "></polygon></svg> 
 		</div>
 		
 		<div id="nano-pay-details" style="${ config.amount || config.line_items || get_name || get_alias ? '' : 'display: none' }"> 
-			<div style="display: ${Number(config.shipping) || config.shipping === 0 || config.shipping === true || config.shipping === "true" ? 'block' : 'none'}" id="nano-pay-details-spacer"></div>
+			<div style="display: ${config.shipping || config.shipping === 0 || config.shipping === true || config.shipping === "true" ? 'block' : 'none'}" id="nano-pay-details-spacer"></div>
 			<div id="nano-pay-details-labels">
-				<div style="display: ${config.shipping !== true && Number(config.shipping) || config.shipping === 0 ? 'block' : 'none'}">${strings.subtotal}</div>  
-				<div style="display: ${config.shipping !== true && Number(config.shipping) || config.shipping === 0 ? 'block' : 'none'}">${strings.shipping}</div>  
-				<br style="display: ${config.shipping !== true && Number(config.shipping) || config.shipping === 0 ? 'block' : 'none'}">
+				<div style="display: ${config.shipping !== true && config.shipping || config.shipping === 0 ? 'block' : 'none'}">${strings.subtotal}</div>  
+				<div style="display: ${config.shipping !== true && config.shipping || config.shipping === 0 ? 'block' : 'none'}">${strings.shipping}</div>  
+				<br style="display: ${config.shipping !== true && config.shipping || config.shipping === 0 ? 'block' : 'none'}">
 				<div id="nano-pay-description">${description}</div>  
 			</div>  
 			<div id="nano-pay-details-values">
-				<div style="display: ${config.shipping !== true && Number(config.shipping) || config.shipping === 0 ? 'block' : 'none'}; text-align: right">${rpc_checkout.subtotal} ${symbol}</div>   
-				<div id="nano-pay-shipping-amount" style="display: ${config.shipping !== true && Number(config.shipping) || config.shipping === 0 ? 'block' : 'none'}; text-align: right">${rpc_checkout.shipping ? rpc_checkout.shipping + ' ' + symbol : 'FREE'}</div>   
-				<br style="display: ${config.shipping !== true && Number(config.shipping) || config.shipping === 0 ? 'block' : 'none'}; text-align: right"> 
+				<div style="display: ${config.shipping !== true && config.shipping || config.shipping === 0 ? 'block' : 'none'}; text-align: right">${rpc_checkout.subtotal} ${symbol}</div>   
+				<div id="nano-pay-shipping-amount" style="display: ${config.shipping !== true && config.shipping || config.shipping === 0 ? 'block' : 'none'}; text-align: right">${rpc_checkout.shipping ? rpc_checkout.shipping + ' ' + symbol : 'FREE'}</div>   
+				<br style="display: ${config.shipping !== true && config.shipping || config.shipping === 0 ? 'block' : 'none'}; text-align: right"> 
 				<div id="nano-pay-amount-value">${rpc_checkout.amount} ${symbol}</div>   
 			</div> 
 		</div>
 
 		<div id="nano-pay-details" style="${ rpc_checkout.service_fee || rpc_checkout.service_fee === 0 ? '' : 'display: none' }"> 
-			<div style="display: ${Number(config.shipping) || config.shipping === true || config.shipping === "true" ? 'block' : 'none'}" id="nano-pay-details-spacer"></div>
+			<div style="display: ${config.shipping || config.shipping === true || config.shipping === "true" ? 'block' : 'none'}" id="nano-pay-details-spacer"></div>
 			<div id="nano-pay-details-labels">
 				<div style="display: ${rpc_checkout.subtotal ? 'block' : 'none'}">${strings.description || 'Amount'}</div>  
 				<div>${strings.service_fee}</div>  
