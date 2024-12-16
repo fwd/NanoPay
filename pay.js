@@ -1,5 +1,5 @@
-// NanoPay 1.2.0
-// March 18, 2024
+// NanoPay 1.2.1
+// December 16, 2024
 // https://github.com/fwd/NanoPay
 // (c) @nano2dev <support@nano.to>
 // Released under MIT License
@@ -956,7 +956,7 @@
 				<div id="nano-pay-description">${description}</div>  
 			</div>  
 			<div id="nano-pay-details-values">
-				<div style="display: ${config.shipping !== true && config.shipping || config.shipping === 0 ? 'block' : 'none'}; text-align: right">${rpc_checkout.subtotal} ${symbol}</div>   
+				<div style="display: ${config.shipping !== true && config.shipping || config.shipping === 0 ? 'block' : 'none'}; text-align: right">${config.amount} ${symbol}</div>   
 				<div id="nano-pay-shipping-amount" style="display: ${config.shipping !== true && config.shipping || config.shipping === 0 ? 'block' : 'none'}; text-align: right">${rpc_checkout.shipping ? rpc_checkout.shipping + ' ' + symbol : 'FREE'}</div>   
 				<br style="display: ${config.shipping !== true && config.shipping || config.shipping === 0 ? 'block' : 'none'}; text-align: right"> 
 				<div id="nano-pay-amount-value">${rpc_checkout.amount} ${symbol}</div>   
