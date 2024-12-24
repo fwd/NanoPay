@@ -566,7 +566,6 @@
     	var description = config.description || config.text || config.note || config.memo || 'Total'
     	var address = config.address
     	var amount = config.amount ? Number(config.amount) : undefined
-    	var random = config.random || config.random === false || config.random === "false" ? config.random : true
     	var notify = config.notify
     	var line_items = config.line_items || config.items || config.products
     	var currency = config.currency
@@ -581,7 +580,9 @@
     	var disclaimer = config.disclaimer
     	var expiration = config.timeout || config.expiration || config.time || config.time
     	var service_fee = config.fee || config.service_fee
+    	var random = config.random || config.random === false || config.random === "false" ? config.random : true
     	var cloud = config.unique || config.cloud
+    	if (unique === false) random = false
     	var countries = config.contries || shipping_countries
 
     	var wallets = {
