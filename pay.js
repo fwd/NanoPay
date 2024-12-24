@@ -582,7 +582,7 @@
     	var service_fee = config.fee || config.service_fee
     	var random = config.random || config.random === false || config.random === "false" ? config.random : true
     	var cloud = config.unique || config.cloud
-    	if (unique === false) random = false
+    	if (config.unique === false) random = false
     	var countries = config.contries || shipping_countries
 
     	var wallets = {
