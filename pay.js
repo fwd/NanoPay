@@ -1,5 +1,5 @@
-// NanoPay 1.2.1
-// December 16, 2024
+// NanoPay 1.2.2
+// December 23, 2024
 // https://github.com/fwd/NanoPay
 // (c) @nano2dev <support@nano.to>
 // Released under MIT License
@@ -582,7 +582,6 @@
     	var service_fee = config.fee || config.service_fee
     	var random = config.random || config.random === false || config.random === "false" ? config.random : true
     	var cloud = config.unique || config.cloud
-    	if (config.unique === false) random = false
     	var countries = config.contries || shipping_countries
 
     	var wallets = {
@@ -1124,10 +1123,6 @@
 	    	})
 	    }
 
-	    // needs more testing
-	    // goal is to prevent un-intentional browser refresh from breaking checkout flow
-	    // if (rpc_checkout && rpc_checkout.id) localStorage.setItem('NanoPayCheckoutId', rpc_checkout.id)
-
     }
 
 	window.NanoPay.onchange_shipping = (e, name) => {
@@ -1186,29 +1181,6 @@
 		document.getElementById('nano-pay-shipping-input').style.display = 'none'
 		return
     }
-
-    // depreceated in 1.1.7
-    // window.NanoPay.configMailingAddress = async () => {
-    // 	var shipping = window.prompt('Shipping Address: ')
-    // 	if (shipping) {
-    // 		if (window.NanoPay.config.localstorage !== false) localStorage.setItem('nano-pay-mailing-address', shipping)
-    // 		if (window.NanoPay.config && window.NanoPay.config.shippingChange) {
-	// 	        if ( window.NanoPay.config.shippingChange && window.NanoPay.config.shippingChange.constructor.name === 'AsyncFunction' ) {
-	// 	        	var async_return = await window.NanoPay.config.shippingChange(shipping)
-	// 	        	if (!async_return) return
-	// 	        	if (typeof async_return === 'string') address = async_return
-	// 	        }
-	// 			if ( window.NanoPay.config.shippingChange && window.NanoPay.config.shippingChange.constructor.name !== 'AsyncFunction' ) {
-	// 				var sync_return = window.NanoPay.config.shippingChange(shipping)
-	// 	        	if (!sync_return) return
-	// 	        	if (typeof sync_return === 'string') address = sync_return
-	// 			}
-	//         }
-    // 		window.NanoPay.config.mailing_address = shipping
-    // 		document.getElementById('nano-pay-user-mailing-address').innerText = shipping
-    // 		document.getElementById('nano-pay-user-mailing-address').style.opacity = '1'
-    // 	}
-    // }
 
     window.NanoPay.configEmailAddress = async () => {
     	const validateEmail = (email) => {
