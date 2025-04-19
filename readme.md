@@ -2,7 +2,7 @@
 
 <h1 align="center">NanoPay.js</h1>
 
-<h3 align="center">Nano Web Payment Library</h3>
+<h3 align="center">Nano Currency Payment Library</h3>
 
 ![line](https://github.com/fwd/n2/raw/master/.github/line.png)
 ![line](https://pbs.twimg.com/media/F_4K6f6XoAAYtPE?format=jpg&name=medium)
@@ -17,7 +17,7 @@ https://codepen.io/nano2dev/pen/VwRQypE
 ### Install
 
 ```html
-<script src="https://pay.nano.to/latest.js"></script>
+<script src="https://cdn.nano.to/pay.js"></script>
 ```
 
 ![line](https://raw.githubusercontent.com/nano-to/nano-node-cli/main/.github/line.png)
@@ -37,7 +37,13 @@ https://codepen.io/nano2dev/pen/VwRQypE
 
 ### License
 
-**MIT**
+Copyright 2025 @Nano2Dev
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ![line](https://raw.githubusercontent.com/nano-to/nano-node-cli/main/.github/line.png)
 

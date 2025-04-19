@@ -1,10 +1,9 @@
-// NanoPay 1.2.2
-// December 23, 2024
-// https://github.com/fwd/NanoPay
-// (c) @nano2dev <support@nano.to>
+// NanoPay 1.3.0
+// April 18, 2025
 // Released under MIT License
+// (c) @Nano2dev <support@nano.to>
+// https://github.com/fwd/nano-pay
 ;(async () => {
-
 	let nanopay_loading = false
 	let original_config = false
 	let payment_success = false
@@ -252,7 +251,7 @@
 	window.check_interval = false
 	window.expiration_interval = false
 
-	if (window.NanoPay === undefined) window.NanoPay = { version: '1.1.9', support: 'support@nano.to' }
+	if (window.NanoPay === undefined) window.NanoPay = { version: '1.3.0' }
 
 	if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
 		window.NanoPay.dark_mode = true
@@ -558,7 +557,7 @@
     	if (!window.NanoPay.config && config) window.NanoPay.config = config
 
     	var background = config.background || (window.NanoPay.dark_mode ? '#282c37' : 'rgb(247, 247, 247)')
-    	var backdrop_background = config.backdrop || (window.NanoPay.dark_mode ? '#1f1e1ee0' : 'rgb(142 142 142 / 93%)')
+    	var backdrop_background = config.backdrop || (window.NanoPay.dark_mode ? '#1f1e1ee0' : 'rgb(0 0 0 / 45%)')
     	var text_color = config.text || (window.NanoPay.dark_mode ? '#FFF' : '#000')
     	var position = config.position || 'bottom'
     	var button = config.button || 'Open'
@@ -570,7 +569,6 @@
     	var line_items = config.line_items || config.items || config.products
     	var currency = config.currency
     	var public_key = config.public_key || config.key
-    	var custom_css = config.css || config.custom_css
     	var qrcode = config.qr || config.qrcode
     	var node = config.node || config.rpc || config.endpoint || 'https://rpc.nano.to'
     	var checkout = config.checkout || config.url
@@ -776,6 +774,7 @@
     	if (!config.button) button = button + ' ' + wallets[wallet].name
 
 		var cssContent = `
+
 		    #nano-pay { font-family: sans-serif; font-family: 'Arial'; position: fixed;width: 100%;z-index: 9999;left: 0;top: 0;right: 0;bottom: 0;display: flex;align-items: center;justify-content: center;flex-direction: column;font-size: 15px; }
 			
 			#nano-pay-backdrop { background: ${backdrop_background}; width: 100%; height: 100%;  }
@@ -783,8 +782,8 @@
 			#nano-pay-body { width: 100%;max-width: 420px;display: flex;flex-direction: column;justify-content: center;align-items: center;background:${background}; position: absolute;transition: all 0.3s ease 0s;color:${text_color};box-shadow: 1px 1px 7px #0003; letter-spacing: 0.2px; bottom: ${position === 'bottom' ? '-100%' : 'auto'}; top: ${position === 'top' ? '-100%' : 'auto'} }
 
 			#nano-pay-header { display: flex; align-items: center; }
-			#nano-pay-header > svg { max-width: 22px; height: 22px }
-			#nano-pay-header > span { display: block;margin-left: 7px;font-size: 106%; }
+			#nano-pay-header > svg { max-width: 18px; height: 18px }
+			#nano-pay-header > span { display: block; margin-left: 5px; font-size: 18px; font-weight: 600; font-family: system-ui; }
 			#nano-pay-header-container { box-sizing: border-box; width: 100%;display: flex;align-items: center;justify-content: space-between;padding: 14px;border-bottom: 1px solid ${ window.NanoPay.dark_mode ? '#ffffff08' : '#0000000f' }; }
 			#nano-pay-cancel { color: #1f9ce9 }
 
@@ -832,19 +831,10 @@
 
 			#nano-pay-save-shipping { text-align: center; border: 0; color: #FFF; padding: 12px 10px; border-radius: 5px; background: #209ce9; margin-top: 15px; }
 
-			${custom_css}
-
 		`;
 
 		if (position === 'bottom') {
-			cssContent += `#nano-pay-body { 
-				top: auto;
-				bottom: -100%; 
-				border-bottom-left-radius: 0; 
-				border-bottom-right-radius: 0; 
-				border-top-left-radius: 5px; 
-				border-top-right-radius: 5px; 
-			}`
+			cssContent += `#nano-pay-body { top: auto; bottom: -100%; border-top-left-radius: 10px; border-top-right-radius: 10px; }`
 		}
 
 		if (position === 'center') {
@@ -858,6 +848,7 @@
 		addStyleIfNotExists(cssContent);
 
 		window.NanoPay.config.contact_email = config.email || localStorage.getItem('nano-pay-contact-email')
+
 		window.NanoPay.config.mailing_address = config.mailing_address || (localStorage.getItem('nano-pay-mailing-address') ? JSON.parse(localStorage.getItem('nano-pay-mailing-address')) : { first_name: '', last_name: '', street_address: '', street_address_two: '', city: '', state: '', postal_code: '', country: 'US' })
 
 		if (localStorage.getItem('nano-pay-mailing-address')) {
@@ -877,7 +868,7 @@
 				<path d="M792.911 881H740.396L541.099 570.561L338.761 881H286.68L513.452 529.3L306.882 206.222H360.42L541.95 490.393L727.322 206.222H777.555L568.762 528.379L792.911 881Z" fill="white"/>
 				<path d="M336.487 508.737H744.807V547.116H336.487V508.737ZM336.487 623.872H744.824V662.251H336.47L336.487 623.872Z" fill="white"/>
 				</svg>
-				<span>${config.title || 'Shipping'}</span> 
+				<span>Pay</span> 
 			</div>
 			<div id="nano-pay-cancel" onclick="window.NanoPay.cancelShipping(); return">Cancel</div> 
 		</div>
@@ -909,9 +900,11 @@
 				<path d="M792.911 881H740.396L541.099 570.561L338.761 881H286.68L513.452 529.3L306.882 206.222H360.42L541.95 490.393L727.322 206.222H777.555L568.762 528.379L792.911 881Z" fill="white"/>
 				<path d="M336.487 508.737H744.807V547.116H336.487V508.737ZM336.487 623.872H744.824V662.251H336.47L336.487 623.872Z" fill="white"/>
 				</svg>
-				<span>${config.title || 'Pay'}</span> 
+				<span>Pay</span> 
 			</div>
-			<div id="nano-pay-cancel" onclick="window.NanoPay.cancel(); return">Cancel</div> 
+			<div id="nano-pay-cancel" onclick="window.NanoPay.cancel(); return">
+				<svg style="fill: ${window.NanoPay.dark_mode ? '#FFF' : '#8b8b8b'}" height="20px" id="Layer_1" style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512" width="20px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g><path d="M256,33C132.3,33,32,133.3,32,257c0,123.7,100.3,224,224,224c123.7,0,224-100.3,224-224C480,133.3,379.7,33,256,33z    M364.3,332.5c1.5,1.5,2.3,3.5,2.3,5.6c0,2.1-0.8,4.2-2.3,5.6l-21.6,21.7c-1.6,1.6-3.6,2.3-5.6,2.3c-2,0-4.1-0.8-5.6-2.3L256,289.8   l-75.4,75.7c-1.5,1.6-3.6,2.3-5.6,2.3c-2,0-4.1-0.8-5.6-2.3l-21.6-21.7c-1.5-1.5-2.3-3.5-2.3-5.6c0-2.1,0.8-4.2,2.3-5.6l75.7-76   l-75.9-75c-3.1-3.1-3.1-8.2,0-11.3l21.6-21.7c1.5-1.5,3.5-2.3,5.6-2.3c2.1,0,4.1,0.8,5.6,2.3l75.7,74.7l75.7-74.7   c1.5-1.5,3.5-2.3,5.6-2.3c2.1,0,4.1,0.8,5.6,2.3l21.6,21.7c3.1,3.1,3.1,8.2,0,11.3l-75.9,75L364.3,332.5z"/></g></svg>
+			</div> 
 		</div>
 
 		<div style="display: ${(rpc_checkout.plans || get_name) && rpc_checkout.amount ? 'flex' : 'none'};justify-content: space-between;" id="nano-pay-contact"> 
@@ -953,7 +946,7 @@
 				<div style="display: ${config.shipping !== true && config.shipping || config.shipping === 0 ? 'block' : 'none'}">${strings.subtotal}</div>  
 				<div style="display: ${config.shipping !== true && config.shipping || config.shipping === 0 ? 'block' : 'none'}">${strings.shipping}</div>  
 				<br style="display: ${config.shipping !== true && config.shipping || config.shipping === 0 ? 'block' : 'none'}">
-				<div id="nano-pay-description">${description}</div>  
+				<div id="nano-pay-description">${ config.title || config.description }</div>  
 			</div>  
 			<div id="nano-pay-details-values">
 				<div style="display: ${config.shipping !== true && config.shipping || config.shipping === 0 ? 'block' : 'none'}; text-align: right">${config.amount} ${symbol}</div>   
@@ -1229,7 +1222,7 @@
 	
             window.NanoPay.el = {}
 
-            var buttonCssContent = `.nano-pay-button { cursor: pointer;padding: 7px 25px;border-radius: 4px;margin: 15px 0 10px 0;display: flex;align-items: center;justify-content: center;background: #ffffff;font-family: Helvetica, 'Arial';letter-spacing: 1px;min-height: 48px; color: ${config.color || '#000'} } .nano-pay-button img { max-width: 24px;width: auto;min-width: auto;margin: 0 8px 0 0!important;float: none; }`
+            var buttonCssContent = `.nano-pay-button { cursor: pointer; padding: 7px 25px; border-radius: 4px; margin: 15px 0 10px 0; display: flex ; align-items: center; justify-content: center; background: #1f9ce9; font-family: Helvetica, 'Arial'; letter-spacing: 1px; min-height: 48px; color: ${config.color || '#FFF'}; } .nano-pay-button img { max-width: 24px;width: auto;min-width: auto;margin: 0 8px 0 0!important;float: none; border: 1px solid; border-radius: 50% }`
 
             addStyleIfNotExists(buttonCssContent);
 
