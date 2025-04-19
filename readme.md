@@ -20,6 +20,10 @@ https://codepen.io/nano2dev/pen/VwRQypE
 <script src="https://cdn.nano.to/pay.js"></script>
 ```
 
+```html
+<script src="https://cdn.nano.to/pay.js" integrity="sha384-+cLlleejm9vk0O/ClJFXInfEMI/LvZuYEjy0SJ4jDVbmxD5JO7PY4nW9t1QQrfgz" crossorigin="anonymous"></script>
+```
+
 ![line](https://raw.githubusercontent.com/nano-to/nano-node-cli/main/.github/line.png)
 
 ### Docs
