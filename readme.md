@@ -23,7 +23,7 @@ https://codepen.io/nano2dev/pen/VwRQypE
 **With Integrity Hash:**
 
 ```html
-<script src="https://cdn.nano.to/pay.js" integrity="sha512-vihlRMJ5xlS5Lg+wcNs4RLbs2TdS3OvFjjtF2nVn2IfiVVUe/yo5LJMXpc62+nn8p9TFy/QEhclG/emWactPqw==" crossorigin="anonymous"></script>
+<script src="https://cdn.nano.to/pay.js" integrity="sha512-jDkcxSRPptrRBo77/iW1LrA1TytAGwJRIL1Q0e7bKE0fkYaYPI8pT0o6yF5bsk1oH3aHtzLyKpihQkeU+AaOxw==" crossorigin="anonymous"></script>
 ```
 
 ![line](https://raw.githubusercontent.com/nano-to/nano-node-cli/main/.github/line.png)
