@@ -578,7 +578,7 @@
     	var disclaimer = config.disclaimer
     	var expiration = config.timeout || config.expiration || config.time || config.time
     	var service_fee = config.fee || config.service_fee
-    	var random = config.random || config.random === false || config.random === "false" ? config.random : true
+    	var random = config.random || false
     	var cloud = config.unique || config.cloud
     	var countries = config.contries || shipping_countries
 
@@ -1239,7 +1239,7 @@
 					position: item.getAttribute('data-position') || false,
 					button: item.getAttribute('data-button') || false,
 					notify: item.getAttribute('data-notify') || false,
-					random: item.getAttribute('data-random') || true,
+					random: item.getAttribute('data-random') || false,
 					currency: item.getAttribute('data-currency') || false,
 					debug: item.getAttribute('data-debug') || false,
 					key: item.getAttribute('data-key') || item.getAttribute('data-public_key') || item.getAttribute('data-public-key') || false,
