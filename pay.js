@@ -1,5 +1,5 @@
-// NanoPay 1.3.1
-// April 19, 2025
+// NanoPay 1.3.2
+// June 3, 2025
 // Released under MIT License
 // (c) @Nano2dev <support@nano.to>
 // https://github.com/fwd/nano-pay
@@ -251,7 +251,7 @@
 	window.check_interval = false
 	window.expiration_interval = false
 
-	if (window.NanoPay === undefined) window.NanoPay = { version: '1.3.1' }
+	if (window.NanoPay === undefined) window.NanoPay = { version: '1.3.2' }
 
 	if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
 		window.NanoPay.dark_mode = true
@@ -946,7 +946,7 @@
 				<div style="display: ${config.shipping !== true && config.shipping || config.shipping === 0 ? 'block' : 'none'}">${strings.subtotal}</div>  
 				<div style="display: ${config.shipping !== true && config.shipping || config.shipping === 0 ? 'block' : 'none'}">${strings.shipping}</div>  
 				<br style="display: ${config.shipping !== true && config.shipping || config.shipping === 0 ? 'block' : 'none'}">
-				<div id="nano-pay-description">${ config.title || config.description }</div>  
+				<div id="nano-pay-description">${ config.title || config.description || 'Amount' }</div>  
 			</div>  
 			<div id="nano-pay-details-values">
 				<div style="display: ${config.shipping !== true && config.shipping || config.shipping === 0 ? 'block' : 'none'}; text-align: right">${config.amount} ${symbol}</div>   
