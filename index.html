@@ -4,18 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NanoPay 2.0.0 - Test Page</title>
-    <!-- Content Security Policy for enhanced security -->
-    <meta http-equiv="Content-Security-Policy" content="
-        default-src 'self';
-        script-src 'self' 'unsafe-inline' https://cdn.nano.to https://cdnjs.cloudflare.com;
-        style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
-        img-src 'self' data: https://cdn.nano.to https://wall.nano.to;
-        connect-src 'self' https://api.nano.to https://rpc.nano.to;
-        font-src 'self';
-        object-src 'none';
-        base-uri 'self';
-        form-action 'self';
-    ">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -247,8 +235,8 @@ window.NanoPay.open({
         </div>
 
         <div class="test-section">
-            <h2>3. Premium Content Wall</h2>
-            <p>Test the premium content wall feature:</p>
+            <h2>3. Premium Content Wall (with Debug Mode)</h2>
+            <p>Test the premium content wall feature with debug mode enabled for testing callbacks:</p>
             <div class="premium-content" id="premium-content">
                 <h3>This is premium content!</h3>
                 <p>This content is locked behind a payment wall. Users need to pay to unlock it.</p>
@@ -267,7 +255,7 @@ window.NanoPay.open({
                     </button>
                 </div>
                 <div class="code-example">
-                    <pre><code class="language-javascript" id="premium-wall-js">// Setup premium content wall
+                    <pre><code class="language-javascript" id="premium-wall-js">// Setup premium content wall with debug mode
 window.NanoPay.wall({
     element: '#premium-content',
     title: 'Unlock Premium Content',
@@ -275,9 +263,18 @@ window.NanoPay.wall({
     address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
     description: 'Pay to unlock this premium content',
     button: 'Unlock with Nano',
+    debug: true, // Enables debug buttons for testing
     success: function(block, element, elementId) {
-        console.log('Content unlocked!', block);
-        // Content is automatically unlocked
+        console.log('Content unlocked!', block, element, elementId);
+        // Content is automatically unlocked by NanoPay
+    },
+    cancel: function() {
+        console.log('Premium wall cancelled');
+        alert('Premium wall cancelled');
+    },
+    expired: function() {
+        console.log('Premium wall expired');
+        alert('Premium wall expired');
     }
 });</code></pre>
                 </div>
@@ -318,8 +315,8 @@ window.NanoPay.open({
         </div>
 
         <div class="test-section">
-            <h2>5. Payment with Line Items</h2>
-            <p>Test payment with multiple line items:</p>
+            <h2>5. Payment with Line Items (Enhanced)</h2>
+            <p>Test payment with multiple line items featuring quantity, variants (color, size), descriptions, and images:</p>
             <button class="test-button" onclick="testLineItemsPayment()">
                 Test Line Items Payment
             </button>
@@ -337,9 +334,29 @@ window.NanoPay.open({
     title: 'Shopping Cart',
     address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
     line_items: [
-        { name: 'T-Shirt', price: 2.5 },
-        { name: 'Mug', price: 1.0 },
-        { name: 'Sticker Pack', price: 0.5 }
+        { 
+            name: 'Premium T-Shirt', 
+            price: 2.5, 
+            quantity: 2,
+            variants: { color: 'Blue', size: 'Large' },
+            description: '100% Cotton Premium T-Shirt',
+            image: 'https://fpoimg.com/40x40/209CE9?text=T'
+        },
+        { 
+            name: 'Ceramic Coffee Mug', 
+            price: 1.0, 
+            quantity: 1,
+            variants: { color: 'White', material: 'Ceramic' },
+            description: 'Handcrafted ceramic mug',
+            image: 'https://fpoimg.com/40x40/8B4513?text=M'
+        },
+        { 
+            name: 'Sticker Pack', 
+            price: 0.5, 
+            quantity: 3,
+            variants: { theme: 'Nano', count: '10 stickers' },
+            description: 'Decorative sticker collection'
+        }
     ],
     success: function(block) {
         alert('Line items payment successful!');
@@ -355,6 +372,29 @@ window.NanoPay.open({
             <button class="test-button" onclick="testShippingPayment()">
                 Test Shipping Payment
             </button>
+            
+            <div class="code-example-container">
+                <div class="code-example-header">
+                    <span>JavaScript</span>
+                    <button class="copy-button" onclick="copyToClipboard('shipping-payment-js')">
+                        <span>📋</span> Copy
+                    </button>
+                </div>
+                <div class="code-example">
+                    <pre><code class="language-javascript" id="shipping-payment-js">// Payment with shipping information
+window.NanoPay.open({
+    title: 'Physical Product Purchase',
+    amount: 10,
+    address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+    shipping: true,
+    contact: true,
+    description: 'Product with shipping',
+    success: function(block) {
+        alert('Shipping payment successful!');
+    }
+});</code></pre>
+                </div>
+            </div>
         </div>
 
         <div class="test-section">
@@ -363,6 +403,28 @@ window.NanoPay.open({
             <button class="test-button" onclick="testEmailPayment()">
                 Test Email Payment
             </button>
+            
+            <div class="code-example-container">
+                <div class="code-example-header">
+                    <span>JavaScript</span>
+                    <button class="copy-button" onclick="copyToClipboard('email-payment-js')">
+                        <span>📋</span> Copy
+                    </button>
+                </div>
+                <div class="code-example">
+                    <pre><code class="language-javascript" id="email-payment-js">// Payment requiring email contact
+window.NanoPay.open({
+    title: 'Email Required Payment',
+    amount: 3,
+    address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+    contact: true,
+    description: 'Payment requiring email contact',
+    success: function(block) {
+        alert('Email payment successful!');
+    }
+});</code></pre>
+                </div>
+            </div>
         </div>
 
         <div class="test-section">
@@ -371,6 +433,32 @@ window.NanoPay.open({
             <button class="test-button" onclick="testCustomConfig()">
                 Test Custom Config
             </button>
+            
+            <div class="code-example-container">
+                <div class="code-example-header">
+                    <span>JavaScript</span>
+                    <button class="copy-button" onclick="copyToClipboard('custom-config-js')">
+                        <span>📋</span> Copy
+                    </button>
+                </div>
+                <div class="code-example">
+                    <pre><code class="language-javascript" id="custom-config-js">// Custom configuration with styling
+window.NanoPay.open({
+    title: 'Custom Configuration',
+    amount: 1.5,
+    address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+    description: 'Custom styled payment',
+    background: '#2c3e50',
+    text: '#ecf0f1',
+    button: 'Custom Pay Button',
+    position: 'top',
+    wallet: 'nault',
+    success: function(block) {
+        alert('Custom config payment successful!');
+    }
+});</code></pre>
+                </div>
+            </div>
         </div>
 
         <div class="test-section">
@@ -379,6 +467,46 @@ window.NanoPay.open({
             <button class="test-button" onclick="testDebugMode()">
                 Test Debug Mode
             </button>
+            
+            <div class="code-example-container">
+                <div class="code-example-header">
+                    <span>JavaScript</span>
+                    <button class="copy-button" onclick="copyToClipboard('debug-mode-js')">
+                        <span>📋</span> Copy
+                    </button>
+                </div>
+                <div class="code-example">
+                    <pre><code class="language-javascript" id="debug-mode-js">// Payment with debug mode enabled
+window.NanoPay.open({
+    title: 'Debug Mode Test',
+    amount: 0.1,
+    address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+    description: 'Debug mode enabled - test callbacks below wallet icons',
+    debug: true,
+    success: function(block) {
+        console.log('Debug success callback triggered!', block);
+        // block structure:
+        // {
+        //   block: {
+        //     hash: "786DD3F82BFEAF80A668EB87498531DE114F1A9BB7AF30558B4136AB69F5133E",
+        //     account: "nano_1demo1234567890abcdefghijklmnopqrstuvwxyz",
+        //     amount: "0.1",
+        //     amount_raw: "100000000000000000000000000000"
+        //   }
+        // }
+        alert('Debug success! Hash: ' + block.block.hash);
+    },
+    cancel: function() {
+        console.log('Debug cancel callback triggered!');
+        alert('Debug cancel callback triggered!');
+    },
+    expired: function() {
+        console.log('Debug expired callback triggered!');
+        alert('Debug expired callback triggered!');
+    }
+});</code></pre>
+                </div>
+            </div>
         </div>
 
         <div class="test-section">
@@ -387,6 +515,31 @@ window.NanoPay.open({
             <button class="test-button" onclick="testPaymentPlans()">
                 Test Payment Plans
             </button>
+            
+            <div class="code-example-container">
+                <div class="code-example-header">
+                    <span>JavaScript</span>
+                    <button class="copy-button" onclick="copyToClipboard('payment-plans-js')">
+                        <span>📋</span> Copy
+                    </button>
+                </div>
+                <div class="code-example">
+                    <pre><code class="language-javascript" id="payment-plans-js">// Payment with expiration time
+window.NanoPay.open({
+    title: 'Subscription Plans',
+    amount: 5,
+    address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+    description: 'Monthly subscription',
+    expiration: 300, // 5 minutes
+    success: function(block) {
+        alert('Subscription payment successful!');
+    },
+    expired: function() {
+        alert('Payment expired!');
+    }
+});</code></pre>
+                </div>
+            </div>
         </div>
 
         <div class="test-section">
@@ -395,6 +548,35 @@ window.NanoPay.open({
             <button class="test-button" onclick="testSecurityFeatures()">
                 Test Security Features
             </button>
+            
+            <div class="code-example-container">
+                <div class="code-example-header">
+                    <span>JavaScript</span>
+                    <button class="copy-button" onclick="copyToClipboard('security-features-js')">
+                        <span>📋</span> Copy
+                    </button>
+                </div>
+                <div class="code-example">
+                    <pre><code class="language-javascript" id="security-features-js">// Testing security features and validation
+// Test invalid amount (should be rejected)
+window.NanoPay.open({
+    title: 'Security Test - Invalid Amount',
+    amount: -1, // This should be rejected
+    address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+    description: 'Testing amount validation'
+});
+
+// Test invalid address (should be rejected)
+setTimeout(() => {
+    window.NanoPay.open({
+        title: 'Security Test - Invalid Address',
+        amount: 1,
+        address: 'invalid_address', // This should be rejected
+        description: 'Testing address validation'
+    });
+}, 2000);</code></pre>
+                </div>
+            </div>
         </div>
 
         <div class="test-section">
@@ -472,8 +654,17 @@ window.NanoPay.open({
                 address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
                 description: 'Pay to unlock this premium content',
                 button: 'Unlock with Nano',
+                debug: true,
                 success: function(block, element, elementId) {
                     console.log('Content unlocked!', block, element, elementId);
+                },
+                cancel: function() {
+                    console.log('Premium wall cancelled');
+                    alert('Premium wall cancelled');
+                },
+                expired: function() {
+                    console.log('Premium wall expired');
+                    alert('Premium wall expired');
                 }
             });
         }
@@ -499,9 +690,29 @@ window.NanoPay.open({
                 title: 'Shopping Cart',
                 address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
                 line_items: [
-                    { name: 'T-Shirt', price: 2.5 },
-                    { name: 'Mug', price: 1.0 },
-                    { name: 'Sticker Pack', price: 0.5 }
+                    { 
+                        name: 'Premium T-Shirt', 
+                        price: 2.5, 
+                        quantity: 2,
+                        variants: { color: 'Blue', size: 'Large' },
+                        description: '100% Cotton Premium T-Shirt',
+                        image: 'https://fpoimg.com/40x40/209CE9?text=T'
+                    },
+                    { 
+                        name: 'Ceramic Coffee Mug', 
+                        price: 1.0, 
+                        quantity: 1,
+                        variants: { color: 'White', material: 'Ceramic' },
+                        description: 'Handcrafted ceramic mug',
+                        image: 'https://fpoimg.com/40x40/8B4513?text=M'
+                    },
+                    { 
+                        name: 'Sticker Pack', 
+                        price: 0.5, 
+                        quantity: 3,
+                        variants: { theme: 'Nano', count: '10 stickers' },
+                        description: 'Decorative sticker collection'
+                    }
                 ],
                 success: function(block) {
                     alert('Line items payment successful!');

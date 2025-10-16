@@ -520,6 +520,7 @@ const SecurityUtils = {
 			description: original_config.description,
 			address,
 			notify,
+			debug: original_config.debug,
 			success: (block) => window.NanoPay.unlock_content(element, elementId, block)
 		})
 	}
@@ -577,8 +578,16 @@ const SecurityUtils = {
         if (!config.address) return console.error('NanoPay: No address provided:', config.address)
         if (!config.amount) return console.error('NanoPay: No price provided:', config.amount)
 
-        if (config.endpoint || config.node) window.nano.rpc.endpoint = config.endpoint || config.node
-        if (config.debug) window.nano.debug = config.debug 
+        if (config.endpoint || config.node) {
+            if (window.nano && window.nano.rpc) {
+                window.nano.rpc.endpoint = config.endpoint || config.node
+            }
+        }
+        if (config.debug) {
+            if (window.nano) {
+                window.nano.debug = config.debug
+            }
+        }
         if (config.success) window.user_success = config.success 
         
         var all = document.querySelectorAll(config.element);
@@ -724,7 +733,7 @@ const SecurityUtils = {
     	var description = config.description || config.text || config.note || config.memo || 'Total'
     	var address = config.address
     	var amount = config.amount || undefined
-    	var notify = config.notify
+    	var notify = config.notify || undefined
     	var line_items = config.line_items || config.items || config.products
     	var currency = config.currency
     	var public_key = config.public_key || config.key
@@ -738,7 +747,7 @@ const SecurityUtils = {
     	var expiration = config.timeout || config.expiration || config.time || config.time
     	var service_fee = config.fee || config.service_fee
     	var random = config.random || false
-    	var cloud = config.unique || config.cloud
+    	var cloud = config.unique || config.cloud || undefined
     	var countries = config.contries || shipping_countries
 
     	var wallets = {
@@ -749,7 +758,7 @@ const SecurityUtils = {
     	}
 
     	var strings = {
-    		line_items: config.strings && config.strings.line_items ? config.strings.line_items : (config.line_items && config.line_items.length > 1 ? 'Items' : 'Item'),
+    		line_items: config.strings && config.strings.line_items ? config.strings.line_items : (config.line_items && config.line_items.length > 1 ? 'Line Items' : 'LineItem'),
     		email: config.strings && config.strings.email ? config.strings.email : 'Email',
     		shipping: config.strings && config.strings.shipping ? config.strings.shipping : 'Shipping',
     		service_fee: config.strings && config.strings.shipping ? config.strings.shipping : 'Service Fee',
@@ -764,18 +773,22 @@ const SecurityUtils = {
     	}
 
 		window.NanoPay.updateShipping = async (new_shipping) => {
-			rpc_checkout = (await RPC.post(node, { 
+			const requestData = { 
 				action: "checkout", 
 				line_items, 
 				shipping: new_shipping, 
 				currency, 
-				cloud, 
 				address, 
 				amount, 
 				random,
-				notify,
 				public_key
-			}))
+			}
+			
+			// Only add cloud and notify if they have actual values
+			if (cloud && cloud !== 'undefined') requestData.cloud = cloud
+			if (notify && notify !== 'undefined') requestData.notify = notify
+			
+			rpc_checkout = (await RPC.post(node, requestData))
 			document.getElementById('nano-pay-shipping-amount').innerText = rpc_checkout.shipping + ' NANO'
 			document.getElementById('nano-pay-amount-value').innerText = rpc_checkout.amount + ' NANO'
 			document.getElementById('nano-pay-amount-subtotal').innerText = rpc_checkout.subtotal + ' NANO'
@@ -895,18 +908,22 @@ const SecurityUtils = {
 		    		description = original_config.description || 'Amount'
 		    	}
 
-				rpc_checkout = (await RPC.post(node, {
+				const requestData = {
 					action: "checkout", 
 					line_items, 
 					shipping: Number(config.shipping) ? config.shipping : undefined, 
 					currency, 
-					cloud, 
 					address, 
 					amount, 
 					random,
-					notify,
 					public_key
-				}))
+				}
+				
+				// Only add cloud and notify if they have actual values
+				if (cloud && cloud !== 'undefined') requestData.cloud = cloud
+				if (notify && notify !== 'undefined') requestData.notify = notify
+				
+				rpc_checkout = (await RPC.post(node, requestData))
 
 				if (rpc_checkout.shipping) {
 					config.contact = true
@@ -1112,9 +1129,34 @@ const SecurityUtils = {
 			</div> 
 		</div>
 
-		<div style="display: ${config.line_items ? 'flex' : 'none'};max-height: 20vh;overflow: auto;justify-content: unset;align-items: start;" id="nano-pay-contact"> 
-			<div id="nano-pay-contact-label">${strings.line_items}</div> 
-			<div id="nano-pay-line-items" style="line-height: 1.3;">${config.line_items ? config.line_items.map(a => a.title || a.name).join('<br>') : ''}</div> 
+		<div id="nano-pay-line-items-container" style="display: ${config.line_items ? 'block' : 'none'};width: 100%;padding: 15px 14px;border-bottom: 1px solid ${ window.NanoPay.dark_mode ? '#ffffff08' : '#0000000f' };box-sizing: border-box;"> 
+			<div id="nano-pay-contact-label" style="letter-spacing: 0.7px; opacity: 0.5; margin-bottom: 12px; font-size: 14px;">${strings.line_items}</div> 
+			<div id="nano-pay-line-items" style="display: flex; flex-direction: column; gap: 8px;">
+				${config.line_items ? config.line_items.map(item => `
+					<div class="nano-pay-line-item" style="
+						display: flex; 
+						align-items: center; 
+						padding: 10px; 
+						background: ${window.NanoPay.dark_mode ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)'}; 
+						border: 1px solid ${window.NanoPay.dark_mode ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'}; 
+						border-radius: 6px; 
+						font-size: 13px;
+						line-height: 1.4;
+						box-sizing: border-box;
+					">
+						${item.image ? `<img src="${item.image}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px; margin-right: 12px; flex-shrink: 0;" alt="${item.title || item.name}">` : ''}
+						<div style="flex: 1; min-width: 0;">
+							<div style="font-weight: 500; margin-bottom: 2px; color: ${text_color};">${item.title || item.name}</div>
+							${item.variants ? `<div style="font-size: 11px; opacity: 0.7; margin-bottom: 2px;">${Object.entries(item.variants).map(([key, value]) => `${key}: ${value}`).join(', ')}</div>` : ''}
+							${item.description ? `<div style="font-size: 11px; opacity: 0.6;">${item.description}</div>` : ''}
+						</div>
+						<div style="text-align: right; margin-left: 8px; flex-shrink: 0;">
+							${item.quantity ? `<div style="font-size: 11px; opacity: 0.7; margin-bottom: 2px;">Qty: ${item.quantity}</div>` : ''}
+							<div style="font-weight: 500; color: ${text_color};">${item.price} ${symbol}</div>
+						</div>
+					</div>
+				`).join('') : ''}
+			</div> 
 		</div>
 
 		<div style="display: ${config.contact ? 'flex' : 'none'}" onclick="window.NanoPay.configEmailAddress()" id="nano-pay-contact"> 
@@ -1183,6 +1225,17 @@ const SecurityUtils = {
 	    	<img id="nano-pay-submit-image" src="${wallets[wallet].image}" style="max-width: 45px;"> 
 	    	<span id="nano-pay-submit-text">${button}</span> 
 	    </a>
+
+		${config.debug ? `
+		<div id="nano-pay-debug-buttons" style="margin-top: 15px; margin-bottom: 20px; padding-top: 15px; border-top: 1px solid ${window.NanoPay.dark_mode ? '#ffffff08' : '#0000000f'};">
+			<div style="font-size: 12px; opacity: 0.6; margin-bottom: 10px; text-align: center;">Debug Mode - Test Callbacks</div>
+			<div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+				<button onclick="window.NanoPay.debugSuccess()" style="background: #10b981; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 11px; cursor: pointer;">✅ Success</button>
+				<button onclick="window.NanoPay.debugCancel()" style="background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 11px; cursor: pointer;">❌ Cancel</button>
+				<button onclick="window.NanoPay.debugExpired()" style="background: #f59e0b; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 11px; cursor: pointer;">⏰ Expired</button>
+			</div>
+		</div>
+		` : ''}
 
 	</div>
 		
@@ -1374,6 +1427,83 @@ const SecurityUtils = {
 		document.getElementById('nano-pay-payment-details').style.display = 'block'
 		document.getElementById('nano-pay-email-input').style.display = 'none'
 		return
+    }
+
+    // Debug mode callback functions
+    window.NanoPay.debugSuccess = async () => {
+
+        if (!window.NanoPay.config || !window.NanoPay.config.debug) return;
+        
+        // Create a mock block for testing with proper structure
+        const amount = window.NanoPay.config.amount || 1;
+        const amountRaw = Math.floor(amount * Math.pow(10, 30)).toString(); // Convert to raw units
+        const payerAddress = window.NanoPay.config.address || 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz';
+        
+        const mockBlock = {
+            block: {
+                hash: "786DD3F82BFEAF80A668EB87498531DE114F1A9BB7AF30558B4136AB69F5133E",
+                account: payerAddress,
+                amount: amount.toString(),
+                amount_raw: amountRaw
+            }
+        };
+        
+        // Set payment_success to true for paywall scenarios
+        payment_success = true;
+        
+        // Check if this is a paywall scenario
+        if (original_config && original_config.element) {
+            // This is a paywall - unlock the content
+            const articleId = original_config.seriesId || window.location.pathname + '-' + original_config.element.replace('#', '') + '-0';
+            window.NanoPay.unlock_content(original_config.element, articleId, mockBlock);
+        }
+        
+        // Call the success callback if it exists
+        if (window.NanoPay.config.success) {
+            window.NanoPay.config.success(mockBlock);
+        }
+        
+        // Show success animation
+        const successEl = document.getElementById('nano-pay-submit-image');
+        const successText = document.getElementById('nano-pay-submit-text');
+        if (successEl) successEl.src = 'https://cdn.nano.to/img/success.gif?v=3';
+        if (successText) successText.innerText = 'Success';
+        
+        // Close modal after a short delay
+        setTimeout(() => {
+            window.NanoPay.cancel();
+        }, 2000);
+        
+    }
+
+    window.NanoPay.debugCancel = async () => {
+        if (!window.NanoPay.config || !window.NanoPay.config.debug) return;
+        
+        // Call the cancel callback if it exists
+        if (window.NanoPay.config.cancel) {
+            window.NanoPay.config.cancel();
+        }
+        
+        // Close modal
+        window.NanoPay.cancel();
+    }
+
+    window.NanoPay.debugExpired = async () => {
+        if (!window.NanoPay.config || !window.NanoPay.config.debug) return;
+        
+        // Call the expired callback if it exists
+        if (window.NanoPay.config.expired) {
+            window.NanoPay.config.expired();
+        }
+        
+        // Show expired message
+        const successText = document.getElementById('nano-pay-submit-text');
+        if (successText) successText.innerText = 'Payment Expired';
+        
+        // Close modal after a short delay
+        setTimeout(() => {
+            window.NanoPay.cancel();
+        }, 2000);
     }
 
     window.NanoPay.onchange_email = (element) => {
