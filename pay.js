@@ -627,7 +627,7 @@
 
     	function show_loading(bool) {
     		if (bool) {
-				var loaderCSS = `#nano-pay-backdrop-initial { background: ${backdrop_background}; width: 100%; height: 100%; position: fixed; z-index: 99999999; top: 0; opacity: 0.7; background-image: url('https://cdn.nano.to/img/loader.gif'); background-size: 50px; background-position: center; background-repeat: no-repeat; }`
+				var loaderCSS = `#nano-pay-backdrop-initial { background: ${backdrop_background}; width: 100%; height: 100%; position: fixed; z-index: 99999999; top: 0; left: 0; opacity: 0.7; background-image: url('https://cdn.nano.to/img/loader.gif'); background-size: 50px; background-position: center; background-repeat: no-repeat; }`
 				addStyleIfNotExists(loaderCSS)
 				var loadingDiv = document.createElement('div');
 				loadingDiv.id = 'nano-pay-backdrop-initial';
