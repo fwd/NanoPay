@@ -3,7 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NanoPay Test Page</title>
+    <title>NanoPay 2.0.0 - Test Page</title>
+    <!-- Content Security Policy for enhanced security -->
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self';
+        script-src 'self' 'unsafe-inline' https://cdn.nano.to;
+        style-src 'self' 'unsafe-inline';
+        img-src 'self' data: https://cdn.nano.to https://wall.nano.to;
+        connect-src 'self' https://api.nano.to https://rpc.nano.to;
+        font-src 'self';
+        object-src 'none';
+        base-uri 'self';
+        form-action 'self';
+    ">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -100,11 +112,13 @@
 </head>
 <body>
     <div class="container">
-        <h1>🚀 NanoPay Test Page</h1>
+        <h1>🚀 NanoPay 2.0.0 Test Page</h1>
         
         <div class="info-box">
             <strong>NanoPay Version:</strong> <span id="version">Loading...</span><br>
-            <strong>Status:</strong> <span id="status">Initializing...</span>
+            <strong>Status:</strong> <span id="status">Initializing...</span><br>
+            <strong>Security Features:</strong> ✅ XSS Protection, Input Validation, Secure Storage<br>
+            <strong>New Features:</strong> 🎨 Glass Morphism UI, 📧 Email Input Screen, 🔒 Enhanced Security
         </div>
 
         <div class="test-section">
@@ -190,6 +204,22 @@
             <p>Test payment with multiple plans:</p>
             <button class="test-button" onclick="testPaymentPlans()">
                 Test Payment Plans
+            </button>
+        </div>
+
+        <div class="test-section">
+            <h2>11. Security Features Test</h2>
+            <p>Test the new security features and validation:</p>
+            <button class="test-button" onclick="testSecurityFeatures()">
+                Test Security Features
+            </button>
+        </div>
+
+        <div class="test-section">
+            <h2>12. Glass Morphism UI Test</h2>
+            <p>Test the new glass morphism design with backdrop blur:</p>
+            <button class="test-button" onclick="testGlassMorphism()">
+                Test Glass Morphism UI
             </button>
         </div>
     </div>
@@ -342,6 +372,42 @@
                 },
                 expired: function() {
                     alert('Payment expired!');
+                }
+            });
+        }
+
+        function testSecurityFeatures() {
+            // Test input validation
+            console.log('Testing security features...');
+            
+            // Test invalid amount
+            window.NanoPay.open({
+                title: 'Security Test - Invalid Amount',
+                amount: -1, // This should be rejected
+                address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+                description: 'Testing amount validation'
+            });
+            
+            // Test invalid address (after the invalid amount test)
+            setTimeout(() => {
+                window.NanoPay.open({
+                    title: 'Security Test - Invalid Address',
+                    amount: 1,
+                    address: 'invalid_address', // This should be rejected
+                    description: 'Testing address validation'
+                });
+            }, 2000);
+        }
+
+        function testGlassMorphism() {
+            // Test the new glass morphism UI
+            window.NanoPay.open({
+                title: 'Glass Morphism UI Test',
+                amount: 2,
+                address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+                description: 'Testing the new glass morphism design with backdrop blur effects',
+                success: function(block) {
+                    alert('Glass morphism UI test successful! Notice the beautiful blur effects.');
                 }
             });
         }

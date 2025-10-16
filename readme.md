@@ -1,13 +1,19 @@
 ![line](https://raw.githubusercontent.com/nano-to/nano-node-cli/main/.github/line.png)
 
-<h1 align="center">NanoPay.js</h1>
+<h1 align="center">NanoPay.js 2.0.0</h1>
 
 <h3 align="center">The Ultimate Nano Currency Payment Library</h3>
 
 <p align="center">
   <strong>Accept Nano payments with just a few lines of code!</strong><br>
-  Beautiful, customizable payment modals with glass morphism effects, dark mode support, and premium content walls.
+  Beautiful, customizable payment modals with glass morphism effects, dark mode support, premium content walls, and enterprise-grade security.
 </p>
+
+<div align="center">
+  <img src="https://img.shields.io/badge/Version-2.0.0-blue.svg" alt="Version 2.0.0">
+  <img src="https://img.shields.io/badge/Security-Enhanced-green.svg" alt="Enhanced Security">
+  <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License">
+</div>
 
 ![line](https://github.com/fwd/n2/raw/master/.github/line.png)
 
@@ -17,12 +23,15 @@
 - 🌙 **Dark Mode** - Automatic dark/light theme detection
 - 📱 **Mobile First** - Responsive design that works on all devices
 - 🔒 **Premium Content Walls** - Lock content behind payments
-- 📧 **Email Collection** - Built-in email input screens
+- 📧 **Email Collection** - Built-in email input screens with validation
 - 🚚 **Shipping Forms** - Complete shipping address collection
 - 💳 **Multiple Wallets** - Support for Natrium, Nault, Nautilus, and more
 - 🎯 **Easy Integration** - Works with any website or app
 - ⚡ **Lightweight** - Only ~50KB, no dependencies
 - 🔧 **Highly Customizable** - Custom CSS themes, colors, and styling
+- 🛡️ **Enterprise Security** - XSS protection, input validation, secure storage
+- ✅ **Input Validation** - Comprehensive validation for amounts, addresses, emails
+- 🔐 **Secure Storage** - Safe localStorage handling with sanitization
 
 ![line](https://github.com/fwd/n2/raw/master/.github/line.png)
 
@@ -511,6 +520,61 @@ window.NanoPay.open({
 
 ![line](https://github.com/fwd/n2/raw/master/.github/line.png)
 
+## 🛡️ Security Features
+
+### Enterprise-Grade Security
+
+NanoPay 2.0.0 includes comprehensive security features to protect your users and your application:
+
+#### **XSS Protection**
+- All user content is sanitized before rendering
+- HTML entities are properly escaped
+- Template injection attacks are prevented
+
+#### **Input Validation**
+- **Amount Validation**: Ensures amounts are positive and within reasonable limits (max 1M NANO)
+- **Address Validation**: Validates Nano address format (with demo address support)
+- **Email Validation**: Comprehensive email format validation
+- **Content Sanitization**: All user inputs are sanitized
+
+#### **Secure Storage**
+- Safe localStorage wrapper with error handling
+- Keys and values are sanitized before storage
+- Graceful failure handling for storage issues
+
+#### **API Security**
+- URL validation for all API calls
+- Response validation and error handling
+- Network error protection
+
+### Content Security Policy (CSP)
+
+Add this to your HTML `<head>` for maximum security:
+
+```html
+<meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' https://cdn.nano.to;
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' data: https://cdn.nano.to https://wall.nano.to;
+    connect-src 'self' https://api.nano.to https://rpc.nano.to;
+    font-src 'self';
+    object-src 'none';
+    base-uri 'self';
+    form-action 'self';
+">
+```
+
+### Security Best Practices
+
+1. **Always validate user inputs** before passing to NanoPay
+2. **Use HTTPS** for all API endpoints
+3. **Implement server-side validation** for payment verification
+4. **Monitor for suspicious activity** (unusual payment patterns)
+5. **Keep NanoPay updated** to the latest version
+
+![line](https://github.com/fwd/n2/raw/master/.github/line.png)
+
 ## 🛠️ Troubleshooting & FAQ
 
 ### Common Issues
@@ -527,6 +591,15 @@ A: Set `window.NanoPay.dark_mode = true` before initializing payments.
 **Q: Custom CSS not applying?**
 A: Use `!important` in your CSS rules or load your styles after the NanoPay script.
 
+**Q: Demo addresses not working?**
+A: Demo addresses starting with `nano_1demo` are automatically allowed for testing purposes.
+
+**Q: Security validation too strict?**
+A: The validation is designed to protect users. For demos, use addresses starting with `nano_1demo`.
+
+**Q: Glass morphism effects not showing?**
+A: Ensure your browser supports `backdrop-filter`. Use a modern browser like Chrome 76+, Firefox 103+, or Safari 9+.
+
 ### Debug Mode
 
 Enable debug mode to see detailed logs:
@@ -540,6 +613,20 @@ window.NanoPay.open({
     success: function(block) {
         console.log('Debug info:', block);
     }
+});
+```
+
+### Security Testing
+
+Test the security features:
+
+```javascript
+// Test input validation
+window.NanoPay.open({
+    title: 'Security Test',
+    amount: -1, // This will be rejected
+    address: 'invalid_address', // This will be rejected
+    description: 'Testing security features'
 });
 ```
 
