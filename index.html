@@ -182,8 +182,6 @@
         <div class="info-box">
             <strong>NanoPay Version:</strong> <span id="version">Loading...</span><br>
             <strong>Status:</strong> <span id="status">Initializing...</span><br>
-            <strong>Security Features:</strong> ✅ XSS Protection, Input Validation, Secure Storage<br>
-            <strong>New Features:</strong> 🎨 Glass Morphism UI, 📧 Email Input Screen, 🔒 Enhanced Security
         </div>
 
         <div class="test-section">
@@ -442,7 +440,7 @@ window.NanoPay.open({
         document.addEventListener('DOMContentLoaded', function() {
             if (window.NanoPay) {
                 document.getElementById('version').textContent = window.NanoPay.version || 'Unknown';
-                document.getElementById('status').textContent = 'Ready';
+                document.getElementById('status').textContent = 'Stable';
                 document.getElementById('status').style.color = 'green';
             } else {
                 document.getElementById('status').textContent = 'Failed to load';
