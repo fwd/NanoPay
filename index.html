@@ -7,8 +7,8 @@
     <!-- Content Security Policy for enhanced security -->
     <meta http-equiv="Content-Security-Policy" content="
         default-src 'self';
-        script-src 'self' 'unsafe-inline' https://cdn.nano.to;
-        style-src 'self' 'unsafe-inline';
+        script-src 'self' 'unsafe-inline' https://cdn.nano.to https://cdnjs.cloudflare.com;
+        style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
         img-src 'self' data: https://cdn.nano.to https://wall.nano.to;
         connect-src 'self' https://api.nano.to https://rpc.nano.to;
         font-src 'self';
@@ -108,6 +108,71 @@
             font-size: 12px;
             font-weight: bold;
         }
+        
+        .code-example-container {
+            position: relative;
+            margin: 20px 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .code-example-header {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .copy-button {
+            background-color: #4a5568;
+            color: #e2e8f0;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .copy-button:hover {
+            background-color: #2d3748;
+        }
+        
+        .copy-button.copied {
+            background-color: #38a169;
+        }
+        
+        .code-example {
+            background-color: #1a202c;
+            border: none;
+            border-radius: 0;
+            padding: 0;
+            margin: 0;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-x: auto;
+        }
+        
+        .code-example pre {
+            margin: 0;
+            padding: 20px;
+            background: transparent;
+        }
+        
+        .code-example code {
+            background: transparent;
+            padding: 0;
+            font-family: inherit;
+        }
     </style>
 </head>
 <body>
@@ -124,8 +189,29 @@
         <div class="test-section">
             <h2>1. Basic Payment Button</h2>
             <p>Test a simple payment button with data attributes:</p>
-            <div data-amount="1" data-address="nano_1demo1234567890abcdefghijklmnopqrstuvwxyz" data-title="Test Payment" class="test-button">
+            <div data-amount="1" data-address="nano_1demo1234567890abcdefghijklmnopqrstuvwxyz" data-title="Test Payment">
                 Pay 1 NANO
+            </div>
+            
+            <div class="code-example-container">
+                <div class="code-example-header">
+                    <span>HTML</span>
+                    <button class="copy-button" onclick="copyToClipboard('basic-html')">
+                        <span>📋</span> Copy
+                    </button>
+                </div>
+                <div class="code-example">
+                    <pre><code class="language-html" id="basic-html">&lt;!-- Basic payment button with data attributes --&gt;
+&lt;button 
+    data-amount="1" 
+    data-address="nano_1demo1234567890abcdefghijklmnopqrstuvwxyz" 
+    data-title="Test Payment"&gt;
+    Pay 1 NANO
+&lt;/button&gt;
+
+&lt;!-- Load NanoPay script --&gt;
+&lt;script src="pay.js"&gt;&lt;/script&gt;</code></pre>
+                </div>
             </div>
         </div>
 
@@ -135,6 +221,31 @@
             <button class="test-button" onclick="testProgrammaticPayment()">
                 Open Payment Modal
             </button>
+            
+            <div class="code-example-container">
+                <div class="code-example-header">
+                    <span>JavaScript</span>
+                    <button class="copy-button" onclick="copyToClipboard('programmatic-js')">
+                        <span>📋</span> Copy
+                    </button>
+                </div>
+                <div class="code-example">
+                    <pre><code class="language-javascript" id="programmatic-js">// Open payment modal programmatically
+window.NanoPay.open({
+    title: 'Test Payment',
+    amount: 2.5,
+    address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+    description: 'This is a test payment',
+    success: function(block) {
+        console.log('Payment successful!', block);
+        alert('Payment completed successfully!');
+    },
+    cancel: function() {
+        console.log('Payment cancelled');
+    }
+});</code></pre>
+                </div>
+            </div>
         </div>
 
         <div class="test-section">
@@ -149,6 +260,30 @@
             <button class="test-button" onclick="testPremiumWall()">
                 Setup Premium Wall
             </button>
+            
+            <div class="code-example-container">
+                <div class="code-example-header">
+                    <span>JavaScript</span>
+                    <button class="copy-button" onclick="copyToClipboard('premium-wall-js')">
+                        <span>📋</span> Copy
+                    </button>
+                </div>
+                <div class="code-example">
+                    <pre><code class="language-javascript" id="premium-wall-js">// Setup premium content wall
+window.NanoPay.wall({
+    element: '#premium-content',
+    title: 'Unlock Premium Content',
+    amount: 1,
+    address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+    description: 'Pay to unlock this premium content',
+    button: 'Unlock with Nano',
+    success: function(block, element, elementId) {
+        console.log('Content unlocked!', block);
+        // Content is automatically unlocked
+    }
+});</code></pre>
+                </div>
+            </div>
         </div>
 
         <div class="test-section">
@@ -157,6 +292,31 @@
             <button class="test-button" onclick="testAdvancedPayment()">
                 Advanced Payment Test
             </button>
+            
+            <div class="code-example-container">
+                <div class="code-example-header">
+                    <span>JavaScript</span>
+                    <button class="copy-button" onclick="copyToClipboard('advanced-payment-js')">
+                        <span>📋</span> Copy
+                    </button>
+                </div>
+                <div class="code-example">
+                    <pre><code class="language-javascript" id="advanced-payment-js">// Advanced payment with custom options
+window.NanoPay.open({
+    title: 'Advanced Payment Test',
+    amount: 5,
+    address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+    description: 'Advanced payment with custom options',
+    position: 'center',
+    wallet: 'natrium',
+    symbol: 'NANO',
+    disclaimer: 'This is a test payment. No real money will be charged.',
+    success: function(block) {
+        alert('Advanced payment successful!');
+    }
+});</code></pre>
+                </div>
+            </div>
         </div>
 
         <div class="test-section">
@@ -165,6 +325,30 @@
             <button class="test-button" onclick="testLineItemsPayment()">
                 Test Line Items Payment
             </button>
+            
+            <div class="code-example-container">
+                <div class="code-example-header">
+                    <span>JavaScript</span>
+                    <button class="copy-button" onclick="copyToClipboard('line-items-js')">
+                        <span>📋</span> Copy
+                    </button>
+                </div>
+                <div class="code-example">
+                    <pre><code class="language-javascript" id="line-items-js">// Payment with multiple line items
+window.NanoPay.open({
+    title: 'Shopping Cart',
+    address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+    line_items: [
+        { name: 'T-Shirt', price: 2.5 },
+        { name: 'Mug', price: 1.0 },
+        { name: 'Sticker Pack', price: 0.5 }
+    ],
+    success: function(block) {
+        alert('Line items payment successful!');
+    }
+});</code></pre>
+                </div>
+            </div>
         </div>
 
         <div class="test-section">
@@ -221,9 +405,35 @@
             <button class="test-button" onclick="testGlassMorphism()">
                 Test Glass Morphism UI
             </button>
+            
+            <div class="code-example-container">
+                <div class="code-example-header">
+                    <span>JavaScript</span>
+                    <button class="copy-button" onclick="copyToClipboard('glass-morphism-js')">
+                        <span>📋</span> Copy
+                    </button>
+                </div>
+                <div class="code-example">
+                    <pre><code class="language-javascript" id="glass-morphism-js">// Test the new glass morphism UI
+window.NanoPay.open({
+    title: 'Glass Morphism UI Test',
+    amount: 2,
+    address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+    description: 'Testing the new glass morphism design with backdrop blur effects',
+    success: function(block) {
+        alert('Glass morphism UI test successful! Notice the beautiful blur effects.');
+    }
+});</code></pre>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    
     <!-- Load NanoPay Script -->
     <script src="pay.js"></script>
     
@@ -408,6 +618,51 @@
                 description: 'Testing the new glass morphism design with backdrop blur effects',
                 success: function(block) {
                     alert('Glass morphism UI test successful! Notice the beautiful blur effects.');
+                }
+            });
+        }
+
+        // Copy to clipboard functionality
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            const text = element.textContent || element.innerText;
+            
+            navigator.clipboard.writeText(text).then(function() {
+                // Find the copy button and update its appearance
+                const copyButton = document.querySelector(`button[onclick="copyToClipboard('${elementId}')"]`);
+                if (copyButton) {
+                    const originalText = copyButton.innerHTML;
+                    copyButton.innerHTML = '<span>✅</span> Copied!';
+                    copyButton.classList.add('copied');
+                    
+                    setTimeout(() => {
+                        copyButton.innerHTML = originalText;
+                        copyButton.classList.remove('copied');
+                    }, 2000);
+                }
+            }).catch(function(err) {
+                console.error('Failed to copy text: ', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                // Still show success feedback
+                const copyButton = document.querySelector(`button[onclick="copyToClipboard('${elementId}')"]`);
+                if (copyButton) {
+                    const originalText = copyButton.innerHTML;
+                    copyButton.innerHTML = '<span>✅</span> Copied!';
+                    copyButton.classList.add('copied');
+                    
+                    setTimeout(() => {
+                        copyButton.innerHTML = originalText;
+                        copyButton.classList.remove('copied');
+                    }, 2000);
                 }
             });
         }
