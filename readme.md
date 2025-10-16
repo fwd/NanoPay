@@ -13,7 +13,21 @@
   <img src="https://img.shields.io/badge/Version-2.0.0-blue.svg" alt="Version 2.0.0">
   <img src="https://img.shields.io/badge/Security-Enhanced-green.svg" alt="Enhanced Security">
   <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License">
+  <img src="https://img.shields.io/badge/Updated-January%202025-brightgreen.svg" alt="Updated January 2025">
 </div>
+
+![line](https://github.com/fwd/n2/raw/master/.github/line.png)
+
+## 🆕 What's New in 2.0.0
+
+- 🐛 **Enhanced Security** - Comprehensive input validation and XSS protection
+- 🛒 **Advanced Line Items** - Support for quantities, variants, descriptions, and images
+- 🔍 **Debug Mode** - Built-in debugging tools for development and testing
+- 🎨 **Glass Morphism UI** - Modern backdrop blur effects and improved aesthetics
+- 📦 **Better Shipping** - Enhanced shipping form with country selection
+- 📧 **Improved Email Validation** - More robust email format validation
+- 🔧 **API Improvements** - Better error handling and response validation
+- 📱 **Mobile Optimization** - Enhanced mobile experience and touch interactions
 
 ![line](https://github.com/fwd/n2/raw/master/.github/line.png)
 
@@ -24,7 +38,7 @@
 - 📱 **Mobile First** - Responsive design that works on all devices
 - 🔒 **Premium Content Walls** - Lock content behind payments
 - 📧 **Email Collection** - Built-in email input screens with validation
-- 🚚 **Shipping Forms** - Complete shipping address collection
+- 🚚 **Shipping Forms** - Complete shipping address collection with country selection
 - 💳 **Multiple Wallets** - Support for Natrium, Nault, Nautilus, and more
 - 🎯 **Easy Integration** - Works with any website or app
 - ⚡ **Lightweight** - Only ~50KB, no dependencies
@@ -32,6 +46,9 @@
 - 🛡️ **Enterprise Security** - XSS protection, input validation, secure storage
 - ✅ **Input Validation** - Comprehensive validation for amounts, addresses, emails
 - 🔐 **Secure Storage** - Safe localStorage handling with sanitization
+- 🛒 **Advanced Line Items** - Support for quantities, variants, descriptions, and images
+- 🔍 **Debug Mode** - Built-in debugging tools for development and testing
+- 🎯 **Enhanced UX** - Improved user experience with better animations and interactions
 
 ![line](https://github.com/fwd/n2/raw/master/.github/line.png)
 
@@ -157,13 +174,29 @@ The button automatically becomes a beautiful payment modal when clicked!
 </div>
 ```
 
-### Payment with Line Items (Shopping Cart)
+### Payment with Enhanced Line Items (Shopping Cart)
 
 ```html
 <div data-amount="15" 
      data-address="nano_1yourwalletaddresshere" 
      data-title="Shopping Cart"
-     data-line-items='[{"name":"T-Shirt","price":10},{"name":"Mug","price":5}]'>
+     data-line-items='[
+         {
+             "name": "Premium T-Shirt", 
+             "price": 10, 
+             "quantity": 2,
+             "variants": {"color": "Blue", "size": "Large"},
+             "description": "100% Cotton Premium T-Shirt",
+             "image": "https://example.com/tshirt.jpg"
+         },
+         {
+             "name": "Ceramic Coffee Mug", 
+             "price": 5, 
+             "quantity": 1,
+             "variants": {"color": "White", "material": "Ceramic"},
+             "description": "Handcrafted ceramic mug"
+         }
+     ]'>
     Complete Purchase - 15 NANO
 </div>
 ```
@@ -229,6 +262,78 @@ window.NanoPay.wall({
     success: function(block, element, elementId) {
         console.log('Content unlocked!', block);
         // Content is automatically unlocked
+    }
+});
+```
+
+### Payment with Enhanced Line Items (Shopping Cart)
+
+```javascript
+// Payment with multiple line items featuring quantities, variants, descriptions, and images
+window.NanoPay.open({
+    title: 'Shopping Cart',
+    address: 'nano_1yourwalletaddresshere',
+    line_items: [
+        { 
+            name: 'Premium T-Shirt', 
+            price: 2.5, 
+            quantity: 2,
+            variants: { color: 'Blue', size: 'Large' },
+            description: '100% Cotton Premium T-Shirt',
+            image: 'https://example.com/tshirt.jpg'
+        },
+        { 
+            name: 'Ceramic Coffee Mug', 
+            price: 1.0, 
+            quantity: 1,
+            variants: { color: 'White', material: 'Ceramic' },
+            description: 'Handcrafted ceramic mug',
+            image: 'https://example.com/mug.jpg'
+        },
+        { 
+            name: 'Sticker Pack', 
+            price: 0.5, 
+            quantity: 3,
+            variants: { theme: 'Nano', count: '10 stickers' },
+            description: 'Decorative sticker collection'
+        }
+    ],
+    success: function(block) {
+        alert('Line items payment successful!');
+    }
+});
+```
+
+### Payment with Debug Mode
+
+```javascript
+// Enable debug mode for development and testing
+window.NanoPay.open({
+    title: 'Debug Payment',
+    amount: 1,
+    address: 'nano_1yourwalletaddresshere',
+    description: 'Debug mode enabled - test callbacks below wallet icons',
+    debug: true, // Enables debug buttons for testing
+    success: function(block) {
+        console.log('Debug success callback triggered!', block);
+        // block structure:
+        // {
+        //   block: {
+        //     hash: "786DD3F82BFEAF80A668EB87498531DE114F1A9BB7AF30558B4136AB69F5133E",
+        //     account: "nano_1yourwalletaddresshere",
+        //     amount: "1",
+        //     amount_raw: "1000000000000000000000000000000"
+        //   }
+        // }
+        alert('Debug success! Hash: ' + block.block.hash);
+    },
+    cancel: function() {
+        console.log('Debug cancel callback triggered!');
+        alert('Debug cancel callback triggered!');
+    },
+    expired: function() {
+        console.log('Debug expired callback triggered!');
+        alert('Debug expired callback triggered!');
     }
 });
 ```
@@ -600,6 +705,15 @@ A: The validation is designed to protect users. For demos, use addresses startin
 **Q: Glass morphism effects not showing?**
 A: Ensure your browser supports `backdrop-filter`. Use a modern browser like Chrome 76+, Firefox 103+, or Safari 9+.
 
+**Q: Debug mode not working?**
+A: Set `debug: true` in your payment configuration. Debug buttons will appear below wallet icons for testing callbacks.
+
+**Q: Line items not displaying correctly?**
+A: Ensure your line items array is properly formatted with required fields (name, price) and optional fields (quantity, variants, description, image).
+
+**Q: Enhanced features not available?**
+A: Make sure you're using NanoPay 2.0.0 or later. Check the version with `window.NanoPay.version`.
+
 ### Debug Mode
 
 Enable debug mode to see detailed logs:
@@ -633,11 +747,12 @@ window.NanoPay.open({
 ### Browser Compatibility
 
 NanoPay.js works on all modern browsers:
-- ✅ Chrome 60+
-- ✅ Firefox 55+
-- ✅ Safari 12+
+- ✅ Chrome 76+ (recommended for glass morphism effects)
+- ✅ Firefox 103+ (recommended for glass morphism effects)
+- ✅ Safari 12+ (recommended for glass morphism effects)
 - ✅ Edge 79+
 - ✅ Mobile browsers (iOS Safari, Chrome Mobile)
+- ⚠️ Internet Explorer: Not supported (use modern browsers for best experience)
 
 ![line](https://github.com/fwd/n2/raw/master/.github/line.png)
 
@@ -654,6 +769,20 @@ For complete API documentation and advanced features:
 See NanoPay in action:
 
 **[🚀 Live Demo on CodePen](https://codepen.io/nano2dev/pen/VwRQypE)**
+
+### Local Testing
+
+You can also test NanoPay locally by opening the included `index.html` file in your browser. This test page includes:
+
+- ✅ All payment examples with working demo addresses
+- ✅ Interactive test buttons for each feature
+- ✅ Copy-to-clipboard functionality for code examples
+- ✅ Real-time testing of all NanoPay features
+- ✅ Debug mode demonstrations
+- ✅ Enhanced line items examples
+- ✅ Security feature testing
+
+Simply open `index.html` in your browser to start testing immediately!
 
 ![line](https://github.com/fwd/n2/raw/master/.github/line.png)
 
