@@ -1,5 +1,5 @@
 // NanoPay 2.0.0
-// October 15, 2025
+// November 1, 2025
 // Released under MIT License
 // (c) @Nano2dev <support@nano.to>
 // https://github.com/fwd/nano-pay
