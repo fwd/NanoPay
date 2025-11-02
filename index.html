@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NanoPay 2.0.0 - Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            color: #209CE9;
+            border-bottom: 2px solid #209CE9;
+            padding-bottom: 10px;
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fafafa;
+        }
+        
+        .test-button {
+            margin: 10px 0;
+            padding: 15px 25px;
+            background-color: #209CE9;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .test-button:hover {
+            background-color: #1a7bb8;
+        }
+        
+        .info-box {
+            background-color: #e7f3ff;
+            border: 1px solid #209CE9;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .code-example {
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        
+        .premium-content {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .premium-content::before {
+            content: "🔒 Premium Content";
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background-color: #ffeaa7;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .code-example-container {
+            position: relative;
+            margin: 20px 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .code-example-header {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .copy-button {
+            background-color: #4a5568;
+            color: #e2e8f0;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .copy-button:hover {
+            background-color: #2d3748;
+        }
+        
+        .copy-button.copied {
+            background-color: #38a169;
+        }
+        
+        .code-example {
+            background-color: #1a202c;
+            border: none;
+            border-radius: 0;
+            padding: 0;
+            margin: 0;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-x: auto;
+        }
+        
+        .code-example pre {
+            margin: 0;
+            padding: 20px;
+            background: transparent;
+        }
+        
+        .code-example code {
+            background: transparent;
+            padding: 0;
+            font-family: inherit;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 NanoPay 2.0.0 Test Page</h1>
+        
+        <div class="info-box">
+            <strong>NanoPay Version:</strong> <span id="version">Loading...</span><br>
+            <strong>Status:</strong> <span id="status">Initializing...</span><br>
+        </div>
+
+        <div class="test-section">
+            <h2>1. Basic Payment Button</h2>
+            <p>Test a simple payment button with data attributes:</p>
+            <div data-amount="1" data-address="nano_1demo1234567890abcdefghijklmnopqrstuvwxyz" data-title="Test Payment">
+                Pay 1 NANO
+            </div>
+            
+            <div class="code-example-container">
+                <div class="code-example-header">
+                    <span>HTML</span>
+                    <button class="copy-button" onclick="copyToClipboard('basic-html')">
+                        <span>📋</span> Copy
+                    </button>
+                </div>
+                <div class="code-example">
+                    <pre><code class="language-html" id="basic-html">&lt;!-- Basic payment button with data attributes --&gt;
+&lt;button 
+    data-amount="1" 
+    data-address="nano_1demo1234567890abcdefghijklmnopqrstuvwxyz" 
+    data-title="Test Payment"&gt;
+    Pay 1 NANO
+&lt;/button&gt;
+
+&lt;!-- Load NanoPay script --&gt;
+&lt;script src="pay.js"&gt;&lt;/script&gt;</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>2. Programmatic Payment</h2>
+            <p>Test opening payment modal programmatically:</p>
+            <button class="test-button" onclick="testProgrammaticPayment()">
+                Open Payment Modal
+            </button>
+            
+            <div class="code-example-container">
+                <div class="code-example-header">
+                    <span>JavaScript</span>
+                    <button class="copy-button" onclick="copyToClipboard('programmatic-js')">
+                        <span>📋</span> Copy
+                    </button>
+                </div>
+                <div class="code-example">
+                    <pre><code class="language-javascript" id="programmatic-js">// Open payment modal programmatically
+window.NanoPay.open({
+    title: 'Test Payment',
+    amount: 2.5,
+    address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+    description: 'This is a test payment',
+    success: function(block) {
+        console.log('Payment successful!', block);
+        alert('Payment completed successfully!');
+    },
+    cancel: function() {
+        console.log('Payment cancelled');
+    }
+});</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>3. Premium Content Wall (with Debug Mode)</h2>
+            <p>Test the premium content wall feature with debug mode enabled for testing callbacks:</p>
+            <div class="premium-content" id="premium-content">
+                <h3>This is premium content!</h3>
+                <p>This content is locked behind a payment wall. Users need to pay to unlock it.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+            </div>
+            <button class="test-button" onclick="testPremiumWall()">
+                Setup Premium Wall
+            </button>
+            
+            <div class="code-example-container">
+                <div class="code-example-header">
+                    <span>JavaScript</span>
+                    <button class="copy-button" onclick="copyToClipboard('premium-wall-js')">
+                        <span>📋</span> Copy
+                    </button>
+                </div>
+                <div class="code-example">
+                    <pre><code class="language-javascript" id="premium-wall-js">// Setup premium content wall with debug mode
+window.NanoPay.wall({
+    element: '#premium-content',
+    title: 'Unlock Premium Content',
+    amount: 1,
+    address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+    description: 'Pay to unlock this premium content',
+    button: 'Unlock with Nano',
+    debug: true, // Enables debug buttons for testing
+    success: function(block, element, elementId) {
+        console.log('Content unlocked!', block, element, elementId);
+        // Content is automatically unlocked by NanoPay
+    },
+    cancel: function() {
+        console.log('Premium wall cancelled');
+        alert('Premium wall cancelled');
+    },
+    expired: function() {
+        console.log('Premium wall expired');
+        alert('Premium wall expired');
+    }
+});</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>4. Advanced Payment Options</h2>
+            <p>Test payment with additional options:</p>
+            <button class="test-button" onclick="testAdvancedPayment()">
+                Advanced Payment Test
+            </button>
+            
+            <div class="code-example-container">
+                <div class="code-example-header">
+                    <span>JavaScript</span>
+                    <button class="copy-button" onclick="copyToClipboard('advanced-payment-js')">
+                        <span>📋</span> Copy
+                    </button>
+                </div>
+                <div class="code-example">
+                    <pre><code class="language-javascript" id="advanced-payment-js">// Advanced payment with custom options
+window.NanoPay.open({
+    title: 'Advanced Payment Test',
+    amount: 5,
+    address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+    description: 'Advanced payment with custom options',
+    position: 'center',
+    wallet: 'natrium',
+    symbol: 'NANO',
+    disclaimer: 'This is a test payment. No real money will be charged.',
+    success: function(block) {
+        alert('Advanced payment successful!');
+    }
+});</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>5. Payment with Line Items (Enhanced)</h2>
+            <p>Test payment with multiple line items featuring quantity, variants (color, size), descriptions, and images:</p>
+            <button class="test-button" onclick="testLineItemsPayment()">
+                Test Line Items Payment
+            </button>
+            
+            <div class="code-example-container">
+                <div class="code-example-header">
+                    <span>JavaScript</span>
+                    <button class="copy-button" onclick="copyToClipboard('line-items-js')">
+                        <span>📋</span> Copy
+                    </button>
+                </div>
+                <div class="code-example">
+                    <pre><code class="language-javascript" id="line-items-js">// Payment with multiple line items
+window.NanoPay.open({
+    title: 'Shopping Cart',
+    address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+    line_items: [
+        { 
+            name: 'Premium T-Shirt', 
+            price: 2.5, 
+            quantity: 2,
+            variants: { color: 'Blue', size: 'Large' },
+            description: '100% Cotton Premium T-Shirt',
+            image: 'https://fpoimg.com/40x40/209CE9?text=T'
+        },
+        { 
+            name: 'Ceramic Coffee Mug', 
+            price: 1.0, 
+            quantity: 1,
+            variants: { color: 'White', material: 'Ceramic' },
+            description: 'Handcrafted ceramic mug',
+            image: 'https://fpoimg.com/40x40/8B4513?text=M'
+        },
+        { 
+            name: 'Sticker Pack', 
+            price: 0.5, 
+            quantity: 3,
+            variants: { theme: 'Nano', count: '10 stickers' },
+            description: 'Decorative sticker collection'
+        }
+    ],
+    success: function(block) {
+        alert('Line items payment successful!');
+    }
+});</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>6. Payment with Shipping</h2>
+            <p>Test payment with shipping information:</p>
+            <button class="test-button" onclick="testShippingPayment()">
+                Test Shipping Payment
+            </button>
+            
+            <div class="code-example-container">
+                <div class="code-example-header">
+                    <span>JavaScript</span>
+                    <button class="copy-button" onclick="copyToClipboard('shipping-payment-js')">
+                        <span>📋</span> Copy
+                    </button>
+                </div>
+                <div class="code-example">
+                    <pre><code class="language-javascript" id="shipping-payment-js">// Payment with shipping information
+window.NanoPay.open({
+    title: 'Physical Product Purchase',
+    amount: 10,
+    address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+    shipping: true,
+    contact: true,
+    description: 'Product with shipping',
+    success: function(block) {
+        alert('Shipping payment successful!');
+    }
+});</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>7. Payment with Email Contact</h2>
+            <p>Test payment requiring email contact:</p>
+            <button class="test-button" onclick="testEmailPayment()">
+                Test Email Payment
+            </button>
+            
+            <div class="code-example-container">
+                <div class="code-example-header">
+                    <span>JavaScript</span>
+                    <button class="copy-button" onclick="copyToClipboard('email-payment-js')">
+                        <span>📋</span> Copy
+                    </button>
+                </div>
+                <div class="code-example">
+                    <pre><code class="language-javascript" id="email-payment-js">// Payment requiring email contact
+window.NanoPay.open({
+    title: 'Email Required Payment',
+    amount: 3,
+    address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+    contact: true,
+    description: 'Payment requiring email contact',
+    success: function(block) {
+        alert('Email payment successful!');
+    }
+});</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>8. Custom Configuration</h2>
+            <p>Test with custom configuration:</p>
+            <button class="test-button" onclick="testCustomConfig()">
+                Test Custom Config
+            </button>
+            
+            <div class="code-example-container">
+                <div class="code-example-header">
+                    <span>JavaScript</span>
+                    <button class="copy-button" onclick="copyToClipboard('custom-config-js')">
+                        <span>📋</span> Copy
+                    </button>
+                </div>
+                <div class="code-example">
+                    <pre><code class="language-javascript" id="custom-config-js">// Custom configuration with styling
+window.NanoPay.open({
+    title: 'Custom Configuration',
+    amount: 1.5,
+    address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+    description: 'Custom styled payment',
+    background: '#2c3e50',
+    text: '#ecf0f1',
+    button: 'Custom Pay Button',
+    position: 'top',
+    wallet: 'nault',
+    success: function(block) {
+        alert('Custom config payment successful!');
+    }
+});</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>9. Debug Mode</h2>
+            <p>Test with debug mode enabled:</p>
+            <button class="test-button" onclick="testDebugMode()">
+                Test Debug Mode
+            </button>
+            
+            <div class="code-example-container">
+                <div class="code-example-header">
+                    <span>JavaScript</span>
+                    <button class="copy-button" onclick="copyToClipboard('debug-mode-js')">
+                        <span>📋</span> Copy
+                    </button>
+                </div>
+                <div class="code-example">
+                    <pre><code class="language-javascript" id="debug-mode-js">// Payment with debug mode enabled
+window.NanoPay.open({
+    title: 'Debug Mode Test',
+    amount: 0.1,
+    address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+    description: 'Debug mode enabled - test callbacks below wallet icons',
+    debug: true,
+    success: function(block) {
+        console.log('Debug success callback triggered!', block);
+        // block structure:
+        // {
+        //   block: {
+        //     hash: "786DD3F82BFEAF80A668EB87498531DE114F1A9BB7AF30558B4136AB69F5133E",
+        //     account: "nano_1demo1234567890abcdefghijklmnopqrstuvwxyz",
+        //     amount: "0.1",
+        //     amount_raw: "100000000000000000000000000000"
+        //   }
+        // }
+        alert('Debug success! Hash: ' + block.block.hash);
+    },
+    cancel: function() {
+        console.log('Debug cancel callback triggered!');
+        alert('Debug cancel callback triggered!');
+    },
+    expired: function() {
+        console.log('Debug expired callback triggered!');
+        alert('Debug expired callback triggered!');
+    }
+});</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>10. Payment Plans</h2>
+            <p>Test payment with multiple plans:</p>
+            <button class="test-button" onclick="testPaymentPlans()">
+                Test Payment Plans
+            </button>
+            
+            <div class="code-example-container">
+                <div class="code-example-header">
+                    <span>JavaScript</span>
+                    <button class="copy-button" onclick="copyToClipboard('payment-plans-js')">
+                        <span>📋</span> Copy
+                    </button>
+                </div>
+                <div class="code-example">
+                    <pre><code class="language-javascript" id="payment-plans-js">// Payment with expiration time
+window.NanoPay.open({
+    title: 'Subscription Plans',
+    amount: 5,
+    address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+    description: 'Monthly subscription',
+    expiration: 300, // 5 minutes
+    success: function(block) {
+        alert('Subscription payment successful!');
+    },
+    expired: function() {
+        alert('Payment expired!');
+    }
+});</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>11. Security Features Test</h2>
+            <p>Test the new security features and validation:</p>
+            <button class="test-button" onclick="testSecurityFeatures()">
+                Test Security Features
+            </button>
+            
+            <div class="code-example-container">
+                <div class="code-example-header">
+                    <span>JavaScript</span>
+                    <button class="copy-button" onclick="copyToClipboard('security-features-js')">
+                        <span>📋</span> Copy
+                    </button>
+                </div>
+                <div class="code-example">
+                    <pre><code class="language-javascript" id="security-features-js">// Testing security features and validation
+// Test invalid amount (should be rejected)
+window.NanoPay.open({
+    title: 'Security Test - Invalid Amount',
+    amount: -1, // This should be rejected
+    address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+    description: 'Testing amount validation'
+});
+
+// Test invalid address (should be rejected)
+setTimeout(() => {
+    window.NanoPay.open({
+        title: 'Security Test - Invalid Address',
+        amount: 1,
+        address: 'invalid_address', // This should be rejected
+        description: 'Testing address validation'
+    });
+}, 2000);</code></pre>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    
+    <!-- Load NanoPay Script -->
+    <script src="pay.js"></script>
+    
+    <script>
+        // Update status when NanoPay loads
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.NanoPay) {
+                document.getElementById('version').textContent = window.NanoPay.version || 'Unknown';
+                document.getElementById('status').textContent = 'Stable';
+                document.getElementById('status').style.color = 'green';
+            } else {
+                document.getElementById('status').textContent = 'Failed to load';
+                document.getElementById('status').style.color = 'red';
+            }
+        });
+
+        // Test functions
+        function testProgrammaticPayment() {
+            window.NanoPay.open({
+                title: 'Test Payment',
+                amount: 2.5,
+                address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+                description: 'This is a test payment',
+                success: function(block) {
+                    alert('Payment successful! Block: ' + (block.block || 'N/A'));
+                },
+                cancel: function() {
+                    console.log('Payment cancelled');
+                }
+            });
+        }
+
+        function testPremiumWall() {
+            window.NanoPay.wall({
+                element: '#premium-content',
+                title: 'Unlock Premium Content',
+                amount: 1,
+                address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+                description: 'Pay to unlock this premium content',
+                button: 'Unlock with Nano',
+                debug: true,
+                success: function(block, element, elementId) {
+                    console.log('Content unlocked!', block, element, elementId);
+                },
+                cancel: function() {
+                    console.log('Premium wall cancelled');
+                    alert('Premium wall cancelled');
+                },
+                expired: function() {
+                    console.log('Premium wall expired');
+                    alert('Premium wall expired');
+                }
+            });
+        }
+
+        function testAdvancedPayment() {
+            window.NanoPay.open({
+                title: 'Advanced Payment Test',
+                amount: 5,
+                address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+                description: 'Advanced payment with custom options',
+                position: 'center',
+                wallet: 'natrium',
+                symbol: 'NANO',
+                disclaimer: 'This is a test payment. No real money will be charged.',
+                success: function(block) {
+                    alert('Advanced payment successful!');
+                }
+            });
+        }
+
+        function testLineItemsPayment() {
+            window.NanoPay.open({
+                title: 'Shopping Cart',
+                address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+                line_items: [
+                    { 
+                        name: 'Premium T-Shirt', 
+                        price: 2.5, 
+                        quantity: 2,
+                        variants: { color: 'Blue', size: 'Large' },
+                        description: '100% Cotton Premium T-Shirt',
+                        image: 'https://fpoimg.com/40x40/209CE9?text=T'
+                    },
+                    { 
+                        name: 'Ceramic Coffee Mug', 
+                        price: 1.0, 
+                        quantity: 1,
+                        variants: { color: 'White', material: 'Ceramic' },
+                        description: 'Handcrafted ceramic mug',
+                        image: 'https://fpoimg.com/40x40/8B4513?text=M'
+                    },
+                ],
+                success: function(block) {
+                    alert('Line items payment successful!');
+                }
+            });
+        }
+
+        function testShippingPayment() {
+            window.NanoPay.open({
+                title: 'Physical Product Purchase',
+                amount: 10,
+                address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+                shipping: true,
+                contact: true,
+                description: 'Product with shipping',
+                success: function(block) {
+                    alert('Shipping payment successful!');
+                }
+            });
+        }
+
+        function testEmailPayment() {
+            window.NanoPay.open({
+                title: 'Email Required Payment',
+                amount: 3,
+                address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+                contact: true,
+                description: 'Payment requiring email contact',
+                success: function(block) {
+                    alert('Email payment successful!');
+                }
+            });
+        }
+
+        function testCustomConfig() {
+            window.NanoPay.open({
+                title: 'Custom Configuration',
+                amount: 1.5,
+                address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+                description: 'Custom styled payment',
+                background: '#2c3e50',
+                text: '#ecf0f1',
+                button: 'Custom Pay Button',
+                position: 'top',
+                wallet: 'nault',
+                success: function(block) {
+                    alert('Custom config payment successful!');
+                }
+            });
+        }
+
+        function testDebugMode() {
+            window.NanoPay.open({
+                title: 'Debug Mode Test',
+                amount: 0.1,
+                address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+                description: 'Debug mode enabled',
+                debug: true,
+                success: function(block) {
+                    alert('Debug mode payment successful!');
+                }
+            });
+        }
+
+        function testPaymentPlans() {
+            // This would typically use a checkout URL or API endpoint
+            // For testing, we'll simulate with a simple payment
+            window.NanoPay.open({
+                title: 'Subscription Plans',
+                amount: 5,
+                address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+                description: 'Monthly subscription',
+                expiration: 300, // 5 minutes
+                success: function(block) {
+                    alert('Subscription payment successful!');
+                },
+                expired: function() {
+                    alert('Payment expired!');
+                }
+            });
+        }
+
+        function testSecurityFeatures() {
+            // Test input validation
+            console.log('Testing security features...');
+            
+            // Test invalid amount
+            window.NanoPay.open({
+                title: 'Security Test - Invalid Amount',
+                amount: -1, // This should be rejected
+                address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+                description: 'Testing amount validation'
+            });
+            
+            // Test invalid address (after the invalid amount test)
+            setTimeout(() => {
+                window.NanoPay.open({
+                    title: 'Security Test - Invalid Address',
+                    amount: 1,
+                    address: 'invalid_address', // This should be rejected
+                    description: 'Testing address validation'
+                });
+            }, 2000);
+        }
+
+        function testGlassMorphism() {
+            // Test the new glass morphism UI
+            window.NanoPay.open({
+                title: 'Glass Morphism UI Test',
+                amount: 2,
+                address: 'nano_1demo1234567890abcdefghijklmnopqrstuvwxyz',
+                description: 'Testing the new glass morphism design with backdrop blur effects',
+                success: function(block) {
+                    alert('Glass morphism UI test successful! Notice the beautiful blur effects.');
+                }
+            });
+        }
+
+        // Copy to clipboard functionality
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            const text = element.textContent || element.innerText;
+            
+            navigator.clipboard.writeText(text).then(function() {
+                // Find the copy button and update its appearance
+                const copyButton = document.querySelector(`button[onclick="copyToClipboard('${elementId}')"]`);
+                if (copyButton) {
+                    const originalText = copyButton.innerHTML;
+                    copyButton.innerHTML = '<span>✅</span> Copied!';
+                    copyButton.classList.add('copied');
+                    
+                    setTimeout(() => {
+                        copyButton.innerHTML = originalText;
+                        copyButton.classList.remove('copied');
+                    }, 2000);
+                }
+            }).catch(function(err) {
+                console.error('Failed to copy text: ', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                // Still show success feedback
+                const copyButton = document.querySelector(`button[onclick="copyToClipboard('${elementId}')"]`);
+                if (copyButton) {
+                    const originalText = copyButton.innerHTML;
+                    copyButton.innerHTML = '<span>✅</span> Copied!';
+                    copyButton.classList.add('copied');
+                    
+                    setTimeout(() => {
+                        copyButton.innerHTML = originalText;
+                        copyButton.classList.remove('copied');
+                    }, 2000);
+                }
+            });
+        }
+
+        // Log NanoPay events for debugging
+        window.addEventListener('load', function() {
+            console.log('NanoPay loaded:', window.NanoPay);
+            console.log('Available methods:', Object.keys(window.NanoPay));
+        });
+    </script>
+</body>
+</html>
