@@ -449,7 +449,7 @@ const SecurityUtils = {
 			var span = el.getElementsByTagName("span")
 			if (span) {
 				var default_text = span[0].innerText
-				span[0].innerText = 'Copied!'
+				span[0].innerText = 'Copied'
 				setTimeout(() => span[0].innerText = default_text, 2000)
 			}
 	    }, function() {
@@ -726,7 +726,7 @@ const SecurityUtils = {
 
     	var background = config.background || (window.NanoPay.dark_mode ? '#282c37' : 'rgb(247, 247, 247)')
     	var backdrop_background = config.backdrop || (window.NanoPay.dark_mode ? '#1f1e1ee0' : 'rgb(0 0 0 / 45%)')
-    	var text_color = config.text || (window.NanoPay.dark_mode ? '#FFF' : '#000')
+    	var text_color = config.text || (window.NanoPay.dark_mode ? '#FFF' : '#FFF')
     	var position = config.position || 'bottom'
     	var button = config.button || 'Open'
     	var symbol = config.symbol || 'NANO'
@@ -960,7 +960,7 @@ const SecurityUtils = {
 			
 			#nano-pay-backdrop { background: ${backdrop_background}; width: 100%; height: 100%; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 			
-			#nano-pay-body { width: 100%;max-width: 420px;display: flex;flex-direction: column;justify-content: center;align-items: center;background: ${window.NanoPay.dark_mode ? 'rgba(40, 44, 55, 0.25)' : 'rgba(255, 255, 255, 0.25)'}; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid ${window.NanoPay.dark_mode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.05)'}; position: absolute;transition: all 0.3s ease 0s;color:${text_color};letter-spacing: 0.2px; bottom: ${position === 'bottom' ? '-100%' : 'auto'}; top: ${position === 'top' ? '-100%' : 'auto'} }
+			#nano-pay-body { width: 100%;max-width: 420px;display: flex;flex-direction: column;justify-content: center;align-items: center; background: ${window.NanoPay.dark_mode ? 'rgba(40, 44, 55, 0.25)' : 'rgba(255, 255, 255, 0.25)'}; backdrop-filter: blur(200px); -webkit-backdrop-filter: blur(20px); border: 1px solid ${window.NanoPay.dark_mode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.05)'}; position: absolute;transition: all 0.3s ease 0s; color:${text_color}; letter-spacing: 0.2px; bottom: ${position === 'bottom' ? '-100%' : 'auto'}; top: ${position === 'top' ? '-100%' : 'auto'} }
 
 			#nano-pay-header { display: flex; align-items: center; }
 			#nano-pay-header > svg { max-width: 18px; height: 18px }
@@ -980,7 +980,7 @@ const SecurityUtils = {
 			#nano-pay-details { box-sizing: border-box; display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid ${ window.NanoPay.dark_mode ? '#ffffff08' : '#0000000f' };position: relative;align-items: start; }
 
 			#nano-pay-details-spacer { letter-spacing: 0.5px; opacity: 0.5; min-width: 90px; }
-			#nano-pay-details-labels { font-family: sans-serif; opacity: 0.5;font-size: 95%;line-height: 17px;letter-spacing: 0.8px; }
+			#nano-pay-details-labels { font-family: sans-serif;font-size: 95%;line-height: 17px;letter-spacing: 0.8px; }
 			#nano-pay-details-labels > div, #nano-pay-details-values > div { margin: 3px 0; }
 			#nano-pay-details-values { opacity: 1;font-size: 90%;line-height: 17px;letter-spacing: 0.8px; margin-left: auto; }
 
@@ -999,11 +999,13 @@ const SecurityUtils = {
 
 			#nano-pay-copy-address { display: flex }
 
-			.nano-pay-copy-clipboard { background: ${ window.NanoPay.dark_mode ? '#323846' : '#e4e4e4' }; display: flex; min-width: 160px; align-items: center; justify-content: center; padding: 5px; border-radius: 5px; margin: 15px 10px 0 10px; cursor: pointer; zoom: 0.9 }
+			.nano-pay-copy-clipboard { border: ${ window.NanoPay.dark_mode ? '2px solid #FFF' : '2px solid #fff' }; display: flex; min-width: 160px; align-items: center; justify-content: center; padding: 5px; border-radius: 5px; margin: 15px 10px 0 10px; cursor: pointer; zoom: 0.9 }
 			
 			#nano-pay-copy-address .nano-pay-copy-clipboard:last-child { margin: 15px 5px 0 10px; }
 
-			.nano-pay-copy-clipboard svg { max-width: 15px; margin-left: 10px; ${ window.NanoPay.dark_mode ? 'filter: invert(1)' : '' } }
+			.nano-pay-copy-clipboard svg { max-width: 15px; margin-left: 10px; }
+			
+			.nano-pay-copy-clipboard svg path { fill: ${ window.NanoPay.dark_mode ? '#FFF' : '#FFF' } }
 
 			#nano-pay-user-contact-email { line-height: 1.1;max-width: 280px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis; }
 			#nano-pay-user-mailing-address { line-height: 1.1;max-width: 280px; }
@@ -1012,7 +1014,7 @@ const SecurityUtils = {
 
 			#nano-pay-save-shipping { text-align: center; border: 0; color: #FFF; padding: 12px 10px; border-radius: 5px; background: #209ce9; margin-top: 15px; }
 
-			#nano-pay-email-input input { width: 100%; margin-bottom: 10px; box-sizing: border-box; display: block; min-height: 40px; appearance: none; border: 1px solid ${ window.NanoPay.dark_mode ? '#ffffff54' : '#00000054' }; background: transparent; color: ${ window.NanoPay.dark_mode ? '#FFF' : '#000' }; padding: 10px; border-radius: 5px; font-size: 14px }
+			#nano-pay-email-input input { width: 100%; margin-bottom: 10px; box-sizing: border-box; display: block; min-height: 40px; appearance: none; border: 1px solid ${ window.NanoPay.dark_mode ? '#FFFFFF54' : '#FFFFFF54' }; background: transparent; color: ${ window.NanoPay.dark_mode ? '#000' : '#FFF' }; padding: 10px; border-radius: 5px; font-size: 14px }
 
 			#nano-pay-save-email { text-align: center; border: 0; color: #FFF; padding: 12px 10px; border-radius: 5px; background: #209ce9; margin-top: 15px; cursor: pointer; }
 
@@ -1130,7 +1132,6 @@ const SecurityUtils = {
 		</div>
 
 		<div id="nano-pay-line-items-container" style="display: ${config.line_items ? 'block' : 'none'};width: 100%;padding: 15px 14px;border-bottom: 1px solid ${ window.NanoPay.dark_mode ? '#ffffff08' : '#0000000f' };box-sizing: border-box;"> 
-			<div id="nano-pay-contact-label" style="letter-spacing: 0.7px; opacity: 0.5; margin-bottom: 12px; font-size: 14px;">${strings.line_items}</div> 
 			<div id="nano-pay-line-items" style="display: flex; flex-direction: column; gap: 8px;">
 				${config.line_items ? config.line_items.map(item => `
 					<div class="nano-pay-line-item" style="
@@ -1147,11 +1148,11 @@ const SecurityUtils = {
 						${item.image ? `<img src="${item.image}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px; margin-right: 12px; flex-shrink: 0;" alt="${item.title || item.name}">` : ''}
 						<div style="flex: 1; min-width: 0;">
 							<div style="font-weight: 500; margin-bottom: 2px; color: ${text_color};">${item.title || item.name}</div>
-							${item.variants ? `<div style="font-size: 11px; opacity: 0.7; margin-bottom: 2px;">${Object.entries(item.variants).map(([key, value]) => `${key}: ${value}`).join(', ')}</div>` : ''}
-							${item.description ? `<div style="font-size: 11px; opacity: 0.6;">${item.description}</div>` : ''}
+							${item.variants ? `<div style="font-size: 90%; opacity: 0.8; margin-bottom: 2px;">${Object.entries(item.variants).map(([key, value]) => `${ String(key).charAt(0).toUpperCase() + String(key).slice(1) }: ${value}`).join(', ')}</div>` : ''}
+							${item.description ? `<div style="font-size: 90%; opacity: 0.6;">${item.description}</div>` : ''}
 						</div>
 						<div style="text-align: right; margin-left: 8px; flex-shrink: 0;">
-							${item.quantity ? `<div style="font-size: 11px; opacity: 0.7; margin-bottom: 2px;">Qty: ${item.quantity}</div>` : ''}
+							${item.quantity ? `<div style="font-size: 90%; opacity: 0.8; margin-bottom: 2px;">Qty: ${item.quantity}</div>` : ''}
 							<div style="font-weight: 500; color: ${text_color};">${item.price} ${symbol}</div>
 						</div>
 					</div>
