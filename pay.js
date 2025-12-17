@@ -875,7 +875,6 @@ const SecurityUtils = {
 				rpc_checkout.amount_raw = rpc_checkout.plans[default_plan].value_raw
 				rpc_checkout.qrcode = rpc_checkout.plans[default_plan].qrcode
 				strings.quantity = 'Duration'
-				config.title = 'Name'
 				description = '@' + rpc_checkout.lease
 
     		} else if (get_alias) {
