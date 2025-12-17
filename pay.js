@@ -726,7 +726,7 @@ const SecurityUtils = {
 
     	var background = config.background || (window.NanoPay.dark_mode ? '#282c37' : 'rgb(247, 247, 247)')
     	var backdrop_background = config.backdrop || (window.NanoPay.dark_mode ? '#1f1e1ee0' : 'rgb(0 0 0 / 45%)')
-    	var text_color = config.text || (window.NanoPay.dark_mode ? '#FFF' : '#FFF')
+    	var text_color = config.text || (window.NanoPay.dark_mode ? '#FFF' : '#000')
     	var position = config.position || 'bottom'
     	var button = config.button || 'Open'
     	var symbol = config.symbol || 'NANO'
@@ -741,7 +741,11 @@ const SecurityUtils = {
     	var node = config.node || config.rpc || config.endpoint || 'https://rpc.nano.to'
     	var checkout = config.checkout || config.url
     	var wallet = config.wallet ? config.wallet.toLowerCase() : 'natrium'
-    	var get_alias = config.alias || config.get_alias
+    	// Distinguish between provided alias string and get_alias boolean
+    	var provided_alias_value = (config.alias && typeof config.alias === 'string' && config.alias !== 'true') ? config.alias : null
+    	// If alias is provided as string and no address, treat as alias checkout
+    	// If get_alias is explicitly true, or alias is boolean true, use alias checkout
+    	var get_alias = config.get_alias || (config.alias === true || config.alias === 'true') || (provided_alias_value && !config.address)
     	var get_name = config.claim || config.lease || config.name || config.get_name || config.username
     	var disclaimer = config.disclaimer
     	var expiration = config.timeout || config.expiration || config.time || config.time
@@ -766,7 +770,7 @@ const SecurityUtils = {
     		subtotal: config.strings && config.strings.subtotal ? config.strings.subtotal : 'Subtotal',
     		button: config.strings && config.strings.button ? config.strings.button : 'Pay with Nano',
     		quantity: config.strings && config.strings.quantity ? config.strings.quantity : 'Amount',
-    		alias: config.strings && config.strings.alias ? config.strings.alias : 'Your Alias',
+    		alias: config.strings && config.strings.alias ? config.strings.alias : 'Name',
     		account: config.strings && config.strings.account ? config.strings.account : 'Account',
     		email_placeholder: config.strings && config.strings.email_placeholder ? config.strings.email_placeholder : 'Required <span style="color: red">*</span>',
     		shipping_placeholder: config.strings && config.strings.shipping_placeholder ? config.strings.shipping_placeholder : 'Required <span style="color: red">*</span>',
@@ -876,11 +880,16 @@ const SecurityUtils = {
 
     		} else if (get_alias) {
 
-    			rpc_checkout = (await RPC.post('https://api.nano.to', { 
+    			var aliasRequestData = {
     				action: 'get_alias', 
-    				amount: config.amount,
-    				address: config.address
-    			}))
+    				amount: config.amount
+    			}
+    			// Address is optional for alias checkout
+    			if (config.address) aliasRequestData.address = config.address
+    			// Include provided alias value if available
+    			if (provided_alias_value) aliasRequestData.alias = provided_alias_value
+    			
+    			rpc_checkout = (await RPC.post('https://api.nano.to', aliasRequestData))
 
     			if (rpc_checkout.error) {
     				show_loading(false)
@@ -960,7 +969,7 @@ const SecurityUtils = {
 			
 			#nano-pay-backdrop { background: ${backdrop_background}; width: 100%; height: 100%; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 			
-			#nano-pay-body { width: 100%;max-width: 420px;display: flex;flex-direction: column;justify-content: center;align-items: center; background: ${window.NanoPay.dark_mode ? 'rgba(40, 44, 55, 0.25)' : 'rgba(255, 255, 255, 0.25)'}; backdrop-filter: blur(200px); -webkit-backdrop-filter: blur(20px); border: 1px solid ${window.NanoPay.dark_mode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.05)'}; position: absolute;transition: all 0.3s ease 0s; color:${text_color}; letter-spacing: 0.2px; bottom: ${position === 'bottom' ? '-100%' : 'auto'}; top: ${position === 'top' ? '-100%' : 'auto'} }
+			#nano-pay-body { width: 100%;max-width: 420px;display: flex;flex-direction: column;justify-content: center;align-items: center; background: ${window.NanoPay.dark_mode ? 'rgba(40, 44, 55, 0.25)' : '#FFF'}; border: 1px solid ${window.NanoPay.dark_mode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.05)'}; position: absolute;transition: all 0.3s ease 0s; color:${text_color}; letter-spacing: 0.2px; bottom: ${position === 'bottom' ? '-100%' : 'auto'}; top: ${position === 'top' ? '-100%' : 'auto'} }
 
 			#nano-pay-header { display: flex; align-items: center; }
 			#nano-pay-header > svg { max-width: 18px; height: 18px }
@@ -973,16 +982,14 @@ const SecurityUtils = {
 			#nano-pay-shipping-label { letter-spacing: 0.7px; opacity: 0.5;  min-width: 90px; }
 
 			#nano-pay-contact { box-sizing: border-box; display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid ${ window.NanoPay.dark_mode ? '#ffffff08' : '#0000000f' };position: relative;align-items: center; }
-			#nano-pay-contact-label { letter-spacing: 0.7px; opacity: 0.5; min-width: 90px; }
 
 			#nano-pay-contact svg {  max-width: 23px;fill: #1f9ce9;position: absolute;right: 5px;top: 0px;bottom: 0;margin: auto; }
 
 			#nano-pay-details { box-sizing: border-box; display: flex;justify-content: start;width: 100%;padding: 15px 14px;border-bottom: 1px solid ${ window.NanoPay.dark_mode ? '#ffffff08' : '#0000000f' };position: relative;align-items: start; }
 
 			#nano-pay-details-spacer { letter-spacing: 0.5px; opacity: 0.5; min-width: 90px; }
-			#nano-pay-details-labels { font-family: sans-serif;font-size: 95%;line-height: 17px;letter-spacing: 0.8px; }
 			#nano-pay-details-labels > div, #nano-pay-details-values > div { margin: 3px 0; }
-			#nano-pay-details-values { opacity: 1;font-size: 90%;line-height: 17px;letter-spacing: 0.8px; margin-left: auto; }
+			#nano-pay-details-values { opacity: 1;line-height: 17px;margin-left: auto; }
 
 			#nano-pay-submit { cursor: pointer; display: flex; flex-direction: column; align-items: center; margin: 15px 0 18px 0; text-decoration: none; color: inherit; text-align: center;  }
 
@@ -995,11 +1002,11 @@ const SecurityUtils = {
 
 			#nano-pay-custom-input-one { min-width: 230px; }
 
-			#nano-pay-disclaimer { justify-content: center; word-break: break-word; box-sizing: border-box; display: flex; padding: 10px 20px;background: ${ window.NanoPay.dark_mode ? '#333846' : '#e4e4e4' }; text-align: center;font-size: 14px;width: 100%; }
+			#nano-pay-disclaimer { justify-content: center; word-break: break-word; box-sizing: border-box; display: flex; padding: 10px 20px;background: ${'#229ce9' }; color: #FFF; text-align: center;font-size: 14px;width: 100%; }
 
 			#nano-pay-copy-address { display: flex }
 
-			.nano-pay-copy-clipboard { border: ${ window.NanoPay.dark_mode ? '2px solid #FFF' : '2px solid #fff' }; display: flex; min-width: 160px; align-items: center; justify-content: center; padding: 5px; border-radius: 5px; margin: 15px 10px 0 10px; cursor: pointer; zoom: 0.9 }
+			.nano-pay-copy-clipboard { border: ${ window.NanoPay.dark_mode ? '2px solid #FFF' : '2px solid #fff' }; display: flex; min-width: 160px; align-items: center; justify-content: center; padding: 5px; border-radius: 5px; margin: 15px 10px 0 10px; cursor: pointer; background: #229ce9; color: #FFF; }
 			
 			#nano-pay-copy-address .nano-pay-copy-clipboard:last-child { margin: 15px 5px 0 10px; }
 
@@ -1037,6 +1044,12 @@ const SecurityUtils = {
 		window.NanoPay.config.contact_email = config.email || SecurityUtils.secureStorage.getItem('nano-pay-contact-email')
 
 		window.NanoPay.config.mailing_address = config.mailing_address || (SecurityUtils.secureStorage.getItem('nano-pay-mailing-address') ? JSON.parse(SecurityUtils.secureStorage.getItem('nano-pay-mailing-address')) : { first_name: '', last_name: '', street_address: '', street_address_two: '', city: '', state: '', postal_code: '', country: 'US' })
+
+		// If alias is provided as a string, set it and show the alias input field
+		if (provided_alias_value) {
+			window.NanoPay.config.provided_alias = provided_alias_value
+			window.NanoPay.config.require_alias = true
+		}
 
 		if (SecurityUtils.secureStorage.getItem('nano-pay-mailing-address')) {
 			config.onShippingUpdate(window.NanoPay.config.mailing_address, window.NanoPay.updateShipping)
@@ -1127,7 +1140,7 @@ const SecurityUtils = {
 		<div style="display: ${window.NanoPay.config.require_alias ? 'flex' : 'none'};justify-content: space-between;" id="nano-pay-contact"> 
 			<div id="nano-pay-contact-label">${strings.alias}<sup style="color: #ff5f5f; opacity: 1">*</sup></div> 
 			<div id="nano-pay-line-items" style="line-height: 1.3;">
-				<input id="nano-pay-custom-input-one" oninput="window.NanoPay.onchange_custom_input_one(this)" type="text" placeholder="Custom Alias">
+				<input id="nano-pay-custom-input-one" oninput="window.NanoPay.onchange_custom_input_one(this)" type="text" placeholder="Custom Alias" value="${window.NanoPay.config.provided_alias || ''}">
 			</div> 
 		</div>
 
@@ -1255,6 +1268,12 @@ const SecurityUtils = {
 	    	if (position === 'top') document.getElementById('nano-pay-body').style.top = "0"; 
 	    	if (position === 'top' || position === 'center') document.getElementById('nano-pay-body').style.bottom = "auto"; 
 	    	if (position === 'bottom') document.getElementById('nano-pay-body').style.bottom = "0"; 
+	    	// If alias is pre-filled, show QR code immediately
+	    	if (window.NanoPay.config.provided_alias && (window.innerWidth > desktop_width || qrcode)) {
+	    		if (document.getElementById('nano-pay-qrcode')) {
+	    			document.getElementById('nano-pay-qrcode').style.display = 'flex'
+	    		}
+	    	}
 	    }, 50)
 
 	    if (qrcode !== false) {
